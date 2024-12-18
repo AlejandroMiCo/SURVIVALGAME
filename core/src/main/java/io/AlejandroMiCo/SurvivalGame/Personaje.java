@@ -31,7 +31,7 @@ public class Personaje {
             regionsMovimiento[i] = tmp[4][i];
         }
 
-        animacion = new Animation(0.175f, regionsMovimiento);
+        animacion = new Animation(0.1f, regionsMovimiento);
         tiempo = 0f;
 
     }
