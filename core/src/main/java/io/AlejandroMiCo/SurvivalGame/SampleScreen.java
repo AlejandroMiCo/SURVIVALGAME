@@ -39,7 +39,7 @@ public class SampleScreen implements Screen {
         this.game = game;
         image = new Texture("pj.png");
         camera = new OrthographicCamera();
-        pj = new Personaje(100, 300);
+        pj = new Personaje();
         panda = new Panda(100, 280);
         viewport = new FitViewport(800, 480,camera);
 
