@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -27,6 +30,8 @@ public class Main extends ApplicationAdapter {
     private Stage stage;
     Texture img;
     Sprite mysprite;
+    private TiledMap map;
+    private OrthogonalTiledMapRenderer mapRenderer;
 
     @Override
     public void create() {
@@ -36,15 +41,10 @@ public class Main extends ApplicationAdapter {
         myViewport = new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
         stage = new Stage(myViewport);
 
-        img = new Texture("red-panda.png");
-        img.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-        mysprite = new Sprite(img);
-
-        float targetSize = 64; // Tamaño deseado en unidades del mundo
-        mysprite.setSize(targetSize, targetSize * (mysprite.getHeight() / mysprite.getWidth()));
-
+        map = new TmxMapLoader().load("maps/mapa1.tmx");
+        mapRenderer = new OrthogonalTiledMapRenderer(map);
+        
         pj = new Personaje();
-
     }
 
     StretchViewport myviewport = new StretchViewport(480, 320);
@@ -60,6 +60,15 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        
+        camera.update();
+        mapRenderer.setView(camera);
+        
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        
+        mapRenderer.render();
+        
         batch.begin();
         pj.render(batch);
         batch.end();
@@ -70,5 +79,8 @@ public class Main extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
         image.dispose();
+
+        map.dispose();
+        mapRenderer.dispose();
     }
 }
