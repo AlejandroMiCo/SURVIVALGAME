@@ -39,9 +39,6 @@ public class Personaje {
     public void render(final SpriteBatch batch) {
         tiempo += Gdx.graphics.getDeltaTime(); // Tiempo que pasa desde el ultimo render
 
-        // int h = Gdx.graphics.getHeight();
-        int j = 16;
-
         if (Gdx.input.isTouched()) {
             dx = Gdx.input.getDeltaX();
             dy = Gdx.input.getDeltaY();

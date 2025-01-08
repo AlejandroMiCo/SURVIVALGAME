@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -37,8 +36,6 @@ public class Main extends ApplicationAdapter {
         myViewport = new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
         stage = new Stage(myViewport);
 
-        float density = Gdx.graphics.getDensity();
-
         img = new Texture("red-panda.png");
         img.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         mysprite = new Sprite(img);
@@ -53,9 +50,6 @@ public class Main extends ApplicationAdapter {
     StretchViewport myviewport = new StretchViewport(480, 320);
 
     public void resize(int width, int height) {
-        // use true here to center the camera
-        // that's what you probably want in case of a UI
-        // stage.setViewport(myviewport);
         stage.getCamera().position.set(640 / 2, 480 / 2, 0);
         myViewport.update(width, height);
     }
@@ -67,10 +61,6 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-
-
-        // batch.draw(mysprite, 100, 100, Gdx.graphics.getWidth()*0.2f , Gdx.graphics.getHeight()*0.25f);
-
         pj.render(batch);
         batch.end();
 
