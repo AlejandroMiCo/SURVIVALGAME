@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -32,11 +33,12 @@ public class Main extends ApplicationAdapter {
     Sprite mysprite;
     private TiledMap map;
     private OrthogonalTiledMapRenderer mapRenderer;
+    private VirtualJoystick joystick;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
-
+        joystick = new VirtualJoystick(100, 100, 50, 20);
         camera = new OrthographicCamera();
         myViewport = new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
         stage = new Stage(myViewport);
@@ -44,34 +46,35 @@ public class Main extends ApplicationAdapter {
         map = new TmxMapLoader().load("maps/mapa1.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map);
        
-        pj = new Personaje();
+        pj = new Personaje(joystick);
     }
 
-    StretchViewport myviewport = new StretchViewport(480, 320);
-
+    @Override
     public void resize(int width, int height) {
-        stage.getCamera().position.set(640 / 2, 480 / 2, 0);
+        //stage.getCamera().position.set(640 / 2, 480 / 2, 0);
         myViewport.update(width, height);
     }
 
     @Override
     public void render() {
+        joystick.update();
+        pj.update(Gdx.graphics.getDeltaTime());
 
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         
         camera.update();
         mapRenderer.setView(camera);
         
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
-        mapRenderer.render();
+        mapRenderer.render(new int[]{0});
         
         batch.begin();
+        joystick.render(batch);
         pj.render(batch);
         batch.end();
+
+        mapRenderer.render(new int[]{1});
 
     }
 
@@ -82,5 +85,6 @@ public class Main extends ApplicationAdapter {
 
         map.dispose();
         mapRenderer.dispose();
+        joystick.dispose();
     }
 }
