@@ -43,7 +43,7 @@ public class Main extends ApplicationAdapter {
 
         map = new TmxMapLoader().load("maps/mapa1.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map);
-        
+       
         pj = new Personaje();
     }
 
