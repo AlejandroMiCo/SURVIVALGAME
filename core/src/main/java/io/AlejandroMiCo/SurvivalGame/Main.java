@@ -38,13 +38,13 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        joystick = new VirtualJoystick(100, 100, 50, 20);
         camera = new OrthographicCamera();
         myViewport = new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
         stage = new Stage(myViewport);
-
+        
         map = new TmxMapLoader().load("maps/mapa1.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map);
+        joystick = new VirtualJoystick(100, 100, 50, 20);
        
         pj = new Personaje(joystick);
     }
@@ -57,8 +57,8 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        joystick.update();
         pj.update(Gdx.graphics.getDeltaTime());
+        joystick.update();
 
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -70,11 +70,14 @@ public class Main extends ApplicationAdapter {
         mapRenderer.render(new int[]{0});
         
         batch.begin();
-        joystick.render(batch);
         pj.render(batch);
         batch.end();
-
+        
         mapRenderer.render(new int[]{1});
+
+        batch.begin();
+        joystick.render(batch);
+        batch.end();
 
     }
 
