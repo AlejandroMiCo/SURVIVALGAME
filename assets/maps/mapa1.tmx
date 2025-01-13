@@ -182,11 +182,11 @@
 62,63,64,45,46,47,48,60,61,62,63,64,0,44,45,46,47,48,0,44,45,46,47,48,62,63,64,45,46,47,48,78
 </data>
   </layer>
-  <objectgroup id="9" name="Colisiones">
-   <object id="5" x="473" y="61" width="41" height="421"/>
-   <object id="6" x="5" y="456" width="506" height="56"/>
-   <object id="7" x="7" y="8" width="41" height="439"/>
-   <object id="8" x="7" y="7" width="509" height="68"/>
-  </objectgroup>
  </group>
+ <objectgroup id="9" name="CollisionLayer">
+  <object id="5" x="473" y="61" width="41" height="421"/>
+  <object id="6" x="5" y="456" width="506" height="56"/>
+  <object id="7" x="7" y="8" width="41" height="439"/>
+  <object id="8" x="7" y="7" width="509" height="68"/>
+ </objectgroup>
 </map>
