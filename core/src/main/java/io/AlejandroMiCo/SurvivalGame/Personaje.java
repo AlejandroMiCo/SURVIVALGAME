@@ -37,7 +37,7 @@ public class Personaje {
         // Crear el cuerpo del personaje en Box2D
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(100 / PPM, 100 / PPM);
+        bodyDef.position.set(250 / PPM, 250 / PPM);
 
         body = world.createBody(bodyDef);
 

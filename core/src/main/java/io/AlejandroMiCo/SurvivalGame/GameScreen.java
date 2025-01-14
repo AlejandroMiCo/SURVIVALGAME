@@ -36,7 +36,6 @@ public class GameScreen implements Screen {
     private OrthogonalTiledMapRenderer mapRenderer;
     private VirtualJoystick joystick;
     private World world;
-    private Box2DDebugRenderer dubbug;
 
     public GameScreen(Main game) {
         super();
@@ -51,7 +50,6 @@ public class GameScreen implements Screen {
 
         map = new TmxMapLoader().load("maps/ProvisionalMap.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map);
-        dubbug = new Box2DDebugRenderer();
 
         world = new World(new Vector2(0, 0), true); // Mundo Box2D sin gravedad
         pj = new Personaje(world, joystick);
@@ -96,27 +94,24 @@ public class GameScreen implements Screen {
         joystick.update();
         pj.update(delta);
 
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         game.batch.setProjectionMatrix(camera.combined);
         camera.update();
         mapRenderer.setView(camera);
 
-        mapRenderer.render(new int[] { 0 }); // Renderiza las primeras capas del mapa
-
+        
         batch.begin();
+        mapRenderer.render(); // Renderiza las primeras capas del mapa
         pj.render(batch);
         batch.end();
 
-        mapRenderer.render(new int[] { 1 }); // Renderiza las capas superiores del mapa
 
         batch.begin();
         joystick.render(batch);
         batch.end();
 
-        
-        dubbug.render(world, camera.combined);
         world.step(1 / 60f, 6, 2);
 
     }
