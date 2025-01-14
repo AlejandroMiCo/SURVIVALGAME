@@ -49,7 +49,7 @@ public class GameScreen implements Screen {
         stage = new Stage(myViewport);
         Gdx.input.setInputProcessor(stage);
 
-        map = new TmxMapLoader().load("maps/mapa1.tmx");
+        map = new TmxMapLoader().load("maps/ProvisionalMap.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map);
         dubbug = new Box2DDebugRenderer();
 
