@@ -26,23 +26,24 @@ public class Personaje {
         imagen = new Texture("img/Warrior_Blue.png");
         TextureRegion[][] tmp = TextureRegion.split(imagen, imagen.getWidth() / 6, imagen.getHeight() / 8);
 
-        regionsMovimiento = new TextureRegion[8 ];
-        
+        // regionsMovimiento = new TextureRegion[8];
 
-        regionsMovimiento[0] = tmp[5][2];
-        regionsMovimiento[1] = tmp[5][3];
-        regionsMovimiento[2] = tmp[5][4];
-        regionsMovimiento[3] = tmp[3][3];
-        regionsMovimiento[4] = tmp[3][4];
-        regionsMovimiento[5] = tmp[7][3];
-        regionsMovimiento[6] = tmp[7][4];
-        regionsMovimiento[7] = tmp[7][5];
+        // regionsMovimiento[0] = tmp[5][2];
+        // regionsMovimiento[1] = tmp[5][3];
+        // regionsMovimiento[2] = tmp[5][4];
+        // regionsMovimiento[3] = tmp[3][3];
+        // regionsMovimiento[4] = tmp[3][4];
+        // regionsMovimiento[5] = tmp[7][3];
+        // regionsMovimiento[6] = tmp[7][4];
+        // regionsMovimiento[7] = tmp[7][5];
+        // 0.7
 
-        
-        // for (int i = 0; i < 6; i++) {
-        // }
+        regionsMovimiento = new TextureRegion[6];
+        for (int i = 0; i < 6; i++) {
+            regionsMovimiento[i] = tmp[1][i];
+        }
 
-        animacion = new Animation<>(0.075f, regionsMovimiento);
+        animacion = new Animation<>(0.125f, regionsMovimiento);
         tiempo = 0f;
 
         // Crear el cuerpo del personaje en Box2D
@@ -53,7 +54,7 @@ public class Personaje {
         body = world.createBody(bodyDef);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(16 / PPM,16 / PPM); // Ajusta el tamaño según sea necesario
+        shape.setAsBox(16 / PPM, 16 / PPM); // Ajusta el tamaño según sea necesario
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
@@ -69,6 +70,21 @@ public class Personaje {
         if (joystick.isTouched()) {
             Vector2 direction = joystick.getDirection();
             body.setLinearVelocity(direction.scl(200 * delta)); // Ajusta la velocidad según sea necesario
+
+            if (direction.x < 0) {
+                for (TextureRegion region : regionsMovimiento) {
+                    if (!region.isFlipX()) {
+                        region.flip(true, false);
+                    }
+                }
+            } else if (direction.x > 0) {
+                for (TextureRegion region : regionsMovimiento) {
+                    if (region.isFlipX()) {
+                        region.flip(true, false);
+                    }
+                }
+            }
+
         } else {
             body.setLinearVelocity(0, 0); // Detener el movimiento
         } // Ajusta la velocidad según sea necesario
@@ -76,13 +92,18 @@ public class Personaje {
 
     public void render(SpriteBatch batch) {
         frameActual = animacion.getKeyFrame(tiempo, true);
-        batch.draw(frameActual, body.getPosition().x * PPM - 64, body.getPosition().y * PPM - 64, 128, 128); // Ajusta el tamaño según sea necesario
+        batch.draw(frameActual, body.getPosition().x * PPM - 64, body.getPosition().y * PPM - 64, 128, 128); // Ajusta
+                                                                                                             // el
+                                                                                                             // tamaño
+                                                                                                             // según
+                                                                                                             // sea
+                                                                                                             // necesario
     }
 
     public Body getBody() {
         return body;
     }
-    
+
     public void dispose() {
         imagen.dispose();
     }

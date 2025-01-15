@@ -131,8 +131,6 @@ public class GameScreen implements Screen {
         }
         batch.end();
 
-        System.out.println(pj.getBody().getPosition().x+"\t"+pj.getBody().getPosition().y);
-
         world.step(1 / 60f, 6, 2);
 
 
