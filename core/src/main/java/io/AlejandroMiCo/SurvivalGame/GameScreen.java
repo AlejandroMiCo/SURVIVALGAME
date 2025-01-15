@@ -1,7 +1,7 @@
 package io.AlejandroMiCo.SurvivalGame;
 
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -26,25 +26,33 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class GameScreen implements Screen {
     private static final float PPM = 100;
 
+    private float MAX_X = 24f;
+    private float MAX_Y = 25f;
+    private float MIN_X = 3f;
+    private float MIN_Y = 3f;
+
+
     private Main game;
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private Personaje pj;
+    private Enemigo enemigo;
     private Viewport myViewport;
     private Stage stage;
     private TiledMap map;
     private OrthogonalTiledMapRenderer mapRenderer;
     private VirtualJoystick joystick;
     private World world;
+    private Box2DDebugRenderer debugRenderer;
 
     public GameScreen(Main game) {
         super();
 
         this.game = game;
         batch = new SpriteBatch();
-        joystick = new VirtualJoystick(100, 100, 50, 20);
+        joystick = new VirtualJoystick(50, 20);
         camera = new OrthographicCamera();
-        myViewport = new FitViewport(800, 480, camera);
+        myViewport = new FitViewport(1920, 1080, camera);
         stage = new Stage(myViewport);
         Gdx.input.setInputProcessor(stage);
 
@@ -53,6 +61,13 @@ public class GameScreen implements Screen {
 
         world = new World(new Vector2(0, 0), true); // Mundo Box2D sin gravedad
         pj = new Personaje(world, joystick);
+
+        float mapWidth = map.getProperties().get("width", Integer.class) * map.getProperties().get("tilewidth", Integer.class);
+        float mapHeight = map.getProperties().get("height", Integer.class) * map.getProperties().get("tileheight", Integer.class);
+
+        enemigo = new Enemigo(world,pj, MIN_X, MIN_Y, MAX_X, MAX_Y);
+
+        debugRenderer = new Box2DDebugRenderer();
 
         createCollisionObjects();
     }
@@ -93,11 +108,12 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         joystick.update();
         pj.update(delta);
+        enemigo.update(delta);
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        game.batch.setProjectionMatrix(camera.combined);
+        camera.position.set(pj.getBody().getPosition().x * PPM, pj.getBody().getPosition().y * PPM, 0);
         camera.update();
         mapRenderer.setView(camera);
 
@@ -105,15 +121,22 @@ public class GameScreen implements Screen {
         batch.begin();
         mapRenderer.render(); // Renderiza las primeras capas del mapa
         pj.render(batch);
+        enemigo.render(batch);
         batch.end();
 
 
         batch.begin();
-        joystick.render(batch);
+        if (joystick.isActive()) {
+            joystick.render(batch);
+        }
         batch.end();
+
+        System.out.println(pj.getBody().getPosition().x+"\t"+pj.getBody().getPosition().y);
 
         world.step(1 / 60f, 6, 2);
 
+
+        debugRenderer.render(world, camera.combined.scl(PPM));
     }
 
     @Override
@@ -139,7 +162,9 @@ public class GameScreen implements Screen {
         map.dispose();
         mapRenderer.dispose();
         pj.dispose();
+        enemigo.dispose();
         joystick.dispose();
         world.dispose();
+        debugRenderer.dispose();
     }
 }

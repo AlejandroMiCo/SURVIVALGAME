@@ -15,11 +15,11 @@ public class VirtualJoystick {
     private boolean touched;
     private int touchPointer;
 
-    public VirtualJoystick(float x, float y, float baseRadius, float knobRadius) {
+    public VirtualJoystick(float baseRadius, float knobRadius) {
         this.baseTexture = new Texture("img/joystick_base.png");
         this.knobTexture = new Texture("img/joystick_knob.png");
-        this.basePosition = new Vector2(x, y);
-        this.knobPosition = new Vector2(x, y);
+        this.basePosition = new Vector2();
+        this.knobPosition = new Vector2();
         this.baseRadius = baseRadius;
         this.knobRadius = knobRadius;
         this.touched = false;
@@ -32,6 +32,9 @@ public class VirtualJoystick {
                     if (Gdx.input.isTouched(i)) {
                         touchPointer = i;
                         touched = true;
+                        basePosition.set(Gdx.input.getX(touchPointer),
+                                Gdx.graphics.getHeight() - Gdx.input.getY(touchPointer));
+                        knobPosition.set(basePosition);
                         break;
                     }
                 }
@@ -51,19 +54,29 @@ public class VirtualJoystick {
             }
         } else {
             touched = false;
-            knobPosition.set(basePosition);
         }
     }
 
     public void render(SpriteBatch batch) {
-        batch.draw(baseTexture, basePosition.x - baseRadius, basePosition.y - baseRadius, baseRadius * 2,
-                baseRadius * 2);
-        batch.draw(knobTexture, knobPosition.x - knobRadius, knobPosition.y - knobRadius, knobRadius * 2,
-                knobRadius * 2);
+        if (touched) {
+            batch.draw(baseTexture, basePosition.x - baseRadius, basePosition.y - baseRadius, baseRadius * 2, baseRadius * 2);
+            batch.draw(knobTexture, knobPosition.x - knobRadius, knobPosition.y - knobRadius, knobRadius * 2, knobRadius * 2);
+        }
     }
 
     public Vector2 getDirection() {
-        return new Vector2(knobPosition.x - basePosition.x, knobPosition.y - basePosition.y).nor();
+        if (touched) {
+            return new Vector2(knobPosition.x - basePosition.x, knobPosition.y - basePosition.y).nor();
+        }
+        return new Vector2(0, 0);
+    }
+
+    public boolean isTouched() {
+        return touched;
+    }
+
+    public boolean isActive() {
+        return touched;
     }
 
     public void dispose() {

@@ -364,10 +364,10 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="6" name="CollisionLayer" visible="0">
+ <objectgroup id="6" name="CollisionLayer">
   <object id="3" x="246.667" y="126" width="2284" height="34"/>
   <object id="4" x="214.667" y="132" width="38.6667" height="2489.33"/>
-  <object id="5" x="229.333" y="2589.33" width="2301.33" height="34.6667"/>
+  <object id="5" x="215.333" y="2531.33" width="2301.33" height="34.6667"/>
   <object id="6" x="2498.67" y="130.667" width="60" height="2456"/>
  </objectgroup>
 </map>
