@@ -30,7 +30,7 @@ public class Enemigo {
 
         regionsMovimiento = new TextureRegion[6];
         for (int i = 0; i < 6; i++) {
-            regionsMovimiento[i] = tmp[0][i];
+            regionsMovimiento[i] = tmp[1][i];
         }
 
         animacion = new Animation<>(0.1f, regionsMovimiento);
@@ -64,6 +64,20 @@ public class Enemigo {
         // Lógica de movimiento del enemigo (si es necesario)
         Vector2 direction = new Vector2(personaje.getBody().getPosition()).sub(body.getPosition()).nor();
         body.setLinearVelocity(direction.scl(100 * delta));
+
+        if (personaje.getBody().getPosition().x < body.getPosition().x) {
+            for (TextureRegion region : regionsMovimiento) {
+                if (!region.isFlipX()) {
+                    region.flip(true, false);
+                }
+            }
+        } else {
+            for (TextureRegion region : regionsMovimiento) {
+                if (region.isFlipX()) {
+                    region.flip(true, false);
+                }
+            }
+        }
     }
 
     public void render(SpriteBatch batch) {
