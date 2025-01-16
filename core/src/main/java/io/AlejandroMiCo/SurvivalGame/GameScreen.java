@@ -52,7 +52,7 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch();
         joystick = new VirtualJoystick(50, 20);
         camera = new OrthographicCamera();
-        myViewport = new FitViewport(1920, 1080, camera);
+        myViewport = new FitViewport(800, 420, camera);
         stage = new Stage(myViewport);
         Gdx.input.setInputProcessor(stage);
 

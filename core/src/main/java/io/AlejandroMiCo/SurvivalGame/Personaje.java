@@ -3,7 +3,7 @@ package io.AlejandroMiCo.SurvivalGame;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Animation; 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -20,12 +20,14 @@ public class Personaje {
     private Body body;
     private VirtualJoystick joystick;
     private static final float PPM = 100; // Pixeles por metro
+    private int vida;
 
     public Personaje(World world, VirtualJoystick joystick) {
         this.joystick = joystick;
         imagen = new Texture("img/Warrior_Blue.png");
         TextureRegion[][] tmp = TextureRegion.split(imagen, imagen.getWidth() / 6, imagen.getHeight() / 8);
 
+        vida = 100;
         // regionsMovimiento = new TextureRegion[8];
 
         // regionsMovimiento[0] = tmp[5][2];
@@ -92,12 +94,7 @@ public class Personaje {
 
     public void render(SpriteBatch batch) {
         frameActual = animacion.getKeyFrame(tiempo, true);
-        batch.draw(frameActual, body.getPosition().x * PPM - 64, body.getPosition().y * PPM - 64, 128, 128); // Ajusta
-                                                                                                             // el
-                                                                                                             // tamaño
-                                                                                                             // según
-                                                                                                             // sea
-                                                                                                             // necesario
+        batch.draw(frameActual, body.getPosition().x * PPM - 64, body.getPosition().y * PPM - 64, 128, 128);
     }
 
     public Body getBody() {
