@@ -117,7 +117,7 @@ public class GameScreen implements Screen {
         camera.update();
         mapRenderer.setView(camera);
 
-        
+
         batch.begin();
         mapRenderer.render(); // Renderiza las primeras capas del mapa
         pj.render(batch);
@@ -129,7 +129,19 @@ public class GameScreen implements Screen {
         if (joystick.isActive()) {
             joystick.render(batch);
         }
+
+    //    System.out.println(pj.getBody().getPosition());
+    //    System.out.println(enemigo.getBody().getPosition());
+   // System.out.println(20/PPM);
+
+
+        if (pj.getBody().getPosition().dst(enemigo.getBody().getPosition()) < 100 / PPM) { // Distancia de colisión
+            pj.takeDamage(10);
+            System.out.println(pj.getHealth());
+            enemigo.takeDamage(10);
+        }
         batch.end();
+
 
         world.step(1 / 60f, 6, 2);
 

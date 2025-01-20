@@ -20,6 +20,7 @@ public class Enemigo {
     private Texture imagen;
     private TextureRegion frameActual;
     private Body body;
+    private int health;
     private Personaje personaje;
     private static final float PPM = 100; // Pixeles por metro
 
@@ -32,6 +33,8 @@ public class Enemigo {
         for (int i = 0; i < 6; i++) {
             regionsMovimiento[i] = tmp[1][i];
         }
+
+        health = 50; // Vida inicial del enemigo
 
         animacion = new Animation<>(0.1f, regionsMovimiento);
         tiempo = 0f;
@@ -85,8 +88,19 @@ public class Enemigo {
         batch.draw(frameActual, body.getPosition().x * PPM - 64, body.getPosition().y * PPM - 64, 128, 128);
     }
 
+    public void takeDamage(int damage) {
+        health -= damage;
+        if (health <= 0) {
+            // Lógica para manejar la muerte del enemigo
+        }
+    }
+
     public Body getBody() {
         return body;
+    }
+
+    public int getHealth() {
+        return health;
     }
 
     public void dispose() {

@@ -3,7 +3,7 @@ package io.AlejandroMiCo.SurvivalGame;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.Animation; 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -20,25 +20,14 @@ public class Personaje {
     private Body body;
     private VirtualJoystick joystick;
     private static final float PPM = 100; // Pixeles por metro
-    private int vida;
+    private int health;
 
     public Personaje(World world, VirtualJoystick joystick) {
         this.joystick = joystick;
         imagen = new Texture("img/Warrior_Blue.png");
         TextureRegion[][] tmp = TextureRegion.split(imagen, imagen.getWidth() / 6, imagen.getHeight() / 8);
 
-        vida = 100;
-        // regionsMovimiento = new TextureRegion[8];
-
-        // regionsMovimiento[0] = tmp[5][2];
-        // regionsMovimiento[1] = tmp[5][3];
-        // regionsMovimiento[2] = tmp[5][4];
-        // regionsMovimiento[3] = tmp[3][3];
-        // regionsMovimiento[4] = tmp[3][4];
-        // regionsMovimiento[5] = tmp[7][3];
-        // regionsMovimiento[6] = tmp[7][4];
-        // regionsMovimiento[7] = tmp[7][5];
-        // 0.7
+        health = 100;
 
         regionsMovimiento = new TextureRegion[6];
         for (int i = 0; i < 6; i++) {
@@ -65,6 +54,7 @@ public class Personaje {
         body.createFixture(fixtureDef);
         shape.dispose();
     }
+
 
     public void update(float delta) {
         tiempo += delta;
@@ -95,6 +85,16 @@ public class Personaje {
     public void render(SpriteBatch batch) {
         frameActual = animacion.getKeyFrame(tiempo, true);
         batch.draw(frameActual, body.getPosition().x * PPM - 64, body.getPosition().y * PPM - 64, 128, 128);
+    }
+    public void takeDamage(int damage) {
+        health -= damage;
+        System.out.println("Au"+health);
+        if (health <= 0) {
+        }
+    }
+
+    public int getHealth() {
+        return health;
     }
 
     public Body getBody() {
