@@ -21,6 +21,7 @@ public class Personaje {
     private VirtualJoystick joystick;
     private static final float PPM = 100; // Pixeles por metro
     private int health;
+    private float damageCooldown;
 
     public Personaje(World world, VirtualJoystick joystick) {
         this.joystick = joystick;
@@ -33,7 +34,7 @@ public class Personaje {
         for (int i = 0; i < 6; i++) {
             regionsMovimiento[i] = tmp[1][i];
         }
-
+        damageCooldown = 0;
         animacion = new Animation<>(0.125f, regionsMovimiento);
         tiempo = 0f;
 
@@ -54,7 +55,6 @@ public class Personaje {
         body.createFixture(fixtureDef);
         shape.dispose();
     }
-
 
     public void update(float delta) {
         tiempo += delta;
@@ -80,16 +80,25 @@ public class Personaje {
         } else {
             body.setLinearVelocity(0, 0); // Detener el movimiento
         } // Ajusta la velocidad según sea necesario
+
+
+        if (damageCooldown >0) {
+            damageCooldown -= delta;
+        }
     }
 
     public void render(SpriteBatch batch) {
         frameActual = animacion.getKeyFrame(tiempo, true);
         batch.draw(frameActual, body.getPosition().x * PPM - 64, body.getPosition().y * PPM - 64, 128, 128);
     }
+
     public void takeDamage(int damage) {
-        health -= damage;
-        System.out.println("Au"+health);
-        if (health <= 0) {
+        if (damageCooldown <= 0) {
+            health -= damage;
+            damageCooldown = 1; // Reiniciar el temporizador a 1 segundo
+            if (health <= 0) {
+               System.out.println("pj: Me mori");
+            }
         }
     }
 

@@ -23,6 +23,8 @@ public class Enemigo {
     private int health;
     private Personaje personaje;
     private static final float PPM = 100; // Pixeles por metro
+    private float damageCooldown;
+    private boolean alive;
 
     public Enemigo(World world, Personaje personaje, float minX, float minY, float maxX, float maxY) {
         this.personaje = personaje;
@@ -34,10 +36,11 @@ public class Enemigo {
             regionsMovimiento[i] = tmp[1][i];
         }
 
-        health = 50; // Vida inicial del enemigo
-
+        health = 20; // Vida inicial del enemigo
+        damageCooldown = 0;
         animacion = new Animation<>(0.1f, regionsMovimiento);
         tiempo = 0f;
+        alive = true;
 
         // Crear el cuerpo del enemigo en Box2D
         BodyDef bodyDef = new BodyDef();
@@ -45,8 +48,8 @@ public class Enemigo {
 
         // Generar una posición aleatoria dentro del mapa
         Random rand = new Random();
-        float x = rand.nextFloat(minX,maxX);
-        float y = rand.nextFloat(minY,maxY);
+        float x = rand.nextFloat(minX, maxX);
+        float y = rand.nextFloat(minY, maxY);
         bodyDef.position.set(x, y);
 
         body = world.createBody(bodyDef);
@@ -68,6 +71,7 @@ public class Enemigo {
         Vector2 direction = new Vector2(personaje.getBody().getPosition()).sub(body.getPosition()).nor();
         body.setLinearVelocity(direction.scl(100 * delta));
 
+        //Movimiento del enemigo segun el personaje
         if (personaje.getBody().getPosition().x < body.getPosition().x) {
             for (TextureRegion region : regionsMovimiento) {
                 if (!region.isFlipX()) {
@@ -81,6 +85,10 @@ public class Enemigo {
                 }
             }
         }
+
+        if (damageCooldown > 0) {
+            damageCooldown -= delta;
+        }
     }
 
     public void render(SpriteBatch batch) {
@@ -89,10 +97,20 @@ public class Enemigo {
     }
 
     public void takeDamage(int damage) {
-        health -= damage;
-        if (health <= 0) {
-            // Lógica para manejar la muerte del enemigo
+        System.out.println(health);
+        if (damageCooldown <= 0) {
+            health -= damage;
+            damageCooldown = 1;
+            if (health <= 0) {
+                // Lógica para manejar la muerte del enemigo
+
+                alive = false;
+            }
         }
+    }
+
+    public boolean isAlive() {
+        return alive;
     }
 
     public Body getBody() {
