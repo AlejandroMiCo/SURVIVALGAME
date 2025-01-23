@@ -61,10 +61,10 @@ public class GameScreen implements Screen {
         world = new World(new Vector2(0, 0), true); // Mundo Box2D sin gravedad
         pj = new Personaje(world, joystick);
 
-        float mapWidth = map.getProperties().get("width", Integer.class)
-                * map.getProperties().get("tilewidth", Integer.class);
-        float mapHeight = map.getProperties().get("height", Integer.class)
-                * map.getProperties().get("tileheight", Integer.class);
+        // float mapWidth = map.getProperties().get("width", Integer.class)
+        //         * map.getProperties().get("tilewidth", Integer.class);
+        // float mapHeight = map.getProperties().get("height", Integer.class)
+        //         * map.getProperties().get("tileheight", Integer.class);
 
         enemigo = new Enemigo(world, pj, MIN_X, MIN_Y, MAX_X, MAX_Y);
 

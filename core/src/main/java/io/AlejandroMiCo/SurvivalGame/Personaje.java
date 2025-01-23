@@ -12,7 +12,16 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Personaje {
-    private Animation<TextureRegion> animacion;
+    public enum State {IDDLE, MOVING}
+    public State currenState;
+    public State previousState;
+
+    private Animation<TextureRegion> MovingAnimation;
+    private Animation<TextureRegion> IddleAnimation;
+
+    private boolean movingRight;
+    private float stateTimer;
+
     private float tiempo;
     private TextureRegion[] regionsMovimiento;
     private Texture imagen;
@@ -26,6 +35,12 @@ public class Personaje {
     public Personaje(World world, VirtualJoystick joystick) {
         this.joystick = joystick;
         imagen = new Texture("img/Warrior_Blue.png");
+
+        currenState = State.IDDLE;
+        previousState = State.IDDLE;
+        stateTimer = 0;
+        movingRight = true;
+
         TextureRegion[][] tmp = TextureRegion.split(imagen, imagen.getWidth() / 6, imagen.getHeight() / 8);
 
         health = 100;
@@ -34,8 +49,18 @@ public class Personaje {
         for (int i = 0; i < 6; i++) {
             regionsMovimiento[i] = tmp[1][i];
         }
+        MovingAnimation = new Animation<>(0.125f, regionsMovimiento);
+
+        for (int i = 0; i < regionsMovimiento.length; i++) {
+            regionsMovimiento[i] = null;
+        }
+
+        for (int i = 0; i < 6; i++) {
+            regionsMovimiento[i] = tmp[0][i];
+        }
+        IddleAnimation = new Animation<>(0.125f, regionsMovimiento);
+
         damageCooldown = 0;
-        animacion = new Animation<>(0.125f, regionsMovimiento);
         tiempo = 0f;
 
         // Crear el cuerpo del personaje en Box2D
@@ -58,28 +83,8 @@ public class Personaje {
 
     public void update(float delta) {
         tiempo += delta;
+        getFrame(delta);
 
-        if (joystick.isTouched()) {
-            Vector2 direction = joystick.getDirection();
-            body.setLinearVelocity(direction.scl(200 * delta)); // Ajusta la velocidad según sea necesario
-
-            if (direction.x < 0) {
-                for (TextureRegion region : regionsMovimiento) {
-                    if (!region.isFlipX()) {
-                        region.flip(true, false);
-                    }
-                }
-            } else if (direction.x > 0) {
-                for (TextureRegion region : regionsMovimiento) {
-                    if (region.isFlipX()) {
-                        region.flip(true, false);
-                    }
-                }
-            }
-
-        } else {
-            body.setLinearVelocity(0, 0); // Detener el movimiento
-        } // Ajusta la velocidad según sea necesario
 
 
         if (damageCooldown >0) {
@@ -87,8 +92,48 @@ public class Personaje {
         }
     }
 
+    public TextureRegion getFrame(float delta){
+        currenState = getState(delta);
+
+        TextureRegion region;
+        if (currenState == State.MOVING) {
+            // Vector2 direction = joystick.getDirection();
+            // body.setLinearVelocity(direction.scl(200 * delta)); // Ajusta la velocidad según sea necesario
+
+            // if (direction.x < 0) {
+            //     for (TextureRegion region : regionsMovimiento) {
+            //         if (!region.isFlipX()) {
+            //             region.flip(true, false);
+            //         }
+            //     }
+            // } else if (direction.x > 0) {
+            //     for (TextureRegion region : regionsMovimiento) {
+            //         if (region.isFlipX()) {
+            //             region.flip(true, false);
+            //         }
+            //     }
+            // }
+
+            region = MovingAnimation.getKeyFrame(stateTimer, true);
+        }else{
+            region = IddleAnimation.getKeyFrame(stateTimer , true);
+        }
+    }
+
+    public State getState(float delta){
+        if (body.getLinearVelocity().x > 0 || body.getLinearVelocity().y > 0) {
+            //
+            return State.MOVING;
+        } else {
+            body.setLinearVelocity(0, 0);
+            return State.IDDLE;
+            // Detener el movimiento
+        } // Ajusta la velocidad según sea necesario
+    }
+
+
     public void render(SpriteBatch batch) {
-        frameActual = animacion.getKeyFrame(tiempo, true);
+        frameActual = MovingAnimation.getKeyFrame(tiempo, true);
         batch.draw(frameActual, body.getPosition().x * PPM - 64, body.getPosition().y * PPM - 64, 128, 128);
     }
 
