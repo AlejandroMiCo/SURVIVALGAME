@@ -10,8 +10,8 @@ import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
  * platforms.
  */
 public class IslandsSurvivors extends Game {
-    public static final int V_WIDTH = 400;
-    public static final int V_HEIGHT = 208;
+    public static final int V_WIDTH = 800;
+    public static final int V_HEIGHT = 480;
 
     public SpriteBatch batch;
 
