@@ -1,25 +1,23 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Scenes;
 
-import java.awt.Color;
-
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 
-public class Hud {
+public class Hud implements Disposable{
     public Stage stage;
     private Viewport viewport;
 
     private Integer worldTimer;
-    private float timeCount;
+    //private float timeCount;
     private Integer score;
 
     Label countdownLabel;
@@ -31,7 +29,7 @@ public class Hud {
 
     public Hud(SpriteBatch sb) {
         worldTimer = 300;
-        timeCount = 0;
+        //timeCount = 0;
         score = 0;
 
         viewport = new FillViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, new OrthographicCamera());
@@ -58,6 +56,10 @@ public class Hud {
         table.add(countdownLabel).expandX();
 
         stage.addActor(table);
+    }
 
+    @Override
+    public void dispose() {
+        stage.dispose();
     }
 }
