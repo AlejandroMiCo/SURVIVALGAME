@@ -12,7 +12,10 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Personaje {
-    public enum State {IDDLE, MOVING}
+    public enum State {
+        IDDLE, MOVING
+    }
+
     public State currenState;
     public State previousState;
 
@@ -83,44 +86,29 @@ public class Personaje {
 
     public void update(float delta) {
         tiempo += delta;
-        getFrame(delta);
+        Vector2 direction = joystick.getDirection();
+        body.setLinearVelocity(direction.scl(200 * delta)); // Ajusta la velocidad según sea necesario
 
+        if (direction.x < 0) {
+            for (TextureRegion region : regionsMovimiento) {
+                if (!region.isFlipX()) {
+                    region.flip(true, false);
+                }
+            }
+        } else if (direction.x > 0) {
+            for (TextureRegion region : regionsMovimiento) {
+                if (region.isFlipX()) {
+                    region.flip(true, false);
+                }
+            }
+        }
 
-
-        if (damageCooldown >0) {
+        if (damageCooldown > 0) {
             damageCooldown -= delta;
         }
     }
 
-    public TextureRegion getFrame(float delta){
-        currenState = getState(delta);
-
-        TextureRegion region;
-        if (currenState == State.MOVING) {
-            // Vector2 direction = joystick.getDirection();
-            // body.setLinearVelocity(direction.scl(200 * delta)); // Ajusta la velocidad según sea necesario
-
-            // if (direction.x < 0) {
-            //     for (TextureRegion region : regionsMovimiento) {
-            //         if (!region.isFlipX()) {
-            //             region.flip(true, false);
-            //         }
-            //     }
-            // } else if (direction.x > 0) {
-            //     for (TextureRegion region : regionsMovimiento) {
-            //         if (region.isFlipX()) {
-            //             region.flip(true, false);
-            //         }
-            //     }
-            // }
-
-            region = MovingAnimation.getKeyFrame(stateTimer, true);
-        }else{
-            region = IddleAnimation.getKeyFrame(stateTimer , true);
-        }
-    }
-
-    public State getState(float delta){
+    public State getState(float delta) {
         if (body.getLinearVelocity().x > 0 || body.getLinearVelocity().y > 0) {
             //
             return State.MOVING;
@@ -130,7 +118,6 @@ public class Personaje {
             // Detener el movimiento
         } // Ajusta la velocidad según sea necesario
     }
-
 
     public void render(SpriteBatch batch) {
         frameActual = MovingAnimation.getKeyFrame(tiempo, true);
@@ -142,7 +129,7 @@ public class Personaje {
             health -= damage;
             damageCooldown = 1; // Reiniciar el temporizador a 1 segundo
             if (health <= 0) {
-               System.out.println("pj: Me mori");
+                System.out.println("pj: Me mori");
             }
         }
     }
