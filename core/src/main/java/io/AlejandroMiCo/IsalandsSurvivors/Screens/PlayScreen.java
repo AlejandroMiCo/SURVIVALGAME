@@ -1,11 +1,11 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Scenes.Hud;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 
 public class PlayScreen implements Screen {
     private IslandsSurvivors game;
@@ -37,15 +38,18 @@ public class PlayScreen implements Screen {
     private World world;
     private Box2DDebugRenderer b2dr;
 
+    private Knight knight;
+
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
         gameCamera = new OrthographicCamera();
-        gamePort = new FitViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, gameCamera);
+        gamePort = new FitViewport(IslandsSurvivors.V_WIDTH / IslandsSurvivors.PPM,
+                IslandsSurvivors.V_HEIGHT / IslandsSurvivors.PPM, gameCamera);
         hud = new Hud(game.batch);
 
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("maps/ProvisionalMap.tmx");
-        renderer = new OrthogonalTiledMapRenderer(map);
+        renderer = new OrthogonalTiledMapRenderer(map, 1 / IslandsSurvivors.PPM);
         gameCamera.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
 
         world = new World(new Vector2(0, 0), true);
@@ -61,14 +65,17 @@ public class PlayScreen implements Screen {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
+            bdef.position.set((rect.getX() + rect.getWidth() / 2) / IslandsSurvivors.PPM,
+                    (rect.getY() + rect.getHeight() / 2) / IslandsSurvivors.PPM);
 
             body = world.createBody(bdef);
 
-            shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
+            shape.setAsBox(rect.getWidth() / 2 / IslandsSurvivors.PPM, rect.getHeight() / 2 / IslandsSurvivors.PPM);
             fdef.shape = shape;
             body.createFixture(fdef);
         }
+
+        knight = new Knight(world);
     }
 
     @Override
@@ -77,13 +84,27 @@ public class PlayScreen implements Screen {
     }
 
     public void handleInput(float dt) {
-        if (Gdx.input.isTouched()) {
-            gameCamera.position.x += 100 * dt;
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) && knight.b2body.getLinearVelocity().y <= 2) {
+            knight.b2body.applyLinearImpulse(new Vector2( 0, 0.1f), knight.b2body.getWorldCenter(),true);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && knight.b2body.getLinearVelocity().x <= 2) {
+            knight.b2body.applyLinearImpulse(new Vector2( 0.1f, 0), knight.b2body.getWorldCenter(),true);
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && knight.b2body.getLinearVelocity().y >= -2) {
+            knight.b2body.applyLinearImpulse(new Vector2( 0, -0.1f), knight.b2body.getWorldCenter(),true);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && knight.b2body.getLinearVelocity().x >= -2) {
+            knight.b2body.applyLinearImpulse(new Vector2( -0.1f, 0), knight.b2body.getWorldCenter(),true);
         }
     }
 
     public void update(float dt) {
         handleInput(dt);
+
+        world.step(1 / 60f, 6, 2);
+        gameCamera.position.x = knight.b2body.getPosition().x;
+        gameCamera.position.y = knight.b2body.getPosition().y;
 
         gameCamera.update();
         renderer.setView(gameCamera);
