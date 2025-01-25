@@ -37,8 +37,7 @@ public class PlayScreen implements Screen {
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
         gameCamera = new OrthographicCamera();
-        gamePort = new FitViewport(IslandsSurvivors.V_WIDTH / IslandsSurvivors.PPM,
-                IslandsSurvivors.V_HEIGHT / IslandsSurvivors.PPM, gameCamera);
+        gamePort = new FitViewport(IslandsSurvivors.V_WIDTH / IslandsSurvivors.PPM,IslandsSurvivors.V_HEIGHT / IslandsSurvivors.PPM, gameCamera);
         hud = new Hud(game.batch);
 
         mapLoader = new TmxMapLoader();
@@ -51,7 +50,7 @@ public class PlayScreen implements Screen {
 
         new B2WorldCreator(world, map);
 
-        knight = new Knight(world);
+        knight = new Knight(world, this);
     }
 
     @Override
@@ -79,6 +78,9 @@ public class PlayScreen implements Screen {
         handleInput(dt);
 
         world.step(1 / 60f, 6, 2);
+
+        knight.update(dt);
+
         gameCamera.position.x = knight.b2body.getPosition().x;
         gameCamera.position.y = knight.b2body.getPosition().y;
 
@@ -94,10 +96,17 @@ public class PlayScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         renderer.render();
-
-        b2dr.render(world, gameCamera.combined);
-
+        
+        // Odio con todo mi corazon y con todo mi ser este metodo, pero de puto chill.
+        game.batch.setProjectionMatrix(gameCamera.combined);
+        
+        game.batch.begin();
+        knight.draw(game.batch);
+        game.batch.end();
+        
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+        
+        b2dr.render(world, gameCamera.combined);    
         hud.stage.draw();
     }
 
