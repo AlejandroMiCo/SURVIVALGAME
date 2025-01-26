@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.VirtualJoystick;
 
 public class Knight extends Sprite {
     public enum State {
@@ -33,8 +34,11 @@ public class Knight extends Sprite {
     private float stateTimer;
     private boolean movingRight;
 
-    public Knight(World world, PlayScreen screen) {
+     private VirtualJoystick joystick;
+
+    public Knight(World world, PlayScreen screen, VirtualJoystick joystick) {
         super(new Texture("creatures/Warrior_Blue.png"), 196, 196);
+        this.joystick = joystick;
         this.world = world;
         defineKnight();
 

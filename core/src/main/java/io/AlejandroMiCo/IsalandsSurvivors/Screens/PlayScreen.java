@@ -18,12 +18,15 @@ import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Scenes.Hud;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.B2WorldCreator;
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.VirtualJoystick;
 
 public class PlayScreen implements Screen {
     private IslandsSurvivors game;
     private OrthographicCamera gameCamera;
     private Viewport gamePort;
     private Hud hud;
+
+    private VirtualJoystick joystick;
 
     private TmxMapLoader mapLoader;
     private TiledMap map;
@@ -37,7 +40,8 @@ public class PlayScreen implements Screen {
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
         gameCamera = new OrthographicCamera();
-        gamePort = new FitViewport(IslandsSurvivors.V_WIDTH / IslandsSurvivors.PPM,IslandsSurvivors.V_HEIGHT / IslandsSurvivors.PPM, gameCamera);
+        gamePort = new FitViewport(IslandsSurvivors.V_WIDTH / IslandsSurvivors.PPM,
+                IslandsSurvivors.V_HEIGHT / IslandsSurvivors.PPM, gameCamera);
         hud = new Hud(game.batch);
 
         mapLoader = new TmxMapLoader();
@@ -49,8 +53,9 @@ public class PlayScreen implements Screen {
         b2dr = new Box2DDebugRenderer();
 
         new B2WorldCreator(world, map);
+        joystick = new VirtualJoystick(50, 20);
 
-        knight = new Knight(world, this);
+        knight = new Knight(world, this, joystick);
     }
 
     @Override
@@ -59,19 +64,8 @@ public class PlayScreen implements Screen {
     }
 
     public void handleInput(float dt) {
-        if (Gdx.input.isKeyPressed(Input.Keys.UP) && knight.b2body.getLinearVelocity().y <= 2) {
-            knight.b2body.applyLinearImpulse(new Vector2( 0, 0.1f), knight.b2body.getWorldCenter(),true);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && knight.b2body.getLinearVelocity().x <= 2) {
-            knight.b2body.applyLinearImpulse(new Vector2( 0.1f, 0), knight.b2body.getWorldCenter(),true);
-        }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && knight.b2body.getLinearVelocity().y >= -2) {
-            knight.b2body.applyLinearImpulse(new Vector2( 0, -0.1f), knight.b2body.getWorldCenter(),true);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && knight.b2body.getLinearVelocity().x >= -2) {
-            knight.b2body.applyLinearImpulse(new Vector2( -0.1f, 0), knight.b2body.getWorldCenter(),true);
-        }
+        Vector2 direction = joystick.getDirection();
+        knight.b2body.setLinearVelocity(direction.scl(200 * dt));
     }
 
     public void update(float dt) {
@@ -91,22 +85,32 @@ public class PlayScreen implements Screen {
     @Override
     public void render(float delta) {
         update(delta);
+        joystick.update();
 
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         renderer.render();
-        
+
         // Odio con todo mi corazon y con todo mi ser este metodo, pero de puto chill.
         game.batch.setProjectionMatrix(gameCamera.combined);
-        
+
         game.batch.begin();
         knight.draw(game.batch);
+        
+
         game.batch.end();
-        
+
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-        
-        b2dr.render(world, gameCamera.combined);    
+
+        b2dr.render(world, gameCamera.combined);
+
+        game.batch.begin();
+        if (joystick.isActive()) {
+            joystick.render(game.batch);
+        }
+        game.batch.end();
+
         hud.stage.draw();
     }
 
@@ -137,6 +141,7 @@ public class PlayScreen implements Screen {
         world.dispose();
         b2dr.dispose();
         hud.dispose();
+        joystick.dispose();
     }
 
 }
