@@ -80,7 +80,7 @@ public class Knight extends Sprite {
     }
 
     public State getState() {
-        if (b2body.getLinearVelocity().x > 0 || b2body.getLinearVelocity().y > 0) {
+        if (b2body.getLinearVelocity().x != 0 || b2body.getLinearVelocity().y != 0) {
             return State.MOVING;
         } else {
             return State.IDDLE;
