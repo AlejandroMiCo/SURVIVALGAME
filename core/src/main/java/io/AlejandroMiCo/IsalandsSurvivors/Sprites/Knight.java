@@ -36,10 +36,10 @@ public class Knight extends Sprite {
 
      private VirtualJoystick joystick;
 
-    public Knight(World world, PlayScreen screen, VirtualJoystick joystick) {
+    public Knight(PlayScreen screen, VirtualJoystick joystick) {
         super(new Texture("creatures/Warrior_Blue.png"), 196, 196);
         this.joystick = joystick;
-        this.world = world;
+        this.world = screen.getWorld();
         defineKnight();
 
         currentState = State.IDDLE;

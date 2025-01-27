@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Scenes.Hud;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TorchGobling;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.B2WorldCreator;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.VirtualJoystick;
 
@@ -36,6 +37,7 @@ public class PlayScreen implements Screen {
     private Box2DDebugRenderer b2dr;
 
     private Knight knight;
+    private TorchGobling gobling;
 
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
@@ -52,10 +54,11 @@ public class PlayScreen implements Screen {
         world = new World(new Vector2(0, 0), true);
         b2dr = new Box2DDebugRenderer();
 
-        new B2WorldCreator(world, map);
+        new B2WorldCreator(this);
         joystick = new VirtualJoystick(50, 20);
 
-        knight = new Knight(world, this, joystick);
+        knight = new Knight(this, joystick);
+        gobling = new TorchGobling(this, 300, 300);
     }
 
     @Override
@@ -74,12 +77,21 @@ public class PlayScreen implements Screen {
         world.step(1 / 60f, 6, 2);
 
         knight.update(dt);
+        hud.update(dt);
 
         gameCamera.position.x = knight.b2body.getPosition().x;
         gameCamera.position.y = knight.b2body.getPosition().y;
 
         gameCamera.update();
         renderer.setView(gameCamera);
+    }
+
+    public TiledMap getMap(){
+        return map;
+    }
+
+    public World getWorld(){
+        return world;
     }
 
     @Override
@@ -97,7 +109,7 @@ public class PlayScreen implements Screen {
 
         game.batch.begin();
         knight.draw(game.batch);
-        
+
 
         game.batch.end();
 
