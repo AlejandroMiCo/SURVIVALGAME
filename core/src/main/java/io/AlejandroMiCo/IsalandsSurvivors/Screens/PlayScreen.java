@@ -58,7 +58,7 @@ public class PlayScreen implements Screen {
         joystick = new VirtualJoystick(50, 20);
 
         knight = new Knight(this, joystick);
-        gobling = new TorchGobling(this, 300, 300);
+        gobling = new TorchGobling(this, 300, 300, knight);
     }
 
     @Override
@@ -77,6 +77,7 @@ public class PlayScreen implements Screen {
         world.step(1 / 60f, 6, 2);
 
         knight.update(dt);
+        gobling.update(dt);
         hud.update(dt);
 
         gameCamera.position.x = knight.b2body.getPosition().x;
@@ -109,7 +110,7 @@ public class PlayScreen implements Screen {
 
         game.batch.begin();
         knight.draw(game.batch);
-
+        gobling.draw(game.batch);
 
         game.batch.end();
 

@@ -2,7 +2,9 @@ package io.AlejandroMiCo.IsalandsSurvivors.Sprites;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -14,32 +16,64 @@ import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
 public class TorchGobling extends Enemy {
 
     private float stateTime;
-    private Animation<TextureRegion> walkAnimation;
-    private Array<TextureRegion> frames;
     private TextureRegion[][] tmp;
     private TextureRegion[] regionsMovimiento;
+    private int health;
+    private boolean setToDestroy;
+    private boolean destroyed;
+    private Knight knight;
+    private Animation<TextureRegion> walkAnimation;
+    private Animation<TextureRegion> deathAnimation;
 
-    private Texture imagen;
-
-    public TorchGobling(PlayScreen screen, float x, float y) {
+    public TorchGobling(PlayScreen screen, float x, float y, Knight knight) {
         super(screen, x, y);
+        this.knight = knight;
 
-        imagen = new Texture("creatures/TorchGobling.png");
+        walkAnimation = getWalkAnimation(new Texture("creatures/TorchGobling.png"), 1);
 
-        tmp = TextureRegion.split(imagen, imagen.getWidth() / 6, imagen.getHeight() / 8);
-        regionsMovimiento = new TextureRegion[6];
-        for (int i = 0; i < 6; i++) {
-            regionsMovimiento[i] = tmp[1][i];
-        }
-        walkAnimation = new Animation<TextureRegion>(0.125f, regionsMovimiento);
+        deathAnimation = getDeathAnimation(new Texture("img/Dead_custom.png"), 0);
 
         stateTime = 0;
+
+        setBounds(getX(), getY(), 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
+
+        health = 2;
+        setToDestroy = false;
+        destroyed = false;
+
     }
 
     public void update(float dt) {
         stateTime += dt;
-        setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
-        setRegion(walkAnimation.getKeyFrame(stateTime, true));
+
+        Vector2 direction = new Vector2(knight.b2body.getPosition()).sub(b2body.getPosition()).nor();
+        b2body.setLinearVelocity(direction.scl(100 * dt));
+
+        // Movimiento del enemigo segun el personaje
+        if (knight.b2body.getPosition().x < b2body.getPosition().x) {
+            for (TextureRegion region : regionsMovimiento) {
+                if (!region.isFlipX()) {
+                    region.flip(true, false);
+                }
+            }
+        } else {
+            for (TextureRegion region : regionsMovimiento) {
+                if (region.isFlipX()) {
+                    region.flip(true, false);
+                }
+            }
+        }
+
+        if (setToDestroy && !destroyed) {
+            world.destroyBody(b2body);
+            destroyed = true;
+            // Animacion de muerte
+            setRegion(new TextureRegion(deathAnimation.getKeyFrame(.75f, false)));
+            stateTime = 0;
+        } else if (!destroyed) {
+            setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
+            setRegion(walkAnimation.getKeyFrame(stateTime, true));
+        }
     }
 
     @Override
@@ -53,9 +87,41 @@ public class TorchGobling extends Enemy {
         FixtureDef fedef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(12 / IslandsSurvivors.PPM, 12 / IslandsSurvivors.PPM);
-
+        fedef.friction = 1;
         fedef.shape = shape;
         b2body.createFixture(fedef);
+    }
+
+    public void draw(Batch batch) {
+        if (!destroyed || stateTime < 1) {
+            super.draw(batch);
+        }
+    }
+
+    @Override
+    protected void getHit() {
+        health -= 5;
+        if (health <= 0) {
+            setToDestroy = true;
+        }
+    }
+
+    public Animation<TextureRegion> getWalkAnimation(Texture imagen, int fila) {
+        tmp = TextureRegion.split(imagen, imagen.getWidth() / 7, imagen.getHeight() / 5);
+        regionsMovimiento = new TextureRegion[6];
+        for (int i = 0; i < 6; i++) {
+            regionsMovimiento[i] = tmp[fila][i];
+        }
+        return new Animation<>(0.125f, regionsMovimiento);
+    }
+
+    public Animation<TextureRegion> getDeathAnimation(Texture imagen, int fila) {
+        tmp = TextureRegion.split(imagen, imagen.getWidth() / 7, imagen.getHeight() / 5);
+        regionsMovimiento = new TextureRegion[6];
+        for (int i = 0; i < 6; i++) {
+            regionsMovimiento[i] = tmp[fila][i];
+        }
+        return new Animation<>(0.125f, regionsMovimiento);
     }
 
 }
