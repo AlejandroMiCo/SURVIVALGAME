@@ -10,6 +10,10 @@ public abstract class Enemy extends Sprite{
     protected World world;
     protected PlayScreen screen;
     public Body b2body;
+    public boolean setToDestroy;
+    public boolean destroyed;
+
+    public int health;
 
     public Enemy(PlayScreen screen, float x, float y) {
         this.world = screen.getWorld();
@@ -19,5 +23,4 @@ public abstract class Enemy extends Sprite{
     }
 
     protected abstract void defineEnemy();
-    protected abstract void getHit();
 }

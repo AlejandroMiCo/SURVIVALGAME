@@ -18,9 +18,6 @@ public class TorchGobling extends Enemy {
     private float stateTime;
     private TextureRegion[][] tmp;
     private TextureRegion[] regionsMovimiento;
-    private int health;
-    private boolean setToDestroy;
-    private boolean destroyed;
     private Knight knight;
     private Animation<TextureRegion> walkAnimation;
     private Animation<TextureRegion> deathAnimation;
@@ -37,7 +34,7 @@ public class TorchGobling extends Enemy {
 
         setBounds(getX(), getY(), 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
 
-        health = 2;
+        health = 20;
         setToDestroy = false;
         destroyed = false;
 
@@ -66,9 +63,9 @@ public class TorchGobling extends Enemy {
 
         if (setToDestroy && !destroyed) {
             world.destroyBody(b2body);
-            destroyed = true;
             // Animacion de muerte
-            setRegion(new TextureRegion(deathAnimation.getKeyFrame(.75f, false)));
+            destroyed = true;
+            setRegion(new TextureRegion(deathAnimation.getKeyFrame(0.125f, false)));
             stateTime = 0;
         } else if (!destroyed) {
             setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
@@ -97,15 +94,6 @@ public class TorchGobling extends Enemy {
             super.draw(batch);
         }
     }
-
-    @Override
-    protected void getHit() {
-        health -= 5;
-        if (health <= 0) {
-            setToDestroy = true;
-        }
-    }
-
     public Animation<TextureRegion> getWalkAnimation(Texture imagen, int fila) {
         tmp = TextureRegion.split(imagen, imagen.getWidth() / 7, imagen.getHeight() / 5);
         regionsMovimiento = new TextureRegion[6];

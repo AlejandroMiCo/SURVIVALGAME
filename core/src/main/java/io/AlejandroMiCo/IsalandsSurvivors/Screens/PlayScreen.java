@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
+import io.AlejandroMiCo.IsalandsSurvivors.Combat.CombatSystem;
 import io.AlejandroMiCo.IsalandsSurvivors.Scenes.Hud;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TorchGobling;
@@ -38,6 +39,7 @@ public class PlayScreen implements Screen {
 
     private Knight knight;
     private TorchGobling gobling;
+    private CombatSystem combatSystem;
 
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
@@ -59,6 +61,8 @@ public class PlayScreen implements Screen {
 
         knight = new Knight(this, joystick);
         gobling = new TorchGobling(this, 300, 300, knight);
+
+        this.combatSystem = new CombatSystem();
     }
 
     @Override
@@ -105,8 +109,11 @@ public class PlayScreen implements Screen {
 
         renderer.render();
 
-        // Odio con todo mi corazon y con todo mi ser este metodo, pero de puto chill.
+
         game.batch.setProjectionMatrix(gameCamera.combined);
+
+        combatSystem.update(delta, knight, gobling);
+        System.out.println(gobling.health);
 
         game.batch.begin();
         knight.draw(game.batch);

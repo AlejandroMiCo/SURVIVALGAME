@@ -11,6 +11,8 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
+import io.AlejandroMiCo.IsalandsSurvivors.Combat.MeleeWeapon;
+import io.AlejandroMiCo.IsalandsSurvivors.Combat.Weapon;
 import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.VirtualJoystick;
 
@@ -34,7 +36,10 @@ public class Knight extends Sprite {
     private float stateTimer;
     private boolean movingRight;
 
-     private VirtualJoystick joystick;
+    private VirtualJoystick joystick;
+
+    public int damage;
+    private Weapon weapon;
 
     public Knight(PlayScreen screen, VirtualJoystick joystick) {
         super(new Texture("creatures/Warrior_Blue.png"), 196, 196);
@@ -51,7 +56,8 @@ public class Knight extends Sprite {
         movingAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 1);
 
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
-
+        weapon = new MeleeWeapon();
+        damage = 10;
     }
 
     public void update(float dt) {
@@ -113,5 +119,9 @@ public class Knight extends Sprite {
             regionsMovimiento[i] = tmp[fila][i];
         }
         return new Animation<>(0.125f, regionsMovimiento);
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
     }
 }
