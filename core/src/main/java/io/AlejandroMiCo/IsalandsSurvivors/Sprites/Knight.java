@@ -18,7 +18,7 @@ import io.AlejandroMiCo.IsalandsSurvivors.Tools.VirtualJoystick;
 
 public class Knight extends Sprite {
     public enum State {
-        IDDLE, MOVING
+        IDDLE, MOVING, ATTACKING
     }
 
     public State currentState;
@@ -26,6 +26,7 @@ public class Knight extends Sprite {
 
     private Animation<TextureRegion> movingAnimation;
     private Animation<TextureRegion> iddleAnimation;
+    private Animation<TextureRegion> attackAnimation;
 
     private TextureRegion[][] tmp;
     private TextureRegion[] regionsMovimiento;
@@ -39,6 +40,7 @@ public class Knight extends Sprite {
     private VirtualJoystick joystick;
 
     public int damage;
+    // public float attackCooldown;
     private Weapon weapon;
 
     public Knight(PlayScreen screen, VirtualJoystick joystick) {
@@ -53,7 +55,9 @@ public class Knight extends Sprite {
         movingRight = true;
 
         iddleAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 0);
-        movingAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 1);
+        // movingAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 1);
+        movingAnimation = getSpinAttackAnimation(new Texture("creatures/SpinAttack.png"));
+        attackAnimation = getSpinAttackAnimation(new Texture("creatures/SpinAttack.png"));
 
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
         weapon = new MeleeWeapon();
@@ -70,11 +74,20 @@ public class Knight extends Sprite {
 
         TextureRegion region;
 
-        if (currentState == State.IDDLE) {
-            region = iddleAnimation.getKeyFrame(stateTimer, true);
-        } else {
-            region = movingAnimation.getKeyFrame(stateTimer, true);
+        switch (currentState) {
+            case MOVING:
+                region = movingAnimation.getKeyFrame(stateTimer, true);
+                break;
+            case ATTACKING:
+                region = attackAnimation.getKeyFrame(stateTimer, false);
+            default:
+                region = iddleAnimation.getKeyFrame(stateTimer, true);
+                break;
         }
+        // if (currentState == State.IDDLE) {
+        // region = iddleAnimation.getKeyFrame(stateTimer, true);
+        // } else {
+        // }
 
         if ((b2body.getLinearVelocity().x < 0 || !movingRight) && !region.isFlipX()) {
             region.flip(true, false);
@@ -119,6 +132,15 @@ public class Knight extends Sprite {
             regionsMovimiento[i] = tmp[fila][i];
         }
         return new Animation<>(0.125f, regionsMovimiento);
+    }
+
+    public Animation<TextureRegion> getSpinAttackAnimation(Texture imagen) {
+        tmp = TextureRegion.split(imagen, imagen.getWidth() / 8, imagen.getHeight());
+        regionsMovimiento = new TextureRegion[8];
+        for (int i = 0; i < 8; i++) {
+            regionsMovimiento[i] = tmp[0][i];
+        }
+        return new Animation<>(0.075f, regionsMovimiento);
     }
 
     public Weapon getWeapon() {

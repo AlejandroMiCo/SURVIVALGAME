@@ -1,7 +1,5 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Combat;
 
-import com.badlogic.gdx.utils.Array;
-
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 

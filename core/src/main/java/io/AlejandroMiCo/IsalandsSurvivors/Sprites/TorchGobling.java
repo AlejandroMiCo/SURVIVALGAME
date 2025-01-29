@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.utils.Array;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
@@ -62,12 +61,14 @@ public class TorchGobling extends Enemy {
         }
 
         if (setToDestroy && !destroyed) {
-            world.destroyBody(b2body);
             // Animacion de muerte
+            world.destroyBody(b2body);
             destroyed = true;
-            setRegion(new TextureRegion(deathAnimation.getKeyFrame(0.125f, false)));
             stateTime = 0;
-        } else if (!destroyed) {
+        }
+        if (destroyed) {
+            setRegion(deathAnimation.getKeyFrame(stateTime, false));
+        } else {
             setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
             setRegion(walkAnimation.getKeyFrame(stateTime, true));
         }
@@ -90,10 +91,11 @@ public class TorchGobling extends Enemy {
     }
 
     public void draw(Batch batch) {
-        if (!destroyed || stateTime < 1) {
+        if (!destroyed || stateTime < 0.75) {
             super.draw(batch);
         }
     }
+
     public Animation<TextureRegion> getWalkAnimation(Texture imagen, int fila) {
         tmp = TextureRegion.split(imagen, imagen.getWidth() / 7, imagen.getHeight() / 5);
         regionsMovimiento = new TextureRegion[6];
@@ -104,7 +106,7 @@ public class TorchGobling extends Enemy {
     }
 
     public Animation<TextureRegion> getDeathAnimation(Texture imagen, int fila) {
-        tmp = TextureRegion.split(imagen, imagen.getWidth() / 7, imagen.getHeight() / 5);
+        tmp = TextureRegion.split(imagen, imagen.getWidth() / 6, imagen.getHeight());
         regionsMovimiento = new TextureRegion[6];
         for (int i = 0; i < 6; i++) {
             regionsMovimiento[i] = tmp[fila][i];
