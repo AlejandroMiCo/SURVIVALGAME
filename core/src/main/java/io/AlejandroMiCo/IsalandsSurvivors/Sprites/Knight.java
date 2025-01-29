@@ -17,6 +17,8 @@ import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.VirtualJoystick;
 
 public class Knight extends Sprite {
+
+    // Posibles estados del personaje
     public enum State {
         IDDLE, MOVING, ATTACKING
     }
@@ -24,6 +26,7 @@ public class Knight extends Sprite {
     public State currentState;
     public State previousState;
 
+    // Animaciones
     private Animation<TextureRegion> movingAnimation;
     private Animation<TextureRegion> iddleAnimation;
     private Animation<TextureRegion> attackAnimation;
@@ -31,15 +34,21 @@ public class Knight extends Sprite {
     private TextureRegion[][] tmp;
     private TextureRegion[] regionsMovimiento;
 
+    // Mundo y cuerpo del personaje
     public World world;
     public Body b2body;
 
     private float stateTimer;
     private boolean movingRight;
 
+    // Joystick para mover el personaje
     private VirtualJoystick joystick;
 
+    // Estadisticas del personaje
     public int damage;
+    public int health;
+    public float cooldown;
+    public float timebetweenattacks;
     // public float attackCooldown;
     private Weapon weapon;
 
@@ -55,20 +64,26 @@ public class Knight extends Sprite {
         movingRight = true;
 
         iddleAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 0);
-        // movingAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 1);
-        movingAnimation = getSpinAttackAnimation(new Texture("creatures/SpinAttack.png"));
+        movingAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 1);
         attackAnimation = getSpinAttackAnimation(new Texture("creatures/SpinAttack.png"));
 
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
         weapon = new MeleeWeapon();
         damage = 10;
+        health = 100;
+        cooldown = 2f;
+        timebetweenattacks = 0;
+
     }
 
+    // Se encarga de actualizar la camara y la animacion
     public void update(float dt) {
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
         setRegion(getFrame(dt));
+        timebetweenattacks += dt;
     }
 
+    // Devuelve la animacion en funcion del estado actual del personaje
     public TextureRegion getFrame(float dt) {
         currentState = getState();
 
@@ -84,11 +99,8 @@ public class Knight extends Sprite {
                 region = iddleAnimation.getKeyFrame(stateTimer, true);
                 break;
         }
-        // if (currentState == State.IDDLE) {
-        // region = iddleAnimation.getKeyFrame(stateTimer, true);
-        // } else {
-        // }
 
+        // Gira la animacion en funcion de la direccion del personaje
         if ((b2body.getLinearVelocity().x < 0 || !movingRight) && !region.isFlipX()) {
             region.flip(true, false);
             movingRight = false;
@@ -102,6 +114,7 @@ public class Knight extends Sprite {
         return region;
     }
 
+    // Devuelve el estado actual del personaje
     public State getState() {
         if (b2body.getLinearVelocity().x != 0 || b2body.getLinearVelocity().y != 0) {
             return State.MOVING;
@@ -110,6 +123,7 @@ public class Knight extends Sprite {
         }
     }
 
+    //Define el cuerpo 2d del personaje
     public void defineKnight() {
         BodyDef bdef = new BodyDef();
         bdef.position.set(300 / IslandsSurvivors.PPM, 300 / IslandsSurvivors.PPM);
@@ -125,6 +139,7 @@ public class Knight extends Sprite {
         b2body.createFixture(fedef);
     }
 
+    // Se encarga de establecer las animaciones basicas del personaje
     public Animation<TextureRegion> getAnimation(Texture imagen, int fila) {
         tmp = TextureRegion.split(imagen, imagen.getWidth() / 6, imagen.getHeight() / 8);
         regionsMovimiento = new TextureRegion[6];
@@ -134,6 +149,7 @@ public class Knight extends Sprite {
         return new Animation<>(0.125f, regionsMovimiento);
     }
 
+    // Se encarga de gestionar la animacion de ataque del personaje
     public Animation<TextureRegion> getSpinAttackAnimation(Texture imagen) {
         tmp = TextureRegion.split(imagen, imagen.getWidth() / 8, imagen.getHeight());
         regionsMovimiento = new TextureRegion[8];
@@ -143,6 +159,7 @@ public class Knight extends Sprite {
         return new Animation<>(0.075f, regionsMovimiento);
     }
 
+    // Devuelve el arma del personaje
     public Weapon getWeapon() {
         return weapon;
     }
