@@ -1,5 +1,7 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Screens;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -15,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
+import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.CombatSystem;
 import io.AlejandroMiCo.IsalandsSurvivors.Scenes.Hud;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
@@ -40,6 +43,11 @@ public class PlayScreen implements Screen {
     private Knight knight;
     private TorchGobling gobling;
     private CombatSystem combatSystem;
+
+    public ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
+
+    private float bulletTimer = 0;
+    private final float bulletDelay = 2f; // disparo cada 2 segundos
 
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
@@ -78,24 +86,71 @@ public class PlayScreen implements Screen {
     public void update(float dt) {
         handleInput(dt);
 
+        // 🔸 Actualizar temporizador de disparo automático
+        bulletTimer += dt;
+        if (bulletTimer >= bulletDelay) {
+            fireBullet();
+            bulletTimer = 0; // Reiniciar el temporizador
+        }
+
+        // 🔹 Lista temporal para almacenar balas que deben eliminarse
+        ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
+
+        // 🔹 Actualizar balas y marcar para eliminación
+        for (Bullet bullet : bulletList) {
+            if (bullet.getBody() != null) {
+                bullet.update(dt);
+                if (bullet.isDead()) {
+                    bulletsToRemove.add(bullet);
+                }
+            }
+        }
+
+        // 🔸 Realizar el step de Box2D (esto actualiza la física del mundo)
         world.step(1 / 60f, 6, 2);
 
+        // 🔸 Ahora que el mundo ya ha actualizado su estado, eliminamos los cuerpos
+        for (Bullet bullet : bulletsToRemove) {
+            world.destroyBody(bullet.getBody()); // Destruir el body en Box2D
+            bulletList.remove(bullet); // Eliminar la bala de la lista
+        }
+        bulletsToRemove.clear(); // Limpiar la lista temporal
+
+        // 🔹 Actualizar otros elementos del juego
         knight.update(dt);
         gobling.update(dt);
         hud.update(dt);
 
+        // 🔹 Mantener la cámara centrada en el personaje
         gameCamera.position.x = knight.b2body.getPosition().x;
         gameCamera.position.y = knight.b2body.getPosition().y;
-
         gameCamera.update();
+
         renderer.setView(gameCamera);
     }
 
-    public TiledMap getMap(){
+    private void fireBullet() {
+        if (gobling != null) { // Asegurarse de que haya un enemigo
+            float knightX = knight.b2body.getPosition().x;
+            float knightY = knight.b2body.getPosition().y;
+            float enemyX = gobling.b2body.getPosition().x;
+            float enemyY = gobling.b2body.getPosition().y;
+
+            // 🔹 Calcular el ángulo en radianes hacia el enemigo
+            float dx = enemyX - knightX;
+            float dy = enemyY - knightY;
+            float shootAngle = (float) Math.atan2(dy, dx);
+
+            // 🔹 Crear la bala y añadirla a la lista
+            bulletList.add(new Bullet(world, knightX, knightY, shootAngle));
+        }
+    }
+
+    public TiledMap getMap() {
         return map;
     }
 
-    public World getWorld(){
+    public World getWorld() {
         return world;
     }
 
@@ -104,26 +159,31 @@ public class PlayScreen implements Screen {
         update(delta);
         joystick.update();
 
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         renderer.render();
-
-
+        
         game.batch.setProjectionMatrix(gameCamera.combined);
 
         combatSystem.update(delta, knight, gobling);
-        System.out.println(gobling.health);
 
         game.batch.begin();
         knight.draw(game.batch);
         gobling.draw(game.batch);
 
+        for (Bullet bullet : bulletList) {
+            if (bullet.getBody() != null) {
+                bullet.draw(game.batch);
+            }
+        }
+        
         game.batch.end();
-
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-
+        
+        hud.stage.draw();
         b2dr.render(world, gameCamera.combined);
+
 
         game.batch.begin();
         if (joystick.isActive()) {
@@ -131,7 +191,25 @@ public class PlayScreen implements Screen {
         }
         game.batch.end();
 
-        hud.stage.draw();
+        // if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        // // Supongamos que el ángulo de disparo es el que está mirando el knight (o un
+        // // valor que calcules)
+        // float knightX = knight.b2body.getPosition().x;
+        // float knightY = knight.b2body.getPosition().y;
+        // float enemyX = gobling.b2body.getPosition().x;
+        // float enemyY = gobling.b2body.getPosition().y;
+
+        // // Calcula la diferencia entre posiciones
+        // float dx = enemyX - knightX;
+        // float dy = enemyY - knightY;
+
+        // // Calcula el ángulo en radianes hacia el enemigo
+        // float shootAngle = (float) Math.atan2(dy, dx);
+
+        // // Crea la bala en la posición del knight y con el ángulo calculado
+        // bulletList.add(new Bullet(world, knightX, knightY, shootAngle));
+        // }
+
     }
 
     @Override
@@ -156,10 +234,17 @@ public class PlayScreen implements Screen {
 
     @Override
     public void dispose() {
-        map.dispose();
-        renderer.dispose();
+        for (Bullet bullet : bulletList) {
+            if (bullet.getBody() != null) {
+                world.destroyBody(bullet.getBody());
+            }
+        }
+        bulletList.clear();
+
         world.dispose();
         b2dr.dispose();
+        map.dispose();
+        renderer.dispose();
         hud.dispose();
         joystick.dispose();
     }
