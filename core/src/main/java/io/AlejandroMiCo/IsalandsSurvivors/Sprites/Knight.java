@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -11,8 +12,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
-import io.AlejandroMiCo.IsalandsSurvivors.Combat.MeleeWeapon;
-import io.AlejandroMiCo.IsalandsSurvivors.Combat.Weapon;
 import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.VirtualJoystick;
 
@@ -50,11 +49,10 @@ public class Knight extends Sprite {
     public float cooldown;
     public float timebetweenattacks;
     // public float attackCooldown;
-    private Weapon weapon;
 
-    public Knight(PlayScreen screen, VirtualJoystick joystick) {
+    public Knight(PlayScreen screen, VirtualJoystick joy) {
         super(new Texture("creatures/Warrior_Blue.png"), 196, 196);
-        this.joystick = joystick;
+        this.joystick = joy;
         this.world = screen.getWorld();
         defineKnight();
 
@@ -68,7 +66,6 @@ public class Knight extends Sprite {
         attackAnimation = getSpinAttackAnimation(new Texture("creatures/SpinAttack.png"));
 
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
-        weapon = new MeleeWeapon();
         damage = 10;
         health = 100;
         cooldown = 2f;
@@ -81,6 +78,9 @@ public class Knight extends Sprite {
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
         setRegion(getFrame(dt));
         timebetweenattacks += dt;
+
+        Vector2 direction = joystick.getDirection();
+        b2body.setLinearVelocity(direction.scl(200 * dt));
     }
 
     // Devuelve la animacion en funcion del estado actual del personaje
@@ -123,7 +123,7 @@ public class Knight extends Sprite {
         }
     }
 
-    //Define el cuerpo 2d del personaje
+    // Define el cuerpo 2d del personaje
     public void defineKnight() {
         BodyDef bdef = new BodyDef();
         bdef.position.set(300 / IslandsSurvivors.PPM, 300 / IslandsSurvivors.PPM);
@@ -134,6 +134,12 @@ public class Knight extends Sprite {
         FixtureDef fedef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(12 / IslandsSurvivors.PPM, 12 / IslandsSurvivors.PPM);
+
+        fedef.friction = 0;
+        fedef.density = 0;
+
+        fedef.filter.categoryBits = IslandsSurvivors.PLAYER_BIT;
+        fedef.filter.maskBits = IslandsSurvivors.ENEMY_BIT | IslandsSurvivors.DEFAULT_BIT;
 
         fedef.shape = shape;
         b2body.createFixture(fedef);
@@ -157,10 +163,5 @@ public class Knight extends Sprite {
             regionsMovimiento[i] = tmp[0][i];
         }
         return new Animation<>(0.075f, regionsMovimiento);
-    }
-
-    // Devuelve el arma del personaje
-    public Weapon getWeapon() {
-        return weapon;
     }
 }

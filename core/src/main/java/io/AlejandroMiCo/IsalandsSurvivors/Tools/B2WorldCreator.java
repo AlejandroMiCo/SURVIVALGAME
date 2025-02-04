@@ -35,6 +35,8 @@ public class B2WorldCreator {
             body = world.createBody(bdef);
 
             shape.setAsBox(rect.getWidth() / 2 / IslandsSurvivors.PPM, rect.getHeight() / 2 / IslandsSurvivors.PPM);
+            fdef.filter.categoryBits = IslandsSurvivors.DEFAULT_BIT;
+            fdef.filter.maskBits = IslandsSurvivors.BULLET_BIT | IslandsSurvivors.PLAYER_BIT | IslandsSurvivors.ENEMY_BIT;
             fdef.shape = shape;
             body.createFixture(fdef);
         }

@@ -17,12 +17,12 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
-import io.AlejandroMiCo.IsalandsSurvivors.Combat.CombatSystem;
 import io.AlejandroMiCo.IsalandsSurvivors.Scenes.Hud;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TorchGobling;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.B2WorldCreator;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.VirtualJoystick;
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.WorldContactListener;
 
 public class PlayScreen implements Screen {
     private IslandsSurvivors game;
@@ -41,7 +41,6 @@ public class PlayScreen implements Screen {
 
     private Knight knight;
     private TorchGobling gobling;
-    private CombatSystem combatSystem;
 
     public ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
 
@@ -69,7 +68,7 @@ public class PlayScreen implements Screen {
         knight = new Knight(this, joystick);
         gobling = new TorchGobling(this, 300, 300, knight);
 
-        this.combatSystem = new CombatSystem();
+        world.setContactListener(new WorldContactListener());
     }
 
     @Override
@@ -77,13 +76,8 @@ public class PlayScreen implements Screen {
 
     }
 
-    public void handleInput(float dt) {
-        Vector2 direction = joystick.getDirection();
-        knight.b2body.setLinearVelocity(direction.scl(200 * dt));
-    }
-
     public void update(float dt) {
-        handleInput(dt);
+        //handleInput(dt);
 
         // 🔸 Actualizar temporizador de disparo automático
         bulletTimer += dt;
@@ -99,7 +93,6 @@ public class PlayScreen implements Screen {
         for (Bullet bullet : bulletList) {
             if (bullet.getBody() != null) {
                 bullet.update(dt);
-                System.out.println("a");
                 if (bullet.isDead()) {
                     bulletsToRemove.add(bullet);
                 }
@@ -166,8 +159,6 @@ public class PlayScreen implements Screen {
 
         game.batch.setProjectionMatrix(gameCamera.combined);
 
-        combatSystem.update(delta, knight, gobling);
-
         game.batch.begin();
         knight.draw(game.batch);
         gobling.draw(game.batch);
@@ -184,32 +175,11 @@ public class PlayScreen implements Screen {
         hud.stage.draw();
         b2dr.render(world, gameCamera.combined);
 
-
         game.batch.begin();
         if (joystick.isActive()) {
             joystick.render(game.batch);
         }
         game.batch.end();
-
-        // if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-        // // Supongamos que el ángulo de disparo es el que está mirando el knight (o un
-        // // valor que calcules)
-        // float knightX = knight.b2body.getPosition().x;
-        // float knightY = knight.b2body.getPosition().y;
-        // float enemyX = gobling.b2body.getPosition().x;
-        // float enemyY = gobling.b2body.getPosition().y;
-
-        // // Calcula la diferencia entre posiciones
-        // float dx = enemyX - knightX;
-        // float dy = enemyY - knightY;
-
-        // // Calcula el ángulo en radianes hacia el enemigo
-        // float shootAngle = (float) Math.atan2(dy, dx);
-
-        // // Crea la bala en la posición del knight y con el ángulo calculado
-        // bulletList.add(new Bullet(world, knightX, knightY, shootAngle));
-        // }
-
     }
 
     @Override

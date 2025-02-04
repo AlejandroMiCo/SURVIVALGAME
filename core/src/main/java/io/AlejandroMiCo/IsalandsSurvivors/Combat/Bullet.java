@@ -22,6 +22,7 @@ public class Bullet extends Sprite {
     private TextureRegion[][] tmp;
     private TextureRegion[] regionsMovimiento;
     private Animation<TextureRegion> animacionMovimiento;
+    private boolean shouldRemove = false;
 
     TextureRegion texture;
     Body body;
@@ -29,14 +30,14 @@ public class Bullet extends Sprite {
 
     public Bullet(World world, float x, float y, float angle) {
         super();
-        this.time = 2f;
-        this.speed = 1f;
+        time = 2f;
+        speed = 1f;
         stateTime = 0;
 
         // Son necesarios para el bdef
         this.angle = angle;
         this.world = world;
-        animacionMovimiento = getAnimation(new Texture("img/bala.png"));
+        animacionMovimiento = getAnimation(new Texture("img/purplesun.png"));
 
         size = 20 / IslandsSurvivors.PPM;
         setSize(size, size);
@@ -70,8 +71,12 @@ public class Bullet extends Sprite {
         setRotation((float) Math.toDegrees(angle));
     }
 
+    public void markForRemoval() {
+        shouldRemove = true;
+    }
+
     public boolean isDead() {
-        return time < 0 || body == null;
+        return time < 0 || body == null || shouldRemove;
     }
 
     public Body getBody() {
@@ -98,10 +103,9 @@ public class Bullet extends Sprite {
         fedef.friction = 0f;
         fedef.restitution = 0f;
 
-        // fedef.isSensor = true;
-        // fedef.filter.categoryBits = MyGame.BULLET_BIT; //Futura implementeacion de
-        // filtros de colisiones
-        // fedef.filter.maskBits = MyGame.ENEMY_BIT | MyGame.WALL_BIT;
+        fedef.filter.categoryBits = IslandsSurvivors.BULLET_BIT; // El Gobling pertenece a la categoría "enemigo"
+        fedef.filter.maskBits = IslandsSurvivors.ENEMY_BIT | IslandsSurvivors.DEFAULT_BIT;
+
         body.createFixture(fedef).setUserData(this);
         shape.dispose();
 
@@ -114,7 +118,7 @@ public class Bullet extends Sprite {
         for (int i = 0; i < 8; i++) {
             regionsMovimiento[i] = tmp[0][i];
         }
-        return new Animation<>(0.02f, regionsMovimiento);
+        return new Animation<>(0.075f, regionsMovimiento);
     }
 
 }
