@@ -56,6 +56,7 @@ public class TorchGobling extends Enemy {
             for (TextureRegion region : regionsMovimiento) {
                 if (region.isFlipX()) {
                     region.flip(true, false);
+
                 }
             }
         }

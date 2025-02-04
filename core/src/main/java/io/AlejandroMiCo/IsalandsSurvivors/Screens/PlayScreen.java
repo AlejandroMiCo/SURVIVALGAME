@@ -3,7 +3,6 @@ package io.AlejandroMiCo.IsalandsSurvivors.Screens;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -100,6 +99,7 @@ public class PlayScreen implements Screen {
         for (Bullet bullet : bulletList) {
             if (bullet.getBody() != null) {
                 bullet.update(dt);
+                System.out.println("a");
                 if (bullet.isDead()) {
                     bulletsToRemove.add(bullet);
                 }
@@ -163,7 +163,7 @@ public class PlayScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         renderer.render();
-        
+
         game.batch.setProjectionMatrix(gameCamera.combined);
 
         combatSystem.update(delta, knight, gobling);
@@ -177,10 +177,10 @@ public class PlayScreen implements Screen {
                 bullet.draw(game.batch);
             }
         }
-        
+
         game.batch.end();
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-        
+
         hud.stage.draw();
         b2dr.render(world, gameCamera.combined);
 

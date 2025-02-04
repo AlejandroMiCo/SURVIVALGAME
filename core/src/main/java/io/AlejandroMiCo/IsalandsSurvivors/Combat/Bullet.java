@@ -1,8 +1,9 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Combat;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -11,32 +12,37 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 
-public class Bullet {
+public class Bullet extends Sprite {
 
-    private Sprite sprite;
+    private float stateTime;
     private float angle;
     private float speed;
     private float time;
-    float size;
+    private float size;
+    private TextureRegion[][] tmp;
+    private TextureRegion[] regionsMovimiento;
+    private Animation<TextureRegion> animacionMovimiento;
 
-    Texture texture;
+    TextureRegion texture;
     Body body;
     World world;
 
     public Bullet(World world, float x, float y, float angle) {
+        super();
         this.time = 2f;
         this.speed = 1f;
+        stateTime = 0;
 
         // Son necesarios para el bdef
         this.angle = angle;
         this.world = world;
+        animacionMovimiento = getAnimation(new Texture("img/bala.png"));
 
-        texture = new Texture("pruebas/bullet.png");
-        sprite = new Sprite(texture);
-        size = 10 / IslandsSurvivors.PPM;
-        sprite.setSize(size, size);
-        sprite.setOriginCenter();
+        size = 20 / IslandsSurvivors.PPM;
+        setSize(size, size);
+        setOriginCenter();
 
+        setRotation((float) Math.toDegrees(angle));
         defineBullet(x, y, size);
 
         // Si se necesitara rotar el sprite para que apunte en la dirección del disparo
@@ -50,23 +56,22 @@ public class Bullet {
     public void update(float dt) {
         // Resta el tiempo de vida
         time -= dt;
+        stateTime += dt;
 
         // Sincroniza la posición del sprite con la del body (conversión de unidades del
         // mundo a píxeles)
-        sprite.setPosition(
-                body.getPosition().x - sprite.getWidth() / 2,
-                body.getPosition().y - sprite.getHeight() / 2);
+        setPosition(
+                body.getPosition().x - getWidth() / 2,
+                body.getPosition().y - getHeight() / 2);
 
+        setRegion(animacionMovimiento.getKeyFrame(stateTime, true));
         // Actualiza la rotación del sprite según el ángulo del body
-        sprite.setRotation((float) Math.toDegrees(body.getAngle()));
+        // sprite.setRotation((float) Math.toDegrees(body.getAngle()));
+        setRotation((float) Math.toDegrees(angle));
     }
 
     public boolean isDead() {
         return time < 0 || body == null;
-    }
-
-    public void draw(SpriteBatch batch) {
-        sprite.draw(batch);
     }
 
     public Body getBody() {
@@ -92,6 +97,8 @@ public class Bullet {
         fedef.density = 1f;
         fedef.friction = 0f;
         fedef.restitution = 0f;
+
+        // fedef.isSensor = true;
         // fedef.filter.categoryBits = MyGame.BULLET_BIT; //Futura implementeacion de
         // filtros de colisiones
         // fedef.filter.maskBits = MyGame.ENEMY_BIT | MyGame.WALL_BIT;
@@ -99,6 +106,15 @@ public class Bullet {
         shape.dispose();
 
         body.setLinearVelocity(speed * (float) Math.cos(angle), speed * (float) Math.sin(angle));
+    }
+
+    public Animation<TextureRegion> getAnimation(Texture imagen) {
+        tmp = TextureRegion.split(imagen, imagen.getWidth() / 8, imagen.getHeight());
+        regionsMovimiento = new TextureRegion[8];
+        for (int i = 0; i < 8; i++) {
+            regionsMovimiento[i] = tmp[0][i];
+        }
+        return new Animation<>(0.02f, regionsMovimiento);
     }
 
 }
