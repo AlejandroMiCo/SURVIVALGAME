@@ -22,6 +22,9 @@ public class TorchGobling extends Enemy {
     private Animation<TextureRegion> deathAnimation;
     public boolean shouldFaceRight;
 
+    public boolean deathAnimationFinished;
+    private static final float DEATH_ANIMATION_DURATION = 0.75f;
+
     public TorchGobling(PlayScreen screen, float x, float y, Knight knight) {
         super(screen, x, y);
         this.knight = knight;
@@ -37,29 +40,35 @@ public class TorchGobling extends Enemy {
         health = 20;
         setToDestroy = false;
         destroyed = false;
-
+        deathAnimationFinished = false;
     }
 
     public void update(float dt) {
         stateTime += dt;
 
-        Vector2 direction = new Vector2(knight.b2body.getPosition()).sub(b2body.getPosition()).nor();
-        b2body.setLinearVelocity(direction.scl(100 * dt));
-
+        
         if (setToDestroy && !destroyed) {
             // Animacion de muerte
             world.destroyBody(b2body);
+            b2body = null;
             destroyed = true;
             stateTime = 0;
         }
         if (destroyed) {
             setRegion(deathAnimation.getKeyFrame(stateTime, false));
+            
+            if (deathAnimation.isAnimationFinished(stateTime)) {
+                deathAnimationFinished = true;
+            }
         } else {
+            // Movimiento del enemigo
+            Vector2 direction = new Vector2(knight.b2body.getPosition()).sub(b2body.getPosition()).nor();
+            b2body.setLinearVelocity(direction.scl(100 * dt));
+
             setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
             setRegion(walkAnimation.getKeyFrame(stateTime, true));
 
             shouldFaceRight = knight.b2body.getPosition().x > b2body.getPosition().x;
-
             if (!shouldFaceRight) {
                 flip(true, false);
             }
@@ -71,7 +80,7 @@ public class TorchGobling extends Enemy {
     public void defineEnemy() {
         BodyDef bdef = new BodyDef();
         bdef.position.set(300 / IslandsSurvivors.PPM, 300 / IslandsSurvivors.PPM);
-        bdef.type = BodyDef.BodyType.KinematicBody;
+        bdef.type = BodyDef.BodyType.DynamicBody;
 
         b2body = world.createBody(bdef);
 
@@ -85,12 +94,13 @@ public class TorchGobling extends Enemy {
         fedef.density = 0;
 
         fedef.filter.categoryBits = IslandsSurvivors.ENEMY_BIT; // El Gobling pertenece a la categoría "enemigo"
-        fedef.filter.maskBits = IslandsSurvivors.BULLET_BIT | IslandsSurvivors.PLAYER_BIT | IslandsSurvivors.DEFAULT_BIT;
+        fedef.filter.maskBits = IslandsSurvivors.BULLET_BIT | IslandsSurvivors.PLAYER_BIT | IslandsSurvivors.DEFAULT_BIT
+                | IslandsSurvivors.ENEMY_BIT;
         b2body.createFixture(fedef).setUserData(this);
     }
 
     public void draw(Batch batch) {
-        if (!destroyed || stateTime < 0.75) {
+        if (!deathAnimationFinished) {
             super.draw(batch);
         }
     }

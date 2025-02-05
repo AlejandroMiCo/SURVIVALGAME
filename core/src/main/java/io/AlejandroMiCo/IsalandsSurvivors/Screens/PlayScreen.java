@@ -40,12 +40,16 @@ public class PlayScreen implements Screen {
     private Box2DDebugRenderer b2dr;
 
     private Knight knight;
-    private TorchGobling gobling;
 
     public ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
 
     private float bulletTimer = 0;
     private final float bulletDelay = 2f; // disparo cada 2 segundos
+
+    private ArrayList<TorchGobling> goblingList = new ArrayList<>();
+    private float enemySpawnTimer = 0;
+    private final float enemySpawnDelay = 1f; // Generar enemigo cada 1 segundo
+    private final int maxEnemies = 5; // Número máximo de enemigos activos
 
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
@@ -66,7 +70,6 @@ public class PlayScreen implements Screen {
         joystick = new VirtualJoystick(50, 20);
 
         knight = new Knight(this, joystick);
-        gobling = new TorchGobling(this, 300, 300, knight);
 
         world.setContactListener(new WorldContactListener());
     }
@@ -77,7 +80,7 @@ public class PlayScreen implements Screen {
     }
 
     public void update(float dt) {
-        //handleInput(dt);
+        // handleInput(dt);
 
         // 🔸 Actualizar temporizador de disparo automático
         bulletTimer += dt;
@@ -109,9 +112,28 @@ public class PlayScreen implements Screen {
         }
         bulletsToRemove.clear(); // Limpiar la lista temporal
 
+        // 🔹 Actualizar temporizador de generación de enemigos
+        enemySpawnTimer += dt;
+        if (enemySpawnTimer >= enemySpawnDelay && goblingList.size() < maxEnemies) {
+            spawnEnemy();
+            enemySpawnTimer = 0; // Reiniciar el temporizador
+        }
+
+        // 🔹 Lista temporal para almacenar enemigos eliminados
+        ArrayList<TorchGobling> enemiesToRemove = new ArrayList<>();
+
+        // 🔹 Actualizar enemigos y marcar los que deben eliminarse
+        for (TorchGobling gobling : goblingList) {
+            gobling.update(dt);
+            if (gobling.deathAnimationFinished) {
+                enemiesToRemove.add(gobling);
+            }
+        }
+
+        goblingList.removeAll(enemiesToRemove);
+
         // 🔹 Actualizar otros elementos del juego
         knight.update(dt);
-        gobling.update(dt);
         hud.update(dt);
 
         // 🔹 Mantener la cámara centrada en el personaje
@@ -122,17 +144,44 @@ public class PlayScreen implements Screen {
         renderer.setView(gameCamera);
     }
 
+    private void spawnEnemy() {
+        float spawnX = (float) (Math.random() * gamePort.getWorldWidth()); // Posición X aleatoria
+        float spawnY = (float) (Math.random() * gamePort.getWorldHeight()); // Posición Y aleatoria
+
+        TorchGobling newGobling = new TorchGobling(this, spawnX, spawnY, knight);
+        goblingList.add(newGobling);
+    }
+
     private void fireBullet() {
-        if (gobling != null) { // Asegurarse de que haya un enemigo
-            float knightX = knight.b2body.getPosition().x;
-            float knightY = knight.b2body.getPosition().y;
+        if (goblingList.isEmpty())
+            return; // No disparar si no hay enemigos
+
+        float knightX = knight.b2body.getPosition().x;
+        float knightY = knight.b2body.getPosition().y;
+
+        // 🔹 Encontrar el enemigo más cercano
+        TorchGobling closestEnemy = null;
+        float minDistance = Float.MAX_VALUE;
+
+        for (TorchGobling gobling : goblingList) {
             float enemyX = gobling.b2body.getPosition().x;
             float enemyY = gobling.b2body.getPosition().y;
 
-            // 🔹 Calcular el ángulo en radianes hacia el enemigo
+            float distance = Vector2.dst(knightX, knightY, enemyX, enemyY);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestEnemy = gobling;
+            }
+        }
+
+        // 🔹 Si encontramos un enemigo más cercano, disparamos hacia él
+        if (closestEnemy != null) {
+            float enemyX = closestEnemy.b2body.getPosition().x;
+            float enemyY = closestEnemy.b2body.getPosition().y;
+
             float dx = enemyX - knightX;
             float dy = enemyY - knightY;
-            float shootAngle = (float) Math.atan2(dy, dx);
+            float shootAngle = (float) Math.atan2(dy, dx); // Calcular ángulo en radianes
 
             // 🔹 Crear la bala y añadirla a la lista
             bulletList.add(new Bullet(world, knightX, knightY, shootAngle));
@@ -161,7 +210,11 @@ public class PlayScreen implements Screen {
 
         game.batch.begin();
         knight.draw(game.batch);
-        gobling.draw(game.batch);
+
+        // 🔹 Dibujar todos los enemigos
+        for (TorchGobling gobling : goblingList) {
+            gobling.draw(game.batch);
+        }
 
         for (Bullet bullet : bulletList) {
             if (bullet.getBody() != null) {
