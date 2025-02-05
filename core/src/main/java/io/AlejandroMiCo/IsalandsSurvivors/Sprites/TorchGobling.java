@@ -23,7 +23,6 @@ public class TorchGobling extends Enemy {
     public boolean shouldFaceRight;
 
     public boolean deathAnimationFinished;
-    private static final float DEATH_ANIMATION_DURATION = 0.75f;
 
     public TorchGobling(PlayScreen screen, float x, float y, Knight knight) {
         super(screen, x, y);
