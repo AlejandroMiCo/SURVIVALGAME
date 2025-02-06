@@ -26,7 +26,7 @@ public class WorldContactListener implements ContactListener {
             case IslandsSurvivors.BULLET_BIT | IslandsSurvivors.ENEMY_BIT:
                 if (fixA.getFilterData().categoryBits == IslandsSurvivors.BULLET_BIT) {
                     ((Bullet) fixA.getUserData()).markForRemoval();
-                    ((TorchGobling) fixB.getUserData()).takeDamage(10);
+                ((TorchGobling) fixB.getUserData()).takeDamage(10);  //TODO: Cambiar el daño al daño del personaje o lo que sea
 
                 } else {
                     ((Bullet) fixB.getUserData()).markForRemoval();

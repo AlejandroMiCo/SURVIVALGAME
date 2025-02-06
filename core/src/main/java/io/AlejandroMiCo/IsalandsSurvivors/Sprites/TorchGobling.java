@@ -45,7 +45,6 @@ public class TorchGobling extends Enemy {
     public void update(float dt) {
         stateTime += dt;
 
-
         if (setToDestroy && !destroyed) {
             // Animacion de muerte
             world.destroyBody(b2body);
@@ -62,7 +61,7 @@ public class TorchGobling extends Enemy {
         } else {
             // Movimiento del enemigo
             Vector2 direction = new Vector2(knight.b2body.getPosition()).sub(b2body.getPosition()).nor();
-            b2body.setLinearVelocity(direction.scl(100 * dt));
+            b2body.setLinearVelocity(direction.scl(75 * dt));
 
             setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
             setRegion(walkAnimation.getKeyFrame(stateTime, true));
@@ -130,6 +129,7 @@ public class TorchGobling extends Enemy {
         // Si la vida llega a 0, destruir el enemigo
         if (health <= 0) {
             setToDestroy = true;
+            knight.gainXP(20); // 🔥 Da 20 XP al jugador al morir
         }
     }
 

@@ -47,7 +47,10 @@ public class Knight extends Sprite {
     public int health;
     public float cooldown;
     public float timebetweenattacks;
-    // public float attackCooldown;
+    private int level;
+    private int xp;
+    private int xpToNextLevel;
+    private float speed;
 
     public Knight(PlayScreen screen, VirtualJoystick joy) {
         super(new Texture("creatures/Warrior_Blue.png"), 196, 196);
@@ -64,11 +67,35 @@ public class Knight extends Sprite {
         movingAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 1);
 
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
-        damage = 10;
-        health = 100;
+        this.level = 1;
+        this.xp = 0;
+        this.xpToNextLevel = 100; // Se necesita 100 XP para subir al nivel 2
+        this.health = 100;
+        this.damage = 10;
+        this.speed = 100f;
         cooldown = 2f;
         timebetweenattacks = 0;
 
+    }
+
+    public void gainXP(int amount) {
+        xp += amount;
+        if (xp >= xpToNextLevel) {
+            levelUp();
+        }
+    }
+
+    private void levelUp() {
+        level++;
+        xp -= xpToNextLevel; // Mantiene el exceso de XP
+        xpToNextLevel *= 1.2; // La siguiente subida de nivel requiere más XP
+
+        // Aumentamos las estadísticas
+        health += 10;
+        damage += 2;
+        speed += 2f;
+
+        System.out.println("¡Subiste a nivel " + level + "! Nueva vida: " + health + ", Daño: " + damage);
     }
 
     // Se encarga de actualizar la camara y la animacion
@@ -78,7 +105,7 @@ public class Knight extends Sprite {
         timebetweenattacks += dt;
 
         Vector2 direction = joystick.getDirection();
-        b2body.setLinearVelocity(direction.scl(200 * dt));
+        b2body.setLinearVelocity(direction.scl(speed * dt));
     }
 
     // Devuelve la animacion en funcion del estado actual del personaje
