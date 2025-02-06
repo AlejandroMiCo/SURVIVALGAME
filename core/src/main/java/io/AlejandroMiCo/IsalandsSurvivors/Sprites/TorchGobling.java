@@ -77,15 +77,14 @@ public class TorchGobling extends Enemy {
     @Override
     public void defineEnemy() {
         BodyDef bdef = new BodyDef();
-        bdef.position.set(300 / IslandsSurvivors.PPM, 300 / IslandsSurvivors.PPM);
-        bdef.type = BodyDef.BodyType.DynamicBody;
+        bdef.position.set((float) ((Math.random() * 20) + 3), (float) ((Math.random() * 20) + 3));
 
+        bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
 
         FixtureDef fedef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(12 / IslandsSurvivors.PPM, 12 / IslandsSurvivors.PPM);
-
         fedef.shape = shape;
 
         fedef.friction = 0;

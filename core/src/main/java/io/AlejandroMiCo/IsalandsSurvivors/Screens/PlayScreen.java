@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
@@ -48,14 +49,13 @@ public class PlayScreen implements Screen {
     private final float bulletDelay = 2f; // disparo cada 2 segundos
 
     private ArrayList<TorchGobling> goblingList = new ArrayList<>();
-    private float enemySpawnTimer = 0;
-    private final float enemySpawnDelay = 1f; // Generar enemigo cada 1 segundo
-    private final int maxEnemies = 5; // Número máximo de enemigos activos
 
     private float gameTimer = 0;
-    private int difficultyLevel = 1;
-    private final float DIFFICULTY_INTERVAL = 30; // Escalado cada 30 segundos
-    private final float GAME_DURATION = 600; // 10 minutos (600 segundos)
+
+    private int waveNumber = 1;
+    private int enemiesPerWave = 10;
+    private final float WAVE_INTERVAL = 10; // Cada 30 segundos hay una nueva oleada
+    private final int MAX_ENEMIES = 150; // Máximo total de enemigos activos en pantalla
 
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
@@ -88,10 +88,6 @@ public class PlayScreen implements Screen {
     public void update(float dt) {
         gameTimer += dt;
 
-        if (gameTimer >= difficultyLevel * DIFFICULTY_INTERVAL && gameTimer <= GAME_DURATION) {
-            updateDifficulty();
-        }
-
         // 🔸 Actualizar temporizador de disparo automático
         bulletTimer += dt;
         if (bulletTimer >= bulletDelay) {
@@ -123,14 +119,16 @@ public class PlayScreen implements Screen {
         bulletsToRemove.clear(); // Limpiar la lista temporal
 
         // 🔹 Actualizar temporizador de generación de enemigos
-        enemySpawnTimer += dt;
-        if (enemySpawnTimer >= enemySpawnDelay && goblingList.size() < maxEnemies) {
-            spawnEnemy();
-            enemySpawnTimer = 0; // Reiniciar el temporizador
-        }
 
         // 🔹 Lista temporal para almacenar enemigos eliminados
         ArrayList<TorchGobling> enemiesToRemove = new ArrayList<>();
+
+        if (gameTimer >= waveNumber * WAVE_INTERVAL) {
+            updateWave();
+        }
+        if (goblingList.size() < MAX_ENEMIES) {
+            spawnEnemies();
+        }
 
         // 🔹 Actualizar enemigos y marcar los que deben eliminarse
         for (TorchGobling gobling : goblingList) {
@@ -139,7 +137,6 @@ public class PlayScreen implements Screen {
                 enemiesToRemove.add(gobling);
             }
         }
-
         goblingList.removeAll(enemiesToRemove);
 
         // 🔹 Actualizar otros elementos del juego
@@ -154,23 +151,29 @@ public class PlayScreen implements Screen {
         renderer.setView(gameCamera);
     }
 
-    private void updateDifficulty() {
-        difficultyLevel++;
+    private void updateWave() {
+        waveNumber++;
 
         // Aumenta la dificultad de los enemigos
         Enemy.INITIAL_HEALTH += 5;
         Enemy.INITIAL_DAMAGE += 2;
         Enemy.INITIAL_SPEED += 10f;
-
-        System.out.println("🔺 ¡Dificultad aumentada! Nivel: " + difficultyLevel);
+        // Cada oleada aumenta la cantidad de enemigos
+        enemiesPerWave += 3; // 🔥 Aumenta en 2 enemigos por oleada
+        System.out.println("⚔️ ¡Nueva Oleada! Enemigos en esta oleada: " + enemiesPerWave);
     }
 
-    private void spawnEnemy() {
-        float spawnX = (float) (Math.random() * gamePort.getWorldWidth()); // Posición X aleatoria
-        float spawnY = (float) (Math.random() * gamePort.getWorldHeight()); // Posición Y aleatoria
+    private void spawnEnemies() {
+        float spawnX, spawnY;
+        float minX = 3, maxX = 23;
+        float minY = 3, maxY = 23;
 
-        TorchGobling newGobling = new TorchGobling(this, spawnX, spawnY, knight);
-        goblingList.add(newGobling);
+        while (goblingList.size() < enemiesPerWave && goblingList.size() < MAX_ENEMIES) {
+            spawnX = MathUtils.clamp((float) (Math.random() * (maxX - minX) + minX), minX, maxX);
+            spawnY = MathUtils.clamp((float) (Math.random() * (maxY - minY) + minY), minY, maxY);
+
+            goblingList.add(new TorchGobling(this, spawnX, spawnY, knight));
+        }
     }
 
     private void fireBullet() {

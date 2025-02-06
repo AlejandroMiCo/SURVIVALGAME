@@ -19,8 +19,8 @@ public class WorldContactListener implements ContactListener {
 
         int cDef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
 
-        System.out.println("Colisión detectada: " + fixA.getFilterData().categoryBits + " con "
-                + fixB.getFilterData().categoryBits);
+        // System.out.println("Colisión detectada: " + fixA.getFilterData().categoryBits + " con "
+        //         + fixB.getFilterData().categoryBits);
 
         switch (cDef) {
             case IslandsSurvivors.BULLET_BIT | IslandsSurvivors.ENEMY_BIT:
