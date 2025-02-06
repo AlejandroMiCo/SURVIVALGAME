@@ -28,7 +28,6 @@ public class Knight extends Sprite {
     // Animaciones
     private Animation<TextureRegion> movingAnimation;
     private Animation<TextureRegion> iddleAnimation;
-    private Animation<TextureRegion> attackAnimation;
 
     private TextureRegion[][] tmp;
     private TextureRegion[] regionsMovimiento;
@@ -63,7 +62,6 @@ public class Knight extends Sprite {
 
         iddleAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 0);
         movingAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 1);
-        attackAnimation = getSpinAttackAnimation(new Texture("creatures/SpinAttack.png"));
 
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
         damage = 10;
@@ -93,8 +91,6 @@ public class Knight extends Sprite {
             case MOVING:
                 region = movingAnimation.getKeyFrame(stateTimer, true);
                 break;
-            case ATTACKING:
-                region = attackAnimation.getKeyFrame(stateTimer, false);
             default:
                 region = iddleAnimation.getKeyFrame(stateTimer, true);
                 break;
@@ -153,15 +149,5 @@ public class Knight extends Sprite {
             regionsMovimiento[i] = tmp[fila][i];
         }
         return new Animation<>(0.125f, regionsMovimiento);
-    }
-
-    // Se encarga de gestionar la animacion de ataque del personaje
-    public Animation<TextureRegion> getSpinAttackAnimation(Texture imagen) {
-        tmp = TextureRegion.split(imagen, imagen.getWidth() / 8, imagen.getHeight());
-        regionsMovimiento = new TextureRegion[8];
-        for (int i = 0; i < 8; i++) {
-            regionsMovimiento[i] = tmp[0][i];
-        }
-        return new Animation<>(0.075f, regionsMovimiento);
     }
 }

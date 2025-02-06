@@ -28,7 +28,7 @@ public class TorchGobling extends Enemy {
         super(screen, x, y);
         this.knight = knight;
 
-        walkAnimation = getWalkAnimation(new Texture("creatures/TorchGobling.png"), 1);
+        walkAnimation = getWalkAnimation(new Texture("creatures/torchGobling.png"));
 
         deathAnimation = getDeathAnimation(new Texture("img/Dead_custom.png"), 0);
 
@@ -45,7 +45,7 @@ public class TorchGobling extends Enemy {
     public void update(float dt) {
         stateTime += dt;
 
-        
+
         if (setToDestroy && !destroyed) {
             // Animacion de muerte
             world.destroyBody(b2body);
@@ -55,7 +55,7 @@ public class TorchGobling extends Enemy {
         }
         if (destroyed) {
             setRegion(deathAnimation.getKeyFrame(stateTime, false));
-            
+
             if (deathAnimation.isAnimationFinished(stateTime)) {
                 deathAnimationFinished = true;
             }
@@ -104,11 +104,11 @@ public class TorchGobling extends Enemy {
         }
     }
 
-    public Animation<TextureRegion> getWalkAnimation(Texture imagen, int fila) {
-        tmp = TextureRegion.split(imagen, imagen.getWidth() / 7, imagen.getHeight() / 5);
+    public Animation<TextureRegion> getWalkAnimation(Texture imagen) {
+        tmp = TextureRegion.split(imagen, imagen.getWidth() / 6, imagen.getHeight());
         regionsMovimiento = new TextureRegion[6];
         for (int i = 0; i < 6; i++) {
-            regionsMovimiento[i] = tmp[fila][i];
+            regionsMovimiento[i] = tmp[0][i];
         }
         return new Animation<>(0.125f, regionsMovimiento);
     }
