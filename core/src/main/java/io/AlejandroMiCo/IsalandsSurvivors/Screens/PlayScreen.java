@@ -54,7 +54,7 @@ public class PlayScreen implements Screen {
 
     private int waveNumber = 1;
     private int enemiesPerWave = 10;
-    private final float WAVE_INTERVAL = 10; // Cada 30 segundos hay una nueva oleada
+    private final float WAVE_INTERVAL = 30; // Cada 30 segundos hay una nueva oleada
     private final int MAX_ENEMIES = 150; // Máximo total de enemigos activos en pantalla
 
     public PlayScreen(IslandsSurvivors game) {
