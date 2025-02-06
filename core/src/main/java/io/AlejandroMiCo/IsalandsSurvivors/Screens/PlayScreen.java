@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
 import io.AlejandroMiCo.IsalandsSurvivors.Scenes.Hud;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TorchGobling;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.B2WorldCreator;
@@ -51,6 +52,11 @@ public class PlayScreen implements Screen {
     private final float enemySpawnDelay = 1f; // Generar enemigo cada 1 segundo
     private final int maxEnemies = 5; // Número máximo de enemigos activos
 
+    private float gameTimer = 0;
+    private int difficultyLevel = 1;
+    private final float DIFFICULTY_INTERVAL = 30; // Escalado cada 30 segundos
+    private final float GAME_DURATION = 600; // 10 minutos (600 segundos)
+
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
         gameCamera = new OrthographicCamera();
@@ -80,7 +86,11 @@ public class PlayScreen implements Screen {
     }
 
     public void update(float dt) {
-        // handleInput(dt);
+        gameTimer += dt;
+
+        if (gameTimer >= difficultyLevel * DIFFICULTY_INTERVAL && gameTimer <= GAME_DURATION) {
+            updateDifficulty();
+        }
 
         // 🔸 Actualizar temporizador de disparo automático
         bulletTimer += dt;
@@ -142,6 +152,17 @@ public class PlayScreen implements Screen {
         gameCamera.update();
 
         renderer.setView(gameCamera);
+    }
+
+    private void updateDifficulty() {
+        difficultyLevel++;
+
+        // Aumenta la dificultad de los enemigos
+        Enemy.INITIAL_HEALTH += 5;
+        Enemy.INITIAL_DAMAGE += 2;
+        Enemy.INITIAL_SPEED += 10f;
+
+        System.out.println("🔺 ¡Dificultad aumentada! Nivel: " + difficultyLevel);
     }
 
     private void spawnEnemy() {
