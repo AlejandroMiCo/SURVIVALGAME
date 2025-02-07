@@ -1,17 +1,15 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Sprites;
 
-import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
 
-public class TorchGobling extends Enemy {
+public class TntGobling extends Enemy {
 
-    private Knight knight;
-
-    public TorchGobling(PlayScreen screen, float x, float y, Knight knight) {
-        super(screen, x, y, knight, "creatures/torchGobling.png");
+    public TntGobling(PlayScreen screen, float x, float y, Knight knight) {
+        super(screen, x, y, knight, "creatures/tntGobling.png");
         this.knight = knight;
 
-        health = 20;
+        health = 40;
+        speed = 60f;
     }
 
     @Override

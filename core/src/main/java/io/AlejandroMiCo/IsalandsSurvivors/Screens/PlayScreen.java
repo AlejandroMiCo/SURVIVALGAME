@@ -19,8 +19,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
 import io.AlejandroMiCo.IsalandsSurvivors.Scenes.Hud;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Coco;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TntGobling;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TorchGobling;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.B2WorldCreator;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.VirtualJoystick;
@@ -48,7 +50,7 @@ public class PlayScreen implements Screen {
     private float bulletTimer = 0;
     private final float bulletDelay = 2f; // disparo cada 2 segundos
 
-    private ArrayList<TorchGobling> goblingList = new ArrayList<>();
+    private ArrayList<Enemy> goblingList = new ArrayList<>();
 
     private float gameTimer = 0;
 
@@ -121,7 +123,7 @@ public class PlayScreen implements Screen {
         // 🔹 Actualizar temporizador de generación de enemigos
 
         // 🔹 Lista temporal para almacenar enemigos eliminados
-        ArrayList<TorchGobling> enemiesToRemove = new ArrayList<>();
+        ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
 
         if (gameTimer >= waveNumber * WAVE_INTERVAL) {
             updateWave();
@@ -131,7 +133,7 @@ public class PlayScreen implements Screen {
         }
 
         // 🔹 Actualizar enemigos y marcar los que deben eliminarse
-        for (TorchGobling gobling : goblingList) {
+        for (Enemy gobling : goblingList) {
             gobling.update(dt);
             if (gobling.deathAnimationFinished) {
                 enemiesToRemove.add(gobling);
@@ -167,12 +169,25 @@ public class PlayScreen implements Screen {
         float spawnX, spawnY;
         float minX = 3, maxX = 23;
         float minY = 3, maxY = 23;
+        int cont = 0;
 
         while (goblingList.size() < enemiesPerWave && goblingList.size() < MAX_ENEMIES) {
             spawnX = MathUtils.clamp((float) (Math.random() * (maxX - minX) + minX), minX, maxX);
             spawnY = MathUtils.clamp((float) (Math.random() * (maxY - minY) + minY), minY, maxY);
 
-            goblingList.add(new TorchGobling(this, spawnX, spawnY, knight));
+            switch (cont) {
+                case 0:
+                    goblingList.add(new TorchGobling(this, spawnX, spawnY, knight));
+                    break;
+                case 1:
+                    goblingList.add(new Coco(this, spawnX, spawnY, knight));
+                    break;
+                default:
+                    goblingList.add(new TntGobling(this, spawnX, spawnY, knight));
+                    cont = -1;
+                    break;
+            }
+            cont++;
         }
     }
 
@@ -184,10 +199,10 @@ public class PlayScreen implements Screen {
         float knightY = knight.b2body.getPosition().y;
 
         // 🔹 Encontrar el enemigo más cercano
-        TorchGobling closestEnemy = null;
+        Enemy closestEnemy = null;
         float minDistance = Float.MAX_VALUE;
 
-        for (TorchGobling gobling : goblingList) {
+        for (Enemy gobling : goblingList) {
             float enemyX = gobling.b2body.getPosition().x;
             float enemyY = gobling.b2body.getPosition().y;
 
@@ -236,7 +251,7 @@ public class PlayScreen implements Screen {
         knight.draw(game.batch);
 
         // 🔹 Dibujar todos los enemigos
-        for (TorchGobling gobling : goblingList) {
+        for (Enemy gobling : goblingList) {
             gobling.draw(game.batch);
         }
 
