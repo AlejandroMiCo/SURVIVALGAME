@@ -21,6 +21,7 @@ import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
 import io.AlejandroMiCo.IsalandsSurvivors.Scenes.Hud;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Coco;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.EnemyWarrior;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TntGobling;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TorchGobling;
@@ -129,7 +130,7 @@ public class PlayScreen implements Screen {
             updateWave();
         }
         if (goblingList.size() < MAX_ENEMIES) {
-            spawnEnemies();
+            spawnEnemies(gameTimer);
         }
 
         // 🔹 Actualizar enemigos y marcar los que deben eliminarse
@@ -165,29 +166,23 @@ public class PlayScreen implements Screen {
         System.out.println("⚔️ ¡Nueva Oleada! Enemigos en esta oleada: " + enemiesPerWave);
     }
 
-    private void spawnEnemies() {
+    private void spawnEnemies(float gameTime) {
         float spawnX, spawnY;
         float minX = 3, maxX = 23;
         float minY = 3, maxY = 23;
-        int cont = 0;
 
         while (goblingList.size() < enemiesPerWave && goblingList.size() < MAX_ENEMIES) {
             spawnX = MathUtils.clamp((float) (Math.random() * (maxX - minX) + minX), minX, maxX);
             spawnY = MathUtils.clamp((float) (Math.random() * (maxY - minY) + minY), minY, maxY);
 
-            switch (cont) {
-                case 0:
-                    goblingList.add(new TorchGobling(this, spawnX, spawnY, knight));
-                    break;
-                case 1:
-                    goblingList.add(new Coco(this, spawnX, spawnY, knight));
-                    break;
-                default:
-                    goblingList.add(new TntGobling(this, spawnX, spawnY, knight));
-                    cont = -1;
-                    break;
+            switch ((int) gameTime / 120) {
+                case 0 -> goblingList.add(new Coco(this, spawnX, spawnY, knight));              //2min
+                case 1 -> goblingList.add(new TorchGobling(this, spawnX, spawnY, knight));      //4min
+                case 2 -> goblingList.add(new TntGobling(this, spawnX, spawnY, knight));        //6min
+                case 3 -> goblingList.add(new EnemyWarrior(this, spawnX, spawnY, knight));              //8min
+                case 4 -> goblingList.add(new Coco(this, spawnX, spawnY, knight));              //10min
+                default -> goblingList.clear();
             }
-            cont++;
         }
     }
 
