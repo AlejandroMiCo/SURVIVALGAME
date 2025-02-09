@@ -1,5 +1,7 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Sprites;
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -43,14 +45,14 @@ public class Knight extends Sprite {
     private VirtualJoystick joystick;
 
     // Estadisticas del personaje
-    public int damage;
-    public int health;
-    public float cooldown;
     public float timebetweenattacks;
     private int level;
     private int xp;
     private int xpToNextLevel;
-    private float speed;
+
+    private HashMap<String, Float> atributos;
+
+    public boolean hasLeveledUp = false;
 
     public Knight(PlayScreen screen, VirtualJoystick joy) {
         super(new Texture("creatures/Warrior_Blue.png"), 196, 196);
@@ -70,17 +72,23 @@ public class Knight extends Sprite {
         this.level = 1;
         this.xp = 0;
         this.xpToNextLevel = 100; // Se necesita 100 XP para subir al nivel 2
-        this.health = 100;
-        this.damage = 10;
-        this.speed = 100f;
-        cooldown = 2f;
+
+        atributos = new HashMap<>();
+        atributos.put("vida", 100f);
+        atributos.put("velocidad", 100f);
+        atributos.put("daño", 10f);
+        atributos.put("velocidad_ataque", 1.5f);
+
         timebetweenattacks = 0;
 
+        this.xp = 0;
+        this.level = 1;
     }
 
     public void gainXP(int amount) {
         xp += amount;
         if (xp >= xpToNextLevel) {
+            hasLeveledUp = true;
             levelUp();
         }
     }
@@ -90,12 +98,6 @@ public class Knight extends Sprite {
         xp -= xpToNextLevel; // Mantiene el exceso de XP
         xpToNextLevel *= 1.2; // La siguiente subida de nivel requiere más XP
 
-        // Aumentamos las estadísticas
-        health += 10;
-        damage += 2;
-        speed += 2f;
-
-        System.out.println("¡Subiste a nivel " + level + "! Nueva vida: " + health + ", Daño: " + damage);
     }
 
     // Se encarga de actualizar la camara y la animacion
@@ -105,7 +107,7 @@ public class Knight extends Sprite {
         timebetweenattacks += dt;
 
         Vector2 direction = joystick.getDirection();
-        b2body.setLinearVelocity(direction.scl(speed * dt));
+        b2body.setLinearVelocity(direction.scl(atributos.get("velocidad") * dt));
     }
 
     // Devuelve la animacion en funcion del estado actual del personaje
@@ -176,5 +178,24 @@ public class Knight extends Sprite {
             regionsMovimiento[i] = tmp[fila][i];
         }
         return new Animation<>(0.125f, regionsMovimiento);
+    }
+
+    public int getExperience() {
+        return xp;
+    }
+
+    public int getNextLevelExperience() {
+        return xpToNextLevel;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void mejorarAtributo(String atributo, float cantidad) {
+        if (atributos.containsKey(atributo)) {
+            atributos.put(atributo, atributos.get(atributo) + cantidad);
+            System.out.println("Se mejoró " + atributo + " en " + cantidad);
+        }
     }
 }

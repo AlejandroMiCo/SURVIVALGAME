@@ -60,6 +60,9 @@ public class PlayScreen implements Screen {
     private final float WAVE_INTERVAL = 30; // Cada 30 segundos hay una nueva oleada
     private final int MAX_ENEMIES = 150; // Máximo total de enemigos activos en pantalla
 
+    private LevelUpScreen levelUpScreen;
+    private int lastNivel = 1;
+
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
         gameCamera = new OrthographicCamera();
@@ -81,6 +84,8 @@ public class PlayScreen implements Screen {
         knight = new Knight(this, joystick);
 
         world.setContactListener(new WorldContactListener());
+
+        levelUpScreen = new LevelUpScreen(knight);
     }
 
     @Override
@@ -90,6 +95,17 @@ public class PlayScreen implements Screen {
 
     public void update(float dt) {
         gameTimer += dt;
+
+        if (levelUpScreen.isVisible()) {
+            levelUpScreen.update(dt);
+            return; // Pausar el juego mientras está activa la UI
+        }
+
+
+        if (knight.getLevel() > lastNivel) {
+            levelUpScreen.show();
+            lastNivel = knight.getLevel();
+        }
 
         // 🔸 Actualizar temporizador de disparo automático
         bulletTimer += dt;
@@ -176,11 +192,11 @@ public class PlayScreen implements Screen {
             spawnY = MathUtils.clamp((float) (Math.random() * (maxY - minY) + minY), minY, maxY);
 
             switch ((int) gameTime / 120) {
-                case 0 -> goblingList.add(new Coco(this, spawnX, spawnY, knight));              //2min
-                case 1 -> goblingList.add(new TorchGobling(this, spawnX, spawnY, knight));      //4min
-                case 2 -> goblingList.add(new TntGobling(this, spawnX, spawnY, knight));        //6min
-                case 3 -> goblingList.add(new EnemyWarrior(this, spawnX, spawnY, knight));              //8min
-                case 4 -> goblingList.add(new Coco(this, spawnX, spawnY, knight));              //10min
+                case 0 -> goblingList.add(new Coco(this, spawnX, spawnY, knight)); // 2min
+                case 1 -> goblingList.add(new TorchGobling(this, spawnX, spawnY, knight)); // 4min
+                case 2 -> goblingList.add(new TntGobling(this, spawnX, spawnY, knight)); // 6min
+                case 3 -> goblingList.add(new EnemyWarrior(this, spawnX, spawnY, knight)); // 8min
+                case 4 -> goblingList.add(new Coco(this, spawnX, spawnY, knight)); // 10min
                 default -> goblingList.clear();
             }
         }
@@ -257,9 +273,10 @@ public class PlayScreen implements Screen {
         }
 
         game.batch.end();
+          
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-
         hud.stage.draw();
+        levelUpScreen.render();
         b2dr.render(world, gameCamera.combined);
 
         game.batch.begin();
