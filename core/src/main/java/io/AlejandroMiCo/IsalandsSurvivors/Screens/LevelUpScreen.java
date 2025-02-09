@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 
 public class LevelUpScreen {
@@ -29,6 +30,8 @@ public class LevelUpScreen {
     private String[] posiblesMejoras = { "vida", "velocidad", "daño", "velocidad_ataque" };
     private float[] valoresMejora = { 20f, 10f, 5f, 0.3f };
 
+    float escala = Gdx.graphics.getWidth() / IslandsSurvivors.V_WIDTH;
+
     public LevelUpScreen(Knight knight) {
         this.knight = knight;
         stage = new Stage(new ScreenViewport());
@@ -39,7 +42,6 @@ public class LevelUpScreen {
     private void generarOpcionesDeMejora() {
         stage.clear(); // Limpiar UI previa
 
-        stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
         // Cargar imágenes
@@ -50,7 +52,7 @@ public class LevelUpScreen {
 
         // Agregar fondo del pergamino
         Image pergamino = new Image(new TextureRegionDrawable(pergaminoTexture));
-        pergamino.setSize(650, 600);
+        pergamino.setSize(650 * escala, 550 * escala);
         pergamino.setPosition(Gdx.graphics.getWidth() / 2f - pergamino.getWidth() / 2f,
                 Gdx.graphics.getHeight() / 2f - pergamino.getHeight() / 2f);
         stage.addActor(pergamino);
@@ -85,17 +87,17 @@ public class LevelUpScreen {
         buttons[2] = btnRojo;
 
         // Dar tamaño a los botones
-        btnAzul.setSize(300, 75);
-        btnAmarillo.setSize(300, 75);
-        btnRojo.setSize(300, 75);
+        btnAzul.setSize(300 * escala, 75 * escala);
+        btnAmarillo.setSize(300 * escala, 75 * escala);
+        btnRojo.setSize(300 * escala, 75 * escala);
 
         // Posicionar botones dentro del pergamino
         float centerX = Gdx.graphics.getWidth() / 2f - btnAzul.getWidth() / 2f;
         float centerY = Gdx.graphics.getHeight() / 2f;
 
-        btnAzul.setPosition(centerX, centerY + 25);
-        btnAmarillo.setPosition(centerX, centerY - 50);
-        btnRojo.setPosition(centerX, centerY - 125);
+        btnAzul.setPosition(centerX, centerY + (25 * escala));
+        btnAmarillo.setPosition(centerX, centerY - (50 * escala));
+        btnRojo.setPosition(centerX, centerY - (125 * escala));
 
         for (TextButton button : buttons) {
 
