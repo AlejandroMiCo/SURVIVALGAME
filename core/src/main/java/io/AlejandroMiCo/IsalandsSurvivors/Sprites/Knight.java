@@ -71,7 +71,7 @@ public class Knight extends Sprite {
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
         this.level = 1;
         this.xp = 0;
-        this.xpToNextLevel = 100; // Se necesita 100 XP para subir al nivel 2
+        this.xpToNextLevel = 20; // Se necesita 100 XP para subir al nivel 2
 
         atributos = new HashMap<>();
         atributos.put("vida", 100f);

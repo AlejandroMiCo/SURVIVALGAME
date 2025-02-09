@@ -1,6 +1,5 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Sprites;
 
-import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
 
 public class TorchGobling extends Enemy {
