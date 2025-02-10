@@ -30,7 +30,14 @@ public class Bullet extends Sprite {
     Body body;
     World world;
 
-    private HashMap<String, Float> atributos;
+    private static HashMap<String, Float> atributos = new HashMap<>() {
+        {
+            put("daño_bala", 10f);
+            put("velocidad_bala", 1f);
+            put("cooldown_bala", 2f);
+            put("critico_bala", 0f);
+        }
+    };
 
     public Bullet(World world, float x, float y, float angle) {
         super();
@@ -48,12 +55,6 @@ public class Bullet extends Sprite {
         setOriginCenter();
 
         setRotation((float) Math.toDegrees(angle));
-
-        atributos = new HashMap<>();
-        atributos.put("daño", 10f);
-        atributos.put("velocidad", 1f);
-        atributos.put("cooldown", 2f);
-        atributos.put("critico", 0f);
 
         defineBullet(x, y, size);
         // Si se necesitara rotar el sprite para que apunte en la dirección del disparo
@@ -119,8 +120,8 @@ public class Bullet extends Sprite {
         body.createFixture(fedef).setUserData(this);
         shape.dispose();
 
-        body.setLinearVelocity(atributos.get("velocidad") * (float) Math.cos(angle),
-                atributos.get("velocidad") * (float) Math.sin(angle));
+        body.setLinearVelocity(atributos.get("velocidad_bala") * (float) Math.cos(angle),
+                atributos.get("velocidad_bala") * (float) Math.sin(angle));
     }
 
     public Animation<TextureRegion> getAnimation(Texture imagen) {
@@ -133,11 +134,23 @@ public class Bullet extends Sprite {
     }
 
     public int getDamage() {
-        return 10; // Daño base de la bala
+        return atributos.get("daño_bala").intValue(); // Daño base de la bala
+    }
+
+    public float getCritChance() {
+        return atributos.get("critico_bala"); // Daño base de la bala
     }
 
     public float getCooldown() {
-        return atributos.get("cooldown");  // Devuelve el valor del cooldown
+        return atributos.get("cooldown_bala"); // Devuelve el valor del cooldown
+    }
+
+    public static void mejorarAtributo(String atributo, float cantidad) {
+        if (atributos.containsKey(atributo)) {
+            System.out.println("entro");
+            atributos.put(atributo, atributos.get(atributo) + cantidad);
+            System.out.println("Se mejoró " + atributo + " en " + cantidad);
+        }
     }
 
 }

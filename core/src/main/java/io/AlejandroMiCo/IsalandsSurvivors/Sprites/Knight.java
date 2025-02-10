@@ -77,7 +77,6 @@ public class Knight extends Sprite {
         atributos.put("vida", 100f);
         atributos.put("velocidad", 100f);
         atributos.put("daño", 10f);
-        atributos.put("velocidad_ataque", 1.5f);
         atributos.put("critico", 0f);
 
         timebetweenattacks = 0;

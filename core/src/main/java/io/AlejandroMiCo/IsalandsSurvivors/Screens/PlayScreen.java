@@ -56,9 +56,9 @@ public class PlayScreen implements Screen {
     private float gameTimer = 0;
 
     private int waveNumber = 1;
-    private int enemiesPerWave = 10;
+    private int enemiesPerWave = 100;
     private final float WAVE_INTERVAL = 30; // Cada 30 segundos hay una nueva oleada
-    private final int MAX_ENEMIES = 150; // Máximo total de enemigos activos en pantalla
+    private final int MAX_ENEMIES = 1000; // Máximo total de enemigos activos en pantalla
 
     private LevelUpScreen levelUpScreen;
     private int lastNivel = 1;
@@ -85,6 +85,7 @@ public class PlayScreen implements Screen {
 
         world.setContactListener(new WorldContactListener(knight));
 
+        bulletList.add(new Bullet(world, 0, 0, 0));
         levelUpScreen = new LevelUpScreen(knight);
     }
 
@@ -100,7 +101,6 @@ public class PlayScreen implements Screen {
             levelUpScreen.update(dt);
             return; // Pausar el juego mientras está activa la UI
         }
-
 
         if (knight.getLevel() > lastNivel) {
             levelUpScreen.show();
@@ -123,9 +123,8 @@ public class PlayScreen implements Screen {
         goblingList.removeAll(enemiesToRemove);
 
         if (!bulletList.isEmpty()) {
-            bulletDelay = bulletList.get(0).getCooldown();  // Obtiene el cooldown del primer disparo
+            bulletDelay = bulletList.get(0).getCooldown(); // Obtiene el cooldown del primer disparo
         }
-
 
         // 🔸 Actualizar temporizador de disparo automático
         bulletTimer += dt;
@@ -143,6 +142,7 @@ public class PlayScreen implements Screen {
                 bullet.update(dt);
                 if (bullet.isDead()) {
                     bulletsToRemove.add(bullet);
+                    System.out.println(bullet.getCooldown());
                 }
             }
         }
@@ -206,7 +206,14 @@ public class PlayScreen implements Screen {
                 case 2 -> goblingList.add(new TntGobling(this, spawnX, spawnY, knight)); // 6min
                 case 3 -> goblingList.add(new EnemyWarrior(this, spawnX, spawnY, knight)); // 8min
                 case 4 -> goblingList.add(new Coco(this, spawnX, spawnY, knight)); // 10min
-                default -> goblingList.clear();
+                default -> {
+                    goblingList.add(new Coco(this, spawnX, spawnY, knight));
+                    goblingList.add(new TorchGobling(this, spawnX, spawnY, knight));
+                    goblingList.add(new TntGobling(this, spawnX, spawnY, knight));
+                    goblingList.add(new EnemyWarrior(this, spawnX, spawnY, knight));
+                    goblingList.add(new Coco(this, spawnX, spawnY, knight));
+                } // 10mi
+
             }
         }
     }
@@ -224,7 +231,7 @@ public class PlayScreen implements Screen {
 
         for (Enemy gobling : goblingList) {
             if (gobling.b2body == null) // Evitar acceso a un body nulo
-            continue;
+                continue;
 
             float enemyX = gobling.b2body.getPosition().x;
             float enemyY = gobling.b2body.getPosition().y;

@@ -15,11 +15,14 @@ public class DamageCalculator {
         int totalBaseDamage = bulletDamage + knightDamage;
 
         // Obtener probabilidad y multiplicador de crítico
-        float critChance = knight.getCritChance(); // Se usa la del Knight
+        float critChance = knight.getCritChance() + bullet.getCritChance(); // Se usa la del Knight
         float critMultiplier = 1.5f; // Aumenta daño un 50% en crítico
 
         // Determinar si el golpe es crítico
-        boolean isCritical = random.nextFloat() < critChance;
+        boolean isCritical = (random.nextFloat()*100) < critChance;
+        if (isCritical) {
+            System.out.println("CRÍTICO!");
+        }
         int finalDamage = isCritical ? Math.round(totalBaseDamage * critMultiplier) : totalBaseDamage;
         System.out.println(finalDamage);
         return finalDamage;

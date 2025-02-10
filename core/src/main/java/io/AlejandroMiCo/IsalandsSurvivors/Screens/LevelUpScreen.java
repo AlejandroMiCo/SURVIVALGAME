@@ -1,5 +1,6 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Screens;
 
+import java.util.HashMap;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
@@ -16,19 +17,32 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
+import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Coco;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.EnemyWarrior;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TntGobling;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TorchGobling;
 
 public class LevelUpScreen {
     private Stage stage;
     private boolean isVisible = false;
     private Knight knight;
+    private Bullet bullet;
     private Texture pergaminoTexture;
     private Texture btnAzulTexture, btnAmarilloTexture, btnRojoTexture;
 
     Random random = new Random();
 
-    private String[] posiblesMejoras = { "vida", "velocidad", "daño", "velocidad_ataque" };
-    private float[] valoresMejora = { 20f, 10f, 5f, 0.3f };
+    // private String[] posiblesMejoras = { "vida", "velocidad", "daño",
+    // "velocidad_ataque" };
+    // private float[] valoresMejora = { 20f, 10f, 5f, 0.3f };
+
+    private HashMap<String, Float> mejorasCaballero = new HashMap<>();
+    private HashMap<String, Float> mejorasBala = new HashMap<>();
+
+    private String[] posiblesMejoras = { "vida", "velocidad", "daño", "critico", "daño_bala",
+            "velocidad_bala", "cooldown_bala", "critico_bala" };
 
     float escala = Gdx.graphics.getWidth() / IslandsSurvivors.V_WIDTH;
 
@@ -36,7 +50,20 @@ public class LevelUpScreen {
         this.knight = knight;
         stage = new Stage(new ScreenViewport());
 
+        cargarMejoras();
         generarOpcionesDeMejora();
+    }
+
+    private void cargarMejoras() {
+        mejorasCaballero.put("vida", 20f);
+        mejorasCaballero.put("velocidad", 10f);
+        mejorasCaballero.put("daño", 5f);
+        mejorasCaballero.put("critico", 5f);
+
+        mejorasBala.put("daño_bala", 5f);
+        mejorasBala.put("velocidad_bala", 1f);
+        mejorasBala.put("cooldown_bala", -0.5f);
+        mejorasBala.put("critico_bala", 5f);
     }
 
     private void generarOpcionesDeMejora() {
@@ -101,16 +128,16 @@ public class LevelUpScreen {
         btnRojo.setPosition(centerX, centerY - (125 * escala));
 
         for (TextButton button : buttons) {
-
             int index = random.nextInt(posiblesMejoras.length);
             String mejora = posiblesMejoras[index];
-            float cantidad = valoresMejora[index];
+            float cantidad = obtenerValorMejora(mejora);
 
             button.setText("+" + cantidad + " " + mejora);
+            button.padBottom(15 * escala);
             button.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    knight.mejorarAtributo(mejora, cantidad);
+                    aplicarMejora(mejora, cantidad);
                     hide();
                 }
             });
@@ -119,6 +146,24 @@ public class LevelUpScreen {
             stage.addActor(btnAzul);
             stage.addActor(btnAmarillo);
             stage.addActor(btnRojo);
+        }
+    }
+
+    private float obtenerValorMejora(String mejora) {
+        // Devuelve el valor de la mejora dependiendo de su tipo
+        if (mejorasCaballero.containsKey(mejora)) {
+            return mejorasCaballero.get(mejora);
+        } else if (mejorasBala.containsKey(mejora)) {
+            return mejorasBala.get(mejora);
+        }
+        return 0f; // Valor por defecto
+    }
+
+    private void aplicarMejora(String mejora, float cantidad) {
+        if (mejorasCaballero.containsKey(mejora)) {
+            knight.mejorarAtributo(mejora, cantidad);
+        } else if (mejorasBala.containsKey(mejora)) {
+            Bullet.mejorarAtributo(mejora, cantidad);
         }
     }
 
