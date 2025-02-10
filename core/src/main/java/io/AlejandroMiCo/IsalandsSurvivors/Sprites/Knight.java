@@ -78,6 +78,7 @@ public class Knight extends Sprite {
         atributos.put("velocidad", 100f);
         atributos.put("daño", 10f);
         atributos.put("velocidad_ataque", 1.5f);
+        atributos.put("critico", 0f);
 
         timebetweenattacks = 0;
 
@@ -160,8 +161,8 @@ public class Knight extends Sprite {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(12 / IslandsSurvivors.PPM, 12 / IslandsSurvivors.PPM);
 
-        fedef.friction = 0;
-        fedef.density = 0;
+        fedef.friction = 1;
+        fedef.density = 200;
 
         fedef.filter.categoryBits = IslandsSurvivors.PLAYER_BIT;
         fedef.filter.maskBits = IslandsSurvivors.ENEMY_BIT | IslandsSurvivors.DEFAULT_BIT;
@@ -190,6 +191,14 @@ public class Knight extends Sprite {
 
     public int getLevel() {
         return level;
+    }
+
+    public int getAttackDamage() {
+        return atributos.get("daño").intValue();
+    }
+
+    public float getCritChance() {
+        return atributos.get("critico").floatValue(); // Probabilidad de crítico del personaje
     }
 
     public void mejorarAtributo(String atributo, float cantidad) {

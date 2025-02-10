@@ -49,7 +49,7 @@ public class PlayScreen implements Screen {
     public ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
 
     private float bulletTimer = 0;
-    private final float bulletDelay = 2f; // disparo cada 2 segundos
+    private float bulletDelay; // disparo cada 2 segundos
 
     private ArrayList<Enemy> goblingList = new ArrayList<>();
 
@@ -83,7 +83,7 @@ public class PlayScreen implements Screen {
 
         knight = new Knight(this, joystick);
 
-        world.setContactListener(new WorldContactListener());
+        world.setContactListener(new WorldContactListener(knight));
 
         levelUpScreen = new LevelUpScreen(knight);
     }
@@ -121,6 +121,10 @@ public class PlayScreen implements Screen {
             }
         }
         goblingList.removeAll(enemiesToRemove);
+
+        if (!bulletList.isEmpty()) {
+            bulletDelay = bulletList.get(0).getCooldown();  // Obtiene el cooldown del primer disparo
+        }
 
 
         // 🔸 Actualizar temporizador de disparo automático

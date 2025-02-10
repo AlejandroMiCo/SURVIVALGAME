@@ -73,8 +73,8 @@ public abstract class Enemy extends Sprite {
         shape.setAsBox(12 / IslandsSurvivors.PPM, 12 / IslandsSurvivors.PPM);
         fedef.shape = shape;
 
-        fedef.friction = 0;
-        fedef.density = 0;
+        fedef.friction = 1;
+        fedef.density = 100;
 
         fedef.filter.categoryBits = IslandsSurvivors.ENEMY_BIT; // El Gobling pertenece a la categoría "enemigo"
         fedef.filter.maskBits = IslandsSurvivors.BULLET_BIT | IslandsSurvivors.PLAYER_BIT | IslandsSurvivors.DEFAULT_BIT

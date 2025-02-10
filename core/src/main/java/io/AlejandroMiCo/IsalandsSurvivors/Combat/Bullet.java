@@ -1,5 +1,7 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Combat;
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -16,7 +18,7 @@ public class Bullet extends Sprite {
 
     private float stateTime;
     private float angle;
-    private float speed;
+    // private float speed;
     private float time;
     private float size;
     private TextureRegion[][] tmp;
@@ -28,10 +30,12 @@ public class Bullet extends Sprite {
     Body body;
     World world;
 
+    private HashMap<String, Float> atributos;
+
     public Bullet(World world, float x, float y, float angle) {
         super();
         time = 2f;
-        speed = 1f;
+        // speed = 1f;
         stateTime = 0;
 
         // Son necesarios para el bdef
@@ -44,8 +48,14 @@ public class Bullet extends Sprite {
         setOriginCenter();
 
         setRotation((float) Math.toDegrees(angle));
-        defineBullet(x, y, size);
 
+        atributos = new HashMap<>();
+        atributos.put("daño", 10f);
+        atributos.put("velocidad", 1f);
+        atributos.put("cooldown", 2f);
+        atributos.put("critico", 0f);
+
+        defineBullet(x, y, size);
         // Si se necesitara rotar el sprite para que apunte en la dirección del disparo
         // sprite.setRotation((float) Math.toDegrees(angle));
     }
@@ -109,7 +119,8 @@ public class Bullet extends Sprite {
         body.createFixture(fedef).setUserData(this);
         shape.dispose();
 
-        body.setLinearVelocity(speed * (float) Math.cos(angle), speed * (float) Math.sin(angle));
+        body.setLinearVelocity(atributos.get("velocidad") * (float) Math.cos(angle),
+                atributos.get("velocidad") * (float) Math.sin(angle));
     }
 
     public Animation<TextureRegion> getAnimation(Texture imagen) {
@@ -119,6 +130,14 @@ public class Bullet extends Sprite {
             regionsMovimiento[i] = tmp[0][i];
         }
         return new Animation<>(0.075f, regionsMovimiento);
+    }
+
+    public int getDamage() {
+        return 10; // Daño base de la bala
+    }
+
+    public float getCooldown() {
+        return atributos.get("cooldown");  // Devuelve el valor del cooldown
     }
 
 }

@@ -9,8 +9,16 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 
 public class WorldContactListener implements ContactListener {
+
+    private Knight knight;
+
+    public WorldContactListener(Knight knight) {
+        this.knight = knight;
+    }
+
 
     @Override
     public void beginContact(Contact contact) {
@@ -25,15 +33,20 @@ public class WorldContactListener implements ContactListener {
 
         switch (cDef) {
             case IslandsSurvivors.BULLET_BIT | IslandsSurvivors.ENEMY_BIT:
-                if (fixA.getFilterData().categoryBits == IslandsSurvivors.BULLET_BIT) {
-                    ((Bullet) fixA.getUserData()).markForRemoval();
-                    ((Enemy) fixB.getUserData()).takeDamage(10); // TODO: Cambiar el daño al daño del personaje o lo que
-                                                                 // sea
+                Bullet bullet;
+                Enemy enemy; // Suponiendo que tenemos una referencia al jugador
 
+                if (fixA.getFilterData().categoryBits == IslandsSurvivors.BULLET_BIT) {
+                    bullet = (Bullet) fixA.getUserData();
+                    enemy = (Enemy) fixB.getUserData();
                 } else {
-                    ((Bullet) fixB.getUserData()).markForRemoval();
-                    ((Enemy) fixA.getUserData()).takeDamage(10);
+                    bullet = (Bullet) fixB.getUserData();
+                    enemy = (Enemy) fixA.getUserData();
                 }
+
+                int damage = DamageCalculator.calculateDamage(knight, bullet);
+                enemy.takeDamage(damage);
+                bullet.markForRemoval();
                 break;
 
             default:
