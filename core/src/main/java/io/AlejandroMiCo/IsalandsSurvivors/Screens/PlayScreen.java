@@ -107,6 +107,22 @@ public class PlayScreen implements Screen {
             lastNivel = knight.getLevel();
         }
 
+        ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
+
+        if (goblingList.size() < MAX_ENEMIES) {
+            spawnEnemies(gameTimer);
+        }
+
+        // 🔹 Actualizar enemigos y marcar los que deben eliminarse
+        for (Enemy gobling : goblingList) {
+            gobling.update(dt);
+            if (gobling.deathAnimationFinished) {
+                enemiesToRemove.add(gobling);
+            }
+        }
+        goblingList.removeAll(enemiesToRemove);
+
+
         // 🔸 Actualizar temporizador de disparo automático
         bulletTimer += dt;
         if (bulletTimer >= bulletDelay) {
@@ -140,23 +156,10 @@ public class PlayScreen implements Screen {
         // 🔹 Actualizar temporizador de generación de enemigos
 
         // 🔹 Lista temporal para almacenar enemigos eliminados
-        ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
 
         if (gameTimer >= waveNumber * WAVE_INTERVAL) {
             updateWave();
         }
-        if (goblingList.size() < MAX_ENEMIES) {
-            spawnEnemies(gameTimer);
-        }
-
-        // 🔹 Actualizar enemigos y marcar los que deben eliminarse
-        for (Enemy gobling : goblingList) {
-            gobling.update(dt);
-            if (gobling.deathAnimationFinished) {
-                enemiesToRemove.add(gobling);
-            }
-        }
-        goblingList.removeAll(enemiesToRemove);
 
         // 🔹 Actualizar otros elementos del juego
         knight.update(dt);
@@ -216,6 +219,9 @@ public class PlayScreen implements Screen {
         float minDistance = Float.MAX_VALUE;
 
         for (Enemy gobling : goblingList) {
+            if (gobling.b2body == null) // Evitar acceso a un body nulo
+            continue;
+
             float enemyX = gobling.b2body.getPosition().x;
             float enemyY = gobling.b2body.getPosition().y;
 
@@ -227,7 +233,7 @@ public class PlayScreen implements Screen {
         }
 
         // 🔹 Si encontramos un enemigo más cercano, disparamos hacia él
-        if (closestEnemy != null) {
+        if (closestEnemy != null && closestEnemy.b2body != null) {
             float enemyX = closestEnemy.b2body.getPosition().x;
             float enemyY = closestEnemy.b2body.getPosition().y;
 
@@ -274,7 +280,7 @@ public class PlayScreen implements Screen {
         }
 
         game.batch.end();
-          
+
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
         levelUpScreen.render();
