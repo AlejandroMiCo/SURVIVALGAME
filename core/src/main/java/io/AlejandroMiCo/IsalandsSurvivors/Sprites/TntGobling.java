@@ -8,6 +8,7 @@ public class TntGobling extends Enemy {
         super(screen, x, y, knight, "creatures/tntGobling.png");
         this.knight = knight;
 
+        damage = 10;
         health = 40;
         speed = 60f;
     }

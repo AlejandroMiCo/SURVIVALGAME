@@ -56,7 +56,7 @@ public class PlayScreen implements Screen {
     private float gameTimer = 0;
 
     private int waveNumber = 1;
-    private int enemiesPerWave = 100;
+    private int enemiesPerWave = 10;
     private final float WAVE_INTERVAL = 30; // Cada 30 segundos hay una nueva oleada
     private final int MAX_ENEMIES = 1000; // Máximo total de enemigos activos en pantalla
 
@@ -277,7 +277,6 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(gameCamera.combined);
 
         game.batch.begin();
-        knight.draw(game.batch);
 
         // 🔹 Dibujar todos los enemigos
         for (Enemy gobling : goblingList) {
@@ -289,6 +288,7 @@ public class PlayScreen implements Screen {
                 bullet.draw(game.batch);
             }
         }
+        knight.draw(game.batch);
 
         game.batch.end();
 

@@ -21,7 +21,7 @@ public class Knight extends Sprite {
 
     // Posibles estados del personaje
     public enum State {
-        IDDLE, MOVING, ATTACKING
+        IDDLE, MOVING, DEAD
     }
 
     public State currentState;
@@ -30,6 +30,7 @@ public class Knight extends Sprite {
     // Animaciones
     private Animation<TextureRegion> movingAnimation;
     private Animation<TextureRegion> iddleAnimation;
+    private Animation<TextureRegion> deathAnimation;
 
     private TextureRegion[][] tmp;
     private TextureRegion[] regionsMovimiento;
@@ -67,6 +68,7 @@ public class Knight extends Sprite {
 
         iddleAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 0);
         movingAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 1);
+        deathAnimation = getAnimation(new Texture("img/deadPlayer.png"));
 
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
         this.level = 1;
@@ -74,7 +76,7 @@ public class Knight extends Sprite {
         this.xpToNextLevel = 20; // Se necesita 100 XP para subir al nivel 2
 
         atributos = new HashMap<>();
-        atributos.put("vida", 100f);
+        atributos.put("vida", 5f);
         atributos.put("velocidad", 100f);
         atributos.put("daño", 10f);
         atributos.put("critico", 0f);
@@ -117,12 +119,9 @@ public class Knight extends Sprite {
         TextureRegion region;
 
         switch (currentState) {
-            case MOVING:
-                region = movingAnimation.getKeyFrame(stateTimer, true);
-                break;
-            default:
-                region = iddleAnimation.getKeyFrame(stateTimer, true);
-                break;
+            case DEAD->region = deathAnimation.getKeyFrame(stateTimer, false);
+            case MOVING->region = movingAnimation.getKeyFrame(stateTimer, true);
+            default ->region = iddleAnimation.getKeyFrame(stateTimer, true);
         }
 
         // Gira la animacion en funcion de la direccion del personaje
@@ -141,6 +140,9 @@ public class Knight extends Sprite {
 
     // Devuelve el estado actual del personaje
     public State getState() {
+        if (atributos.get("vida") <= 0) {
+            return State.DEAD;
+        }
         if (b2body.getLinearVelocity().x != 0 || b2body.getLinearVelocity().y != 0) {
             return State.MOVING;
         } else {
@@ -164,7 +166,7 @@ public class Knight extends Sprite {
         fedef.density = 200;
 
         fedef.filter.categoryBits = IslandsSurvivors.PLAYER_BIT;
-        fedef.filter.maskBits = IslandsSurvivors.ENEMY_BIT | IslandsSurvivors.DEFAULT_BIT;
+        fedef.filter.maskBits = IslandsSurvivors.DEFAULT_BIT | IslandsSurvivors.ENEMY_BIT;
 
         fedef.shape = shape;
         b2body.createFixture(fedef);
@@ -205,5 +207,35 @@ public class Knight extends Sprite {
             atributos.put(atributo, atributos.get(atributo) + cantidad);
             System.out.println("Se mejoró " + atributo + " en " + cantidad);
         }
+    }
+
+    public void receiveDamage(float damage) {
+        float currentHealth = atributos.get("vida");
+        currentHealth -= damage;
+
+        if (currentHealth <= 0) {
+            currentHealth = 0;
+            // Aquí puedes agregar lógica de muerte, como una animación o reiniciar el juego
+            System.out.println("El personaje ha muerto.");
+        }
+
+        atributos.put("vida", currentHealth);
+        System.out.println("El personaje recibió " + damage + " de daño. Vida restante: " + currentHealth);
+    }
+
+    public float getHealth() {
+        return atributos.get("vida");
+    }
+
+    public Animation<TextureRegion> getAnimation(Texture imagen) {
+        TextureRegion[][] tmp;
+        TextureRegion[] regionsMovimiento;
+
+        tmp = TextureRegion.split(imagen, imagen.getWidth() / 7, imagen.getHeight());
+        regionsMovimiento = new TextureRegion[7];
+        for (int i = 0; i < 7; i++) {
+            regionsMovimiento[i] = tmp[0][i];
+        }
+        return new Animation<>(0.125f, regionsMovimiento);
     }
 }

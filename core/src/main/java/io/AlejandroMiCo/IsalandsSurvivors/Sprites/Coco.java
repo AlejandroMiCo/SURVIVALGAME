@@ -9,6 +9,7 @@ public class Coco extends Enemy {
         super(screen, x, y, knight, "creatures/coco.png");
         this.knight = knight;
 
+        damage = 5;
         health = 10;
         speed = 100f;
     }

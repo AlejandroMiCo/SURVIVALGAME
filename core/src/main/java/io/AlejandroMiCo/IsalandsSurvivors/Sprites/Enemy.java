@@ -134,4 +134,8 @@ public abstract class Enemy extends Sprite {
         }
     }
 
+    public int getDamage() {
+        return damage;
+    }
+
 }

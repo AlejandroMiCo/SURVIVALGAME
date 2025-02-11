@@ -10,6 +10,7 @@ public class EnemyWarrior extends Enemy {
         super(screen, x, y, knight, "creatures/redWarrior.png");
         this.knight = knight;
 
+        damage = 40;
         health = 100;
         speed = 120;
     }

@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Coco;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 
@@ -18,7 +19,6 @@ public class WorldContactListener implements ContactListener {
     public WorldContactListener(Knight knight) {
         this.knight = knight;
     }
-
 
     @Override
     public void beginContact(Contact contact) {
@@ -49,6 +49,20 @@ public class WorldContactListener implements ContactListener {
                 bullet.markForRemoval();
                 break;
 
+            case IslandsSurvivors.PLAYER_BIT | IslandsSurvivors.ENEMY_BIT:
+                System.out.println("¡Colisión con el jugador!");
+
+                Enemy enemySource;
+
+                if (fixA.getFilterData().categoryBits == IslandsSurvivors.ENEMY_BIT) {
+                    enemySource = (Enemy) fixA.getUserData();
+                } else {
+                    enemySource = (Enemy) fixB.getUserData();
+                }
+
+                if (enemySource != null) {
+                    knight.receiveDamage(enemySource.getDamage());
+                }
             default:
                 break;
         }
