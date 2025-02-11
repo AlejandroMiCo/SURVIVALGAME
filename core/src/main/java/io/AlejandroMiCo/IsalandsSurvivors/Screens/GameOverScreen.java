@@ -2,15 +2,19 @@ package io.AlejandroMiCo.IsalandsSurvivors.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 
 public class GameOverScreen implements Screen {
@@ -31,9 +35,14 @@ public class GameOverScreen implements Screen {
         table.center();
         table.setFillParent(true);
 
+        TextButtonStyle btnStyle = new TextButtonStyle();
+        btnStyle.up = new TextureRegionDrawable(new Texture((Gdx.files.internal("ui/boton_azul.png"))));
+        btnStyle.font = skin.getFont("default-font");
+        btnStyle.fontColor = Color.BLACK;
+
         Label gameOverLabel = new Label("GAME OVER", skin);
-        TextButton retryButton = new TextButton("Reintentar", skin);
-        TextButton mainMenuButton = new TextButton("Menú Principal", skin);
+        TextButton retryButton = new TextButton("Reintentar", btnStyle);
+        TextButton mainMenuButton = new TextButton("Menú Principal", btnStyle);
 
         retryButton.addListener(new ClickListener() {
             @Override
@@ -46,7 +55,7 @@ public class GameOverScreen implements Screen {
         mainMenuButton.addListener(new ClickListener() {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
-                //game.setScreen(new MainMenuScreen(game));
+                // game.setScreen(new MainMenuScreen(game));
                 dispose();
             }
         });
@@ -64,7 +73,9 @@ public class GameOverScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         stage.draw();
 
         deathTimer += delta;
