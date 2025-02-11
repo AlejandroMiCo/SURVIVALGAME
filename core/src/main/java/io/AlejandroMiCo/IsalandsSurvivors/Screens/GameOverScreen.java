@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -29,18 +30,16 @@ public class GameOverScreen implements Screen {
         stage = new Stage(new FitViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, camera));
         Gdx.input.setInputProcessor(stage);
 
-        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-
         Table table = new Table();
         table.center();
         table.setFillParent(true);
 
         TextButtonStyle btnStyle = new TextButtonStyle();
         btnStyle.up = new TextureRegionDrawable(new Texture((Gdx.files.internal("ui/boton_azul.png"))));
-        btnStyle.font = skin.getFont("default-font");
+        btnStyle.font = new BitmapFont();
         btnStyle.fontColor = Color.BLACK;
 
-        Label gameOverLabel = new Label("GAME OVER", skin);
+        Label gameOverLabel = new Label("GAME OVER", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         TextButton retryButton = new TextButton("Reintentar", btnStyle);
         TextButton mainMenuButton = new TextButton("Menu Principal", btnStyle);
 

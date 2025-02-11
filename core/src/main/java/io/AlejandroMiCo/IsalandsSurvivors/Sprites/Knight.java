@@ -69,7 +69,7 @@ public class Knight extends Sprite {
 
         iddleAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 0);
         movingAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 1);
-        deathAnimation = getAnimation(new Texture("img/deadPlayer.png"));
+        deathAnimation = getAnimation(new Texture("img/DeadPlayer.png"));
 
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
         this.level = 1;
