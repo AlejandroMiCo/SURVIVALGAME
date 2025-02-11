@@ -63,8 +63,6 @@ public class PlayScreen implements Screen {
     private LevelUpScreen levelUpScreen;
     private int lastNivel = 1;
 
-    private float deathTimer = 0;
-
     private boolean isGameOver = false;
 
     public PlayScreen(IslandsSurvivors game) {
@@ -104,7 +102,6 @@ public class PlayScreen implements Screen {
         if (knight.getHealth() <= 0) {
             isGameOver = true;
             world.setGravity(new Vector2(0, 0));
-            deathTimer += dt;
 
             if (knight.getFrame(0).isFlipX()) {
                 knight.setFlip(false, false); // Evitar que se invierta la imagen de muerte

@@ -42,7 +42,7 @@ public class GameOverScreen implements Screen {
 
         Label gameOverLabel = new Label("GAME OVER", skin);
         TextButton retryButton = new TextButton("Reintentar", btnStyle);
-        TextButton mainMenuButton = new TextButton("Menú Principal", btnStyle);
+        TextButton mainMenuButton = new TextButton("Menu Principal", btnStyle);
 
         retryButton.addListener(new ClickListener() {
             @Override
