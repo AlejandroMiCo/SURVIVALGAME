@@ -28,9 +28,9 @@ public class Knight extends Sprite {
     public State previousState;
 
     // Animaciones
-    private Animation<TextureRegion> movingAnimation;
-    private Animation<TextureRegion> iddleAnimation;
-    private Animation<TextureRegion> deathAnimation;
+    public Animation<TextureRegion> movingAnimation;
+    public Animation<TextureRegion> iddleAnimation;
+    public Animation<TextureRegion> deathAnimation;
 
     private TextureRegion[][] tmp;
     private TextureRegion[] regionsMovimiento;
@@ -39,7 +39,7 @@ public class Knight extends Sprite {
     public World world;
     public Body b2body;
 
-    private float stateTimer;
+    public float stateTimer;
     private boolean movingRight;
 
     // Joystick para mover el personaje
@@ -77,7 +77,7 @@ public class Knight extends Sprite {
         this.xpToNextLevel = 160; // Se necesita 100 XP para subir al nivel 2
 
         atributos = new HashMap<>();
-        atributos.put("vida", 200f);
+        atributos.put("vida", 5f);
         atributos.put("velocidad", 100f);
         atributos.put("daño", 10f);
         atributos.put("critico", 0f);
@@ -221,13 +221,17 @@ public class Knight extends Sprite {
         float currentHealth = atributos.get("vida");
         currentHealth -= damage;
 
+        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaa");
+
+        atributos.put("vida", currentHealth);
         if (currentHealth <= 0) {
             currentHealth = 0;
+            b2body.setLinearVelocity(0, 0);
+            stateTimer = 0;
             // Aquí puedes agregar lógica de muerte, como una animación o reiniciar el juego
             System.out.println("El personaje ha muerto.");
         }
 
-        atributos.put("vida", currentHealth);
         System.out.println("El personaje recibió " + damage + " de daño. Vida restante: " + currentHealth);
         flashDamage();
     }

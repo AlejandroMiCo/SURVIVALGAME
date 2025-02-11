@@ -63,6 +63,10 @@ public class PlayScreen implements Screen {
     private LevelUpScreen levelUpScreen;
     private int lastNivel = 1;
 
+    private float deathTimer = 0;
+
+    private boolean isGameOver = false;
+
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
         gameCamera = new OrthographicCamera();
@@ -95,6 +99,26 @@ public class PlayScreen implements Screen {
     }
 
     public void update(float dt) {
+        knight.update(dt);
+
+        if (knight.getHealth() <= 0) {
+            isGameOver = true;
+            world.setGravity(new Vector2(0, 0));
+            deathTimer += dt;
+
+            if (knight.getFrame(0).isFlipX()) {
+                knight.setFlip(false, false); // Evitar que se invierta la imagen de muerte
+            }
+
+            if (knight.deathAnimation.isAnimationFinished(knight.stateTimer)) {
+                game.setScreen(new GameOverScreen(game));
+                return;
+            }
+        }
+
+        if (isGameOver)
+            return;
+
         gameTimer += dt;
 
         if (levelUpScreen.isVisible()) {
@@ -166,7 +190,6 @@ public class PlayScreen implements Screen {
         }
 
         // 🔹 Actualizar otros elementos del juego
-        knight.update(dt);
         hud.update(dt);
 
         // 🔹 Mantener la cámara centrada en el personaje
