@@ -54,6 +54,7 @@ public class Knight extends Sprite {
     private HashMap<String, Float> atributos;
 
     public boolean hasLeveledUp = false;
+    public float damageTimer;
 
     public Knight(PlayScreen screen, VirtualJoystick joy) {
         super(new Texture("creatures/Warrior_Blue.png"), 196, 196);
@@ -73,10 +74,10 @@ public class Knight extends Sprite {
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
         this.level = 1;
         this.xp = 0;
-        this.xpToNextLevel = 20; // Se necesita 100 XP para subir al nivel 2
+        this.xpToNextLevel = 160; // Se necesita 100 XP para subir al nivel 2
 
         atributos = new HashMap<>();
-        atributos.put("vida", 5f);
+        atributos.put("vida", 200f);
         atributos.put("velocidad", 100f);
         atributos.put("daño", 10f);
         atributos.put("critico", 0f);
@@ -110,6 +111,13 @@ public class Knight extends Sprite {
 
         Vector2 direction = joystick.getDirection();
         b2body.setLinearVelocity(direction.scl(atributos.get("velocidad") * dt));
+
+        if (damageTimer > 0) {
+            damageTimer -= dt;
+            if (damageTimer <= 0) {
+                setColor(1, 1, 1, 1); // Volver al color normal
+            }
+        }
     }
 
     // Devuelve la animacion en funcion del estado actual del personaje
@@ -119,9 +127,9 @@ public class Knight extends Sprite {
         TextureRegion region;
 
         switch (currentState) {
-            case DEAD->region = deathAnimation.getKeyFrame(stateTimer, false);
-            case MOVING->region = movingAnimation.getKeyFrame(stateTimer, true);
-            default ->region = iddleAnimation.getKeyFrame(stateTimer, true);
+            case DEAD -> region = deathAnimation.getKeyFrame(stateTimer, false);
+            case MOVING -> region = movingAnimation.getKeyFrame(stateTimer, true);
+            default -> region = iddleAnimation.getKeyFrame(stateTimer, true);
         }
 
         // Gira la animacion en funcion de la direccion del personaje
@@ -221,6 +229,7 @@ public class Knight extends Sprite {
 
         atributos.put("vida", currentHealth);
         System.out.println("El personaje recibió " + damage + " de daño. Vida restante: " + currentHealth);
+        flashDamage();
     }
 
     public float getHealth() {
@@ -238,4 +247,10 @@ public class Knight extends Sprite {
         }
         return new Animation<>(0.125f, regionsMovimiento);
     }
+
+    private void flashDamage() {
+        setColor(1, 0, 0, 0.8f);
+        damageTimer = 0.1f;
+    }
+
 }

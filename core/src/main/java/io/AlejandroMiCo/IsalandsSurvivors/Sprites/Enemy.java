@@ -38,6 +38,8 @@ public abstract class Enemy extends Sprite {
     private float stateTime;
     public boolean shouldFaceRight;
 
+    public float damageTimer;
+
     public Enemy(PlayScreen screen, float x, float y, Knight knight, String walkFile) {
         this.health = INITIAL_HEALTH;
         this.damage = INITIAL_DAMAGE;
@@ -82,7 +84,17 @@ public abstract class Enemy extends Sprite {
         b2body.createFixture(fedef).setUserData(this);
     }
 
-    public abstract void takeDamage(int dmg);
+    public void takeDamage(int dmg) {
+        health -= dmg;
+        System.out.println("¡Gobling recibió " + dmg + " de daño! Vida restante: " + health);
+
+        // Si la vida llega a 0, destruir el enemigo
+        if (health <= 0) {
+            setToDestroy = true;
+            knight.gainXP(20); // 🔥 Da 20 XP al jugador al morir
+        }
+        flashDamage();
+    };
 
     public Animation<TextureRegion> getAnimation(Texture imagen) {
         TextureRegion[][] tmp;
@@ -130,7 +142,13 @@ public abstract class Enemy extends Sprite {
             if (!shouldFaceRight) {
                 flip(true, false);
             }
+        }
 
+        if (damageTimer > 0) {
+            damageTimer -= dt;
+            if (damageTimer <= 0) {
+                setColor(1, 1, 1, 1); // Volver al color normal
+            }
         }
     }
 
@@ -138,4 +156,8 @@ public abstract class Enemy extends Sprite {
         return damage;
     }
 
+    private void flashDamage() {
+        setColor(1, 0, 0, 0.8f);
+        damageTimer = 0.1f;
+    }
 }

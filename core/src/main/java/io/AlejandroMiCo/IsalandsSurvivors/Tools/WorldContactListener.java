@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Coco;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 
