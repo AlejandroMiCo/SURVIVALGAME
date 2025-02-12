@@ -316,12 +316,6 @@ public class PlayScreen implements Screen {
         hud.stage.draw();
         levelUpScreen.render();
         b2dr.render(world, gameCamera.combined);
-
-        game.batch.begin();
-        if (joystick.isActive()) {
-            joystick.render(game.batch);
-        }
-        game.batch.end();
     }
 
     @Override
