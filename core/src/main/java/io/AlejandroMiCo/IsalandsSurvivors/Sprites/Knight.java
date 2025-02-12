@@ -48,8 +48,8 @@ public class Knight extends Sprite {
     // Estadisticas del personaje
     public float timebetweenattacks;
     private int level;
-    private int xp;
-    private int xpToNextLevel;
+    private float xp;
+    private float xpToNextLevel;
 
     private HashMap<String, Float> atributos;
 
@@ -190,11 +190,11 @@ public class Knight extends Sprite {
         return new Animation<>(0.125f, regionsMovimiento);
     }
 
-    public int getExperience() {
+    public float getExperience() {
         return xp;
     }
 
-    public int getNextLevelExperience() {
+    public float getNextLevelExperience() {
         return xpToNextLevel;
     }
 
