@@ -21,17 +21,12 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Coco;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.EnemyWarrior;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TntGobling;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TorchGobling;
 
 public class LevelUpScreen {
     private Stage stage;
     private boolean isVisible = false;
     private Knight knight;
-    private Bullet bullet;
     private Texture pergaminoTexture;
     private Texture btnAzulTexture, btnAmarilloTexture, btnRojoTexture;
 
