@@ -1,6 +1,9 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Screens;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
@@ -119,18 +122,15 @@ public class LevelUpScreen {
         btnAmarillo.setSize(300 * escala, 75 * escala);
         btnRojo.setSize(300 * escala, 75 * escala);
 
-        // Posicionar botones dentro del pergamino
-        float centerX = Gdx.graphics.getWidth() / 2f - btnAzul.getWidth() / 2f;
-        float centerY = Gdx.graphics.getHeight() / 2f;
+        List<String> mejorasSeleccionadas = new ArrayList<>();
+        Collections.addAll(mejorasSeleccionadas, posiblesMejoras);
+        Collections.shuffle(mejorasSeleccionadas);
 
-        btnAzul.setPosition(centerX, centerY + (25 * escala));
-        btnAmarillo.setPosition(centerX, centerY - (50 * escala));
-        btnRojo.setPosition(centerX, centerY - (125 * escala));
+        for (int i = 0; i < buttons.length; i++) {
 
-        for (TextButton button : buttons) {
-            int index = random.nextInt(posiblesMejoras.length);
-            String mejora = posiblesMejoras[index];
+            String mejora = mejorasSeleccionadas.get(i);
             float cantidad = obtenerValorMejora(mejora);
+            TextButton button = buttons[i];
 
             button.setText("+" + cantidad + " " + mejora);
             button.padBottom(15 * escala);
@@ -143,10 +143,15 @@ public class LevelUpScreen {
             });
 
             // Agregar botones a la escena
-            stage.addActor(btnAzul);
-            stage.addActor(btnAmarillo);
-            stage.addActor(btnRojo);
+            stage.addActor(button);
         }
+        // Posicionar botones dentro del pergamino
+        float centerX = Gdx.graphics.getWidth() / 2f - btnAzul.getWidth() / 2f;
+        float centerY = Gdx.graphics.getHeight() / 2f;
+
+        btnAzul.setPosition(centerX, centerY + (25 * escala));
+        btnAmarillo.setPosition(centerX, centerY - (50 * escala));
+        btnRojo.setPosition(centerX, centerY - (125 * escala));
     }
 
     private float obtenerValorMejora(String mejora) {
