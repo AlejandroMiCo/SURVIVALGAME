@@ -70,7 +70,6 @@ public class PlayScreen implements Screen {
         gameCamera = new OrthographicCamera();
         gamePort = new FitViewport(IslandsSurvivors.V_WIDTH / IslandsSurvivors.PPM,
                 IslandsSurvivors.V_HEIGHT / IslandsSurvivors.PPM, gameCamera);
-        hud = new Hud(game.batch);
 
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("maps/ProvisionalMap.tmx");
@@ -84,6 +83,7 @@ public class PlayScreen implements Screen {
         joystick = new VirtualJoystick(50, 20);
 
         knight = new Knight(this, joystick);
+        hud = new Hud(game.batch, knight);
 
         world.setContactListener(new WorldContactListener(knight));
 
@@ -313,7 +313,7 @@ public class PlayScreen implements Screen {
         game.batch.end();
 
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-        hud.stage.draw();
+        hud.render(game.batch);
         levelUpScreen.render();
         b2dr.render(world, gameCamera.combined);
     }
