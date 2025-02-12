@@ -9,6 +9,6 @@ public class Coco extends Enemy {
 
         damage = INITIAL_DAMAGE + 5;
         health = (int) (INITIAL_HEALTH * 0.7f);
-        speed = INITIAL_SPEED + 100f;
+        speed = INITIAL_SPEED + 10f;
     }
 }

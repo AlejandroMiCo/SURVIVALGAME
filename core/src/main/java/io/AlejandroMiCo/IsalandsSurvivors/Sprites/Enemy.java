@@ -25,7 +25,7 @@ public abstract class Enemy extends Sprite {
 
     public static int INITIAL_HEALTH = 20;
     public static int INITIAL_DAMAGE = 5;
-    public static float INITIAL_SPEED = 75;
+    public static float INITIAL_SPEED = 45;
 
     protected int health;
     protected int damage;
