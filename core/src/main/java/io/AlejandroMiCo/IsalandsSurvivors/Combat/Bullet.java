@@ -61,10 +61,6 @@ public class Bullet extends Sprite {
         // sprite.setRotation((float) Math.toDegrees(angle));
     }
 
-    // public Rectangle getHitbox() {
-    // return hitbox;
-    // }
-
     public void update(float dt) {
         // Resta el tiempo de vida
         time -= dt;
@@ -151,6 +147,13 @@ public class Bullet extends Sprite {
             atributos.put(atributo, atributos.get(atributo) + cantidad);
             System.out.println("Se mejoró " + atributo + " en " + cantidad);
         }
+    }
+
+    public static void resetBullet() {
+        atributos.put("daño_bala", 10f);
+        atributos.put("velocidad_bala", 1f);
+        atributos.put("cooldown_bala", 2f);
+        atributos.put("critico_bala", 0f);
     }
 
 }

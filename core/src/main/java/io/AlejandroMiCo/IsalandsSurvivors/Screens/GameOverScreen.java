@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
+import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
 
 public class GameOverScreen implements Screen {
     private IslandsSurvivors game;
@@ -46,6 +47,7 @@ public class GameOverScreen implements Screen {
         retryButton.addListener(new ClickListener() {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
+                Bullet.resetBullet();
                 game.setScreen(new PlayScreen(game));
                 dispose();
             }
