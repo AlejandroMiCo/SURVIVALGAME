@@ -7,8 +7,8 @@ public class EnemyWarrior extends Enemy {
         super(screen, x, y, knight, "creatures/redWarrior.png");
         this.knight = knight;
 
-        damage = 40;
-        health = 100;
-        speed = 120;
+        damage = INITIAL_DAMAGE + 40;
+        health = INITIAL_HEALTH + 100;
+        speed = INITIAL_SPEED *1.2F;
     }
 }

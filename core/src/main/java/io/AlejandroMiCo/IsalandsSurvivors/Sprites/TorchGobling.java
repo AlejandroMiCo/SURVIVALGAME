@@ -7,7 +7,7 @@ public class TorchGobling extends Enemy {
         super(screen, x, y, knight, "creatures/torchGobling.png");
         this.knight = knight;
 
-        damage = 10;
-        health = 20;
+        damage = INITIAL_DAMAGE + 10;
+        health = INITIAL_HEALTH + 20;
     }
 }
