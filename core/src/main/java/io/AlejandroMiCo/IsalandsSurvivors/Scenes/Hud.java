@@ -21,6 +21,7 @@ public class Hud implements Disposable {
     private Viewport viewport;
 
     private Integer worldTimer;
+
     private float timeCount;
     private Label countLabel;
 
@@ -31,6 +32,9 @@ public class Hud implements Disposable {
     private Image heartImage;
     private Image expImage;
     private Knight knight;
+
+    private Label hpLabel;
+    private Label expLabel;
 
     private Table table;
 
@@ -57,16 +61,23 @@ public class Hud implements Disposable {
 
         countLabel = new Label(String.format("%02d:%02d", worldTimer / 60, worldTimer % 60),
                 new Label.LabelStyle(new BitmapFont(), com.badlogic.gdx.graphics.Color.ROYAL));
-        // timeLabel = new Label("TIME", new Label.LabelStyle(new BitmapFont(),
-        // com.badlogic.gdx.graphics.Color.WHITE));
+        hpLabel = new Label(String.format("%3.0f/%3.0f", knight.getCurrentHealth(), knight.getMaxHealth()),
+                new Label.LabelStyle(new BitmapFont(), com.badlogic.gdx.graphics.Color.WHITE));
+        expLabel = new Label(
+                String.format("%3.0f/%3.0f", knight.getCurrentExperience(), knight.getNextLevelExperience()),
+                new Label.LabelStyle(new BitmapFont(), com.badlogic.gdx.graphics.Color.WHITE));
+
+        hpLabel.setAlignment(1);
+        expLabel.setAlignment(1);
 
         // Crear Stack para la barra de vida
         Stack healthStack = new Stack();
         Table barsTable = new Table();
-      //  Table healthTable = new Table();
+        // Table healthTable = new Table();
         barsTable.add(heartImage).size(30).padRight(0);
         healthStack.add(healthBarBgImage);
         healthStack.add(healthBarFillImage);
+        healthStack.add(hpLabel);
         barsTable.add(healthStack).size(200, 20);
         barsTable.row();
 
@@ -77,7 +88,8 @@ public class Hud implements Disposable {
         barsTable.add(expImage).size(30).padLeft(0);
         experienceStack.add(experienceBarBgImage);
         experienceStack.add(experienceBarFillImage);
-        barsTable.add(experienceStack).size(200, 20);
+        experienceStack.add(expLabel);
+        barsTable.add(experienceStack).size(200, 20).right();
 
         barsTable.add(expTable).expandX().padBottom(5).left();
 
@@ -98,6 +110,9 @@ public class Hud implements Disposable {
             timeCount = 0;
         }
 
+        expLabel.setText(String.format("%3.0f/%3.0f", knight.getCurrentExperience(), knight.getNextLevelExperience()));
+        hpLabel.setText(String.format("%3.0f/%3.0f", knight.getCurrentHealth(), knight.getMaxHealth()));
+
         float healthPercentage = Math.max(knight.getCurrentHealth() / knight.getMaxHealth(), 0);
         float experiencePercentage = Math.max(knight.getCurrentExperience() / knight.getNextLevelExperience(), 0);
 
@@ -113,5 +128,13 @@ public class Hud implements Disposable {
     @Override
     public void dispose() {
         stage.dispose();
+    }
+
+    public Integer getWorldTimer() {
+        return worldTimer;
+    }
+
+    public void setWorldTimer(Integer worldTimer) {
+        this.worldTimer = worldTimer;
     }
 }
