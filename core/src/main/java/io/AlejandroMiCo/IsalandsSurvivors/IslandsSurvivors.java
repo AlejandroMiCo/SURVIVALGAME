@@ -17,6 +17,7 @@ public class IslandsSurvivors extends Game {
     public static final short PLAYER_BIT = 2;
     public static final short ENEMY_BIT = 4;
     public static final short BULLET_BIT = 8;
+    public static final short ITEM_BIT = 16;
 
     public SpriteBatch batch;
 

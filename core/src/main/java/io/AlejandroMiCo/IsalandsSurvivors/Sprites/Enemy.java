@@ -1,5 +1,7 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Sprites;
 
+import java.util.Random;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -32,6 +34,7 @@ public abstract class Enemy extends Sprite {
     protected float speed;
 
     public boolean deathAnimationFinished;
+    public Random rdn;
 
     private Animation<TextureRegion> walkAnimation;
     private Animation<TextureRegion> deathAnimation;
@@ -92,6 +95,7 @@ public abstract class Enemy extends Sprite {
         if (health <= 0) {
             setToDestroy = true;
             knight.gainXP(20); // 🔥 Da 20 XP al jugador al morir
+            screen.addCoin(new Vector2(b2body.getPosition().x, b2body.getPosition().y));
         }
         flashDamage();
     };

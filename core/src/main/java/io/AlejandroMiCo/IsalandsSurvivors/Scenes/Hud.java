@@ -35,6 +35,7 @@ public class Hud implements Disposable {
 
     private Label hpLabel;
     private Label expLabel;
+    private Label coins;
 
     private Table table;
 
@@ -65,6 +66,8 @@ public class Hud implements Disposable {
                 new Label.LabelStyle(new BitmapFont(), com.badlogic.gdx.graphics.Color.WHITE));
         expLabel = new Label(
                 String.format("%3.0f/%3.0f", knight.getCurrentExperience(), knight.getNextLevelExperience()),
+                new Label.LabelStyle(new BitmapFont(), com.badlogic.gdx.graphics.Color.WHITE));
+        coins = new Label(String.format("Coins: %4d", knight.getCoins()),
                 new Label.LabelStyle(new BitmapFont(), com.badlogic.gdx.graphics.Color.WHITE));
 
         hpLabel.setAlignment(1);
@@ -97,7 +100,7 @@ public class Hud implements Disposable {
         table.row();
         table.add(barsTable).padTop(15).padLeft(5);
         table.add(countLabel).expandX().padBottom(10).padLeft(10);
-        table.add().expandX();
+        table.add(coins).pad(5);
 
         stage.addActor(table);
     }
@@ -109,6 +112,8 @@ public class Hud implements Disposable {
             countLabel.setText(String.format("%02d:%02d", worldTimer / 60, worldTimer % 60));
             timeCount = 0;
         }
+
+        coins.setText(String.format("Coins: %4d",knight.getCoins()));
 
         expLabel.setText(String.format("%3.0f/%3.0f", knight.getCurrentExperience(), knight.getNextLevelExperience()));
         hpLabel.setText(String.format("%3.0f/%3.0f", knight.getCurrentHealth(), knight.getMaxHealth()));

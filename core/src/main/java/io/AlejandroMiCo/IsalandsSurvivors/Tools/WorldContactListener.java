@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Coin;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 
@@ -62,6 +63,19 @@ public class WorldContactListener implements ContactListener {
                 if (enemySource != null) {
                     knight.receiveDamage(enemySource.getDamage());
                 }
+                break;
+            case IslandsSurvivors.ITEM_BIT | IslandsSurvivors.PLAYER_BIT:
+                Coin coin;
+                if (fixA.getFilterData().categoryBits == IslandsSurvivors.ITEM_BIT) {
+                    coin = (Coin) fixA.getUserData();
+                } else {
+                    coin = (Coin) fixB.getUserData();
+                }
+
+                coin.collect();
+                knight.addCoin();
+                System.out.println("Ahora soy mas rico muahahahha");
+                break;
             default:
                 break;
         }

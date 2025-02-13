@@ -58,6 +58,7 @@ public class Knight extends Sprite {
 
     private float currentHealth;
     private float timeB4Heal;
+    private int coinCount;
 
     public Knight(PlayScreen screen, VirtualJoystick joy) {
         super(new Texture("creatures/Warrior_Blue.png"), 196, 196);
@@ -69,32 +70,33 @@ public class Knight extends Sprite {
         previousState = State.IDDLE;
         stateTimer = 0;
         movingRight = true;
-
+        coinCount = 0;
         timeB4Heal = 1.0f;
-        
+
         iddleAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 0);
         movingAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 1);
         deathAnimation = getAnimation(new Texture("img/deadPlayer.png"));
-        
+
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
         this.level = 1;
         this.xp = 0;
         this.xpToNextLevel = 100; // Se necesita 100 XP para subir al nivel 2
-        
+
         atributos = new HashMap<>();
         atributos.put("player_max_health", 100f);
         atributos.put("player_speed", 100f);
         atributos.put("player_damage", 10f);
         atributos.put("player_critical_chance", 0f);
-        atributos.put("player_health_regenarition", 1f);
-        
+        atributos.put("player_health_regenarition", 0f);
+        atributos.put("player_absorption_radius", 0.75f);
+
         timebetweenattacks = 0;
-        
+
         currentHealth = atributos.get("player_max_health");
         this.xp = 0;
         this.level = 1;
     }
-    
+
     public void gainXP(int amount) {
         xp += amount;
         if (xp >= xpToNextLevel) {
@@ -127,7 +129,7 @@ public class Knight extends Sprite {
         }
 
         timeB4Heal -= dt;
-        if (timeB4Heal <=0 && currentState != State.DEAD && currentHealth < getMaxHealth()) {
+        if (timeB4Heal <= 0 && currentState != State.DEAD && currentHealth < getMaxHealth()) {
             currentHealth += atributos.get("player_health_regenarition");
             timeB4Heal = 1.0f;
         }
@@ -161,7 +163,7 @@ public class Knight extends Sprite {
 
     // Devuelve el estado actual del personaje
     public State getState() {
-        if (currentHealth<= 0) {
+        if (currentHealth <= 0) {
             return State.DEAD;
         }
         if (b2body.getLinearVelocity().x != 0 || b2body.getLinearVelocity().y != 0) {
@@ -187,7 +189,7 @@ public class Knight extends Sprite {
         fedef.density = 200;
 
         fedef.filter.categoryBits = IslandsSurvivors.PLAYER_BIT;
-        fedef.filter.maskBits = IslandsSurvivors.DEFAULT_BIT | IslandsSurvivors.ENEMY_BIT;
+        fedef.filter.maskBits = IslandsSurvivors.DEFAULT_BIT | IslandsSurvivors.ENEMY_BIT | IslandsSurvivors.ITEM_BIT;
 
         fedef.shape = shape;
         b2body.createFixture(fedef);
@@ -217,6 +219,10 @@ public class Knight extends Sprite {
 
     public int getAttackDamage() {
         return atributos.get("player_damage").intValue();
+    }
+
+    public float getAbsorptionRadius(){
+        return atributos.get("player_absorption_radius");
     }
 
     public float getCritChance() {
@@ -249,7 +255,7 @@ public class Knight extends Sprite {
         return currentHealth;
     }
 
-    public float getMaxHealth(){
+    public float getMaxHealth() {
         return atributos.get("player_max_health");
     }
 
@@ -268,6 +274,14 @@ public class Knight extends Sprite {
     private void flashDamage() {
         setColor(1, 0, 0, 0.8f);
         damageTimer = 0.1f;
+    }
+
+    public void addCoin() {
+        coinCount++;
+    }
+
+    public int getCoins() {
+        return coinCount;
     }
 
 }

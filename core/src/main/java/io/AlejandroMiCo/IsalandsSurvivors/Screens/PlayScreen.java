@@ -20,6 +20,7 @@ import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
 import io.AlejandroMiCo.IsalandsSurvivors.Scenes.Hud;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Coco;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Coin;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.EnemyWarrior;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
@@ -48,6 +49,8 @@ public class PlayScreen implements Screen {
     private Knight knight;
 
     public ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
+    private ArrayList<Vector2> pendingCoins;
+    private ArrayList<Coin> coinList = new ArrayList<>();
 
     private float bulletTimer = 0;
     private float bulletDelay; // disparo cada 2 segundos
@@ -89,11 +92,16 @@ public class PlayScreen implements Screen {
 
         bulletList.add(new Bullet(world, 0, 0, 0));
         levelUpScreen = new LevelUpScreen(knight);
+        pendingCoins = new ArrayList<>();
     }
 
     @Override
     public void show() {
 
+    }
+
+    public void addCoin(Vector2 position) {
+        pendingCoins.add(position);
     }
 
     public void update(float dt) {
@@ -125,6 +133,11 @@ public class PlayScreen implements Screen {
             levelUpScreen.show();
             lastNivel = knight.getLevel();
         }
+
+        for (Vector2 pos : pendingCoins) {
+            coinList.add(new Coin(world, pos.x, pos.y, knight));
+        }
+        pendingCoins.clear();
 
         ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
 
@@ -187,12 +200,23 @@ public class PlayScreen implements Screen {
         // 🔹 Actualizar otros elementos del juego
         hud.update(dt);
 
+        for (Coin coin : coinList) {
+            coin.update(dt);
+        }
+
         // 🔹 Mantener la cámara centrada en el personaje
         gameCamera.position.x = knight.b2body.getPosition().x;
         gameCamera.position.y = knight.b2body.getPosition().y;
         gameCamera.update();
 
         joystick.update();
+        ArrayList<Coin> coinsToRemove = new ArrayList<>();
+        for (Coin coin : coinList) {
+            if (coin.isCollected()) {
+                coinsToRemove.add(coin);
+            }
+        }
+        coinList.removeAll(coinsToRemove);
 
         renderer.setView(gameCamera);
     }
@@ -307,6 +331,10 @@ public class PlayScreen implements Screen {
             }
         }
         knight.draw(game.batch);
+
+        for (Coin coin : coinList) {
+            coin.render(game.batch);
+        }
 
         game.batch.end();
 
