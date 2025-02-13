@@ -2,7 +2,6 @@ package io.AlejandroMiCo.IsalandsSurvivors.Tools;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 public class VirtualJoystick {
@@ -11,17 +10,13 @@ public class VirtualJoystick {
     private Vector2 basePosition;
     private Vector2 knobPosition;
     private float baseRadius;
-    private float knobRadius;
     private boolean touched;
     private int touchPointer;
 
-    public VirtualJoystick(float baseRadius, float knobRadius) {
-        this.baseTexture = new Texture("img/joystick_base.png");
-        this.knobTexture = new Texture("img/joystick_knob.png");
+    public VirtualJoystick(float baseRadius) {
         this.basePosition = new Vector2();
         this.knobPosition = new Vector2();
         this.baseRadius = baseRadius;
-        this.knobRadius = knobRadius;
         this.touched = false;
     }
 
@@ -54,15 +49,6 @@ public class VirtualJoystick {
             }
         } else {
             touched = false;
-        }
-    }
-
-    public void render(SpriteBatch batch) {
-        if (touched) {
-            batch.draw(baseTexture, basePosition.x - baseRadius, basePosition.y - baseRadius, baseRadius * 2,
-                    baseRadius * 2);
-            batch.draw(knobTexture, knobPosition.x - knobRadius, knobPosition.y - knobRadius, knobRadius * 2,
-                    knobRadius * 2);
         }
     }
 

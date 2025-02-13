@@ -56,6 +56,9 @@ public class Knight extends Sprite {
     public boolean hasLeveledUp = false;
     public float damageTimer;
 
+    private float currentHealth;
+    private float timeB4Heal;
+
     public Knight(PlayScreen screen, VirtualJoystick joy) {
         super(new Texture("creatures/Warrior_Blue.png"), 196, 196);
         this.joystick = joy;
@@ -67,27 +70,31 @@ public class Knight extends Sprite {
         stateTimer = 0;
         movingRight = true;
 
+        timeB4Heal = 1.0f;
+        
         iddleAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 0);
         movingAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 1);
         deathAnimation = getAnimation(new Texture("img/deadPlayer.png"));
-
+        
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
         this.level = 1;
         this.xp = 0;
         this.xpToNextLevel = 100; // Se necesita 100 XP para subir al nivel 2
-
+        
         atributos = new HashMap<>();
-        atributos.put("vida", 100f);
-        atributos.put("velocidad", 100f);
-        atributos.put("daño", 10f);
-        atributos.put("critico", 0f);
-
+        atributos.put("player_max_health", 100f);
+        atributos.put("player_speed", 100f);
+        atributos.put("player_damage", 10f);
+        atributos.put("player_critical_chance", 0f);
+        atributos.put("player_health_regenarition", 1f);
+        
         timebetweenattacks = 0;
-
+        
+        currentHealth = atributos.get("player_max_health");
         this.xp = 0;
         this.level = 1;
     }
-
+    
     public void gainXP(int amount) {
         xp += amount;
         if (xp >= xpToNextLevel) {
@@ -110,13 +117,19 @@ public class Knight extends Sprite {
         timebetweenattacks += dt;
 
         Vector2 direction = joystick.getDirection();
-        b2body.setLinearVelocity(direction.scl(atributos.get("velocidad") * dt));
+        b2body.setLinearVelocity(direction.scl(atributos.get("player_speed") * dt));
 
         if (damageTimer > 0) {
             damageTimer -= dt;
             if (damageTimer <= 0) {
                 setColor(1, 1, 1, 1); // Volver al color normal
             }
+        }
+
+        timeB4Heal -= dt;
+        if (timeB4Heal <=0 && currentState != State.DEAD && currentHealth < getMaxHealth()) {
+            currentHealth += atributos.get("player_health_regenarition");
+            timeB4Heal = 1.0f;
         }
     }
 
@@ -148,7 +161,7 @@ public class Knight extends Sprite {
 
     // Devuelve el estado actual del personaje
     public State getState() {
-        if (atributos.get("vida") <= 0) {
+        if (currentHealth<= 0) {
             return State.DEAD;
         }
         if (b2body.getLinearVelocity().x != 0 || b2body.getLinearVelocity().y != 0) {
@@ -190,7 +203,7 @@ public class Knight extends Sprite {
         return new Animation<>(0.125f, regionsMovimiento);
     }
 
-    public float getExperience() {
+    public float getCurrentExperience() {
         return xp;
     }
 
@@ -203,11 +216,11 @@ public class Knight extends Sprite {
     }
 
     public int getAttackDamage() {
-        return atributos.get("daño").intValue();
+        return atributos.get("player_damage").intValue();
     }
 
     public float getCritChance() {
-        return atributos.get("critico").floatValue(); // Probabilidad de crítico del personaje
+        return atributos.get("player_critical_chance").floatValue(); // Probabilidad de crítico del personaje
     }
 
     public void mejorarAtributo(String atributo, float cantidad) {
@@ -218,12 +231,8 @@ public class Knight extends Sprite {
     }
 
     public void receiveDamage(float damage) {
-        float currentHealth = atributos.get("vida");
         currentHealth -= damage;
 
-        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaa");
-
-        atributos.put("vida", currentHealth);
         if (currentHealth <= 0) {
             currentHealth = 0;
             b2body.setLinearVelocity(0, 0);
@@ -236,8 +245,12 @@ public class Knight extends Sprite {
         flashDamage();
     }
 
-    public float getHealth() {
-        return atributos.get("vida");
+    public float getCurrentHealth() {
+        return currentHealth;
+    }
+
+    public float getMaxHealth(){
+        return atributos.get("player_max_health");
     }
 
     public Animation<TextureRegion> getAnimation(Texture imagen) {

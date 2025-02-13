@@ -25,6 +25,7 @@ import io.AlejandroMiCo.IsalandsSurvivors.Sprites.EnemyWarrior;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TntGobling;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TorchGobling;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight.State;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.B2WorldCreator;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.VirtualJoystick;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.WorldContactListener;
@@ -81,7 +82,7 @@ public class PlayScreen implements Screen {
         b2dr = new Box2DDebugRenderer();
 
         new B2WorldCreator(this);
-        joystick = new VirtualJoystick(50, 20);
+        joystick = new VirtualJoystick(50);
 
         knight = new Knight(this, joystick);
         hud = new Hud(game.batch, knight);
@@ -100,7 +101,7 @@ public class PlayScreen implements Screen {
     public void update(float dt) {
         knight.update(dt);
 
-        if (knight.getHealth() <= 0) {
+        if (knight.getState() == State.DEAD) {
             isGameOver = true;
             world.setGravity(new Vector2(0, 0));
 

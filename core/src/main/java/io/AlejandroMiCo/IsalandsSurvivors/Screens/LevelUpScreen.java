@@ -39,7 +39,7 @@ public class LevelUpScreen {
     private HashMap<String, Float> mejorasCaballero = new HashMap<>();
     private HashMap<String, Float> mejorasBala = new HashMap<>();
 
-    private String[] posiblesMejoras = { "vida", "velocidad", "daño", "critico", "daño_bala",
+    private String[] posiblesMejoras = { "player_max_health", "player_speed", "player_damage", "player_critical_chance", "player_health_regenarition", "daño_bala",
             "velocidad_bala", "cooldown_bala", "critico_bala" };
 
     float escala = Gdx.graphics.getWidth() / IslandsSurvivors.V_WIDTH;
@@ -53,10 +53,11 @@ public class LevelUpScreen {
     }
 
     private void cargarMejoras() {
-        mejorasCaballero.put("vida", 20f);
-        mejorasCaballero.put("velocidad", 10f);
-        mejorasCaballero.put("daño", 5f);
-        mejorasCaballero.put("critico", 5f);
+        mejorasCaballero.put("player_max_health", 20f);
+        mejorasCaballero.put("player_speed", 10f);
+        mejorasCaballero.put("player_damage", 5f);
+        mejorasCaballero.put("player_critical_chance", 5f);
+        mejorasCaballero.put("player_health_regenarition", 1f);
 
         mejorasBala.put("daño_bala", 5f);
         mejorasBala.put("velocidad_bala", 1f);

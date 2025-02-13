@@ -30,17 +30,12 @@ public class Hud implements Disposable {
     private Image experienceBarFillImage;
     private Image heartImage;
     private Image expImage;
-
-    private float maxHealth;
-    private float maxExperience;
     private Knight knight;
 
     private Table table;
 
     public Hud(SpriteBatch sb, Knight knight) {
         this.knight = knight;
-        this.maxHealth = knight.getHealth();
-        this.maxExperience = knight.getNextLevelExperience();
 
         worldTimer = 0;
         timeCount = 0;
@@ -103,10 +98,8 @@ public class Hud implements Disposable {
             timeCount = 0;
         }
 
-        maxExperience = knight.getNextLevelExperience();
-
-        float healthPercentage = Math.max(knight.getHealth() / maxHealth, 0);
-        float experiencePercentage = Math.max(knight.getExperience() / maxExperience, 0);
+        float healthPercentage = Math.max(knight.getCurrentHealth() / knight.getMaxHealth(), 0);
+        float experiencePercentage = Math.max(knight.getCurrentExperience() / knight.getNextLevelExperience(), 0);
 
         // Actualizar el tamaño de las barras de relleno
         healthBarFillImage.setSize(200 * healthPercentage, 20);
