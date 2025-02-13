@@ -74,6 +74,7 @@ public class PlayScreen implements Screen {
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("maps/ProvisionalMap.tmx");
         renderer = new OrthogonalTiledMapRenderer(map, 1 / IslandsSurvivors.PPM);
+
         gameCamera.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
 
         world = new World(new Vector2(0, 0), true);
@@ -313,7 +314,7 @@ public class PlayScreen implements Screen {
         game.batch.end();
 
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-        hud.render(game.batch);
+        hud.render();
         levelUpScreen.render();
         b2dr.render(world, gameCamera.combined);
     }
