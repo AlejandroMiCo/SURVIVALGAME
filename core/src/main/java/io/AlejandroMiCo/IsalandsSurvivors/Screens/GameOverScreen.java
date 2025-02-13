@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
 
 public class GameOverScreen implements Screen {
     private IslandsSurvivors game;
@@ -47,6 +48,7 @@ public class GameOverScreen implements Screen {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
                 Bullet.resetBullet();
+                Enemy.resetEnemiesStats();
                 game.setScreen(new PlayScreen(game));
                 dispose();
             }

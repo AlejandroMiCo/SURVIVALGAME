@@ -160,4 +160,10 @@ public abstract class Enemy extends Sprite {
         setColor(1, 0, 0, 0.8f);
         damageTimer = 0.1f;
     }
+
+    public static void resetEnemiesStats() {
+        INITIAL_HEALTH = 20;
+        INITIAL_DAMAGE = 5;
+        INITIAL_SPEED = 45;
+    }
 }
