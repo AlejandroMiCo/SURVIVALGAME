@@ -221,7 +221,7 @@ public class Knight extends Sprite {
         return atributos.get("player_damage").intValue();
     }
 
-    public float getAbsorptionRadius(){
+    public float getAbsorptionRadius() {
         return atributos.get("player_absorption_radius");
     }
 
@@ -282,6 +282,13 @@ public class Knight extends Sprite {
 
     public int getCoins() {
         return coinCount;
+    }
+
+    public void eat() {
+        if (currentHealth < getMaxHealth()) {
+            currentHealth += Math.min(10, getMaxHealth() - currentHealth);
+        }
+        System.out.println("ñam ñam ñam");
     }
 
 }

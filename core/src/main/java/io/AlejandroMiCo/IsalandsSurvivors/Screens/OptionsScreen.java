@@ -39,8 +39,8 @@ public class OptionsScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         Table table = new Table();
-        table.setSize(500, 450);
-        table.setPosition((IslandsSurvivors.V_WIDTH / 2) - (table.getWidth() / 2), -60);
+        table.setSize(500, 350);
+        table.setPosition((IslandsSurvivors.V_WIDTH / 2) - (table.getWidth() / 2), 40);
 
         fondo = new Texture("img/map.png");
 
@@ -140,7 +140,7 @@ public class OptionsScreen implements Screen {
         });
 
         // Construcción de la tabla
-        table.add(titleLabel).padBottom(20).colspan(2).row();
+        table.add(titleLabel).padBottom(10).colspan(2).row();
         table.add(musicLabel).padRight(10);
         table.add(musicSlider).width(200).row();
         table.add(soundLabel).padRight(10);
@@ -149,9 +149,9 @@ public class OptionsScreen implements Screen {
         table.add(vibrationButton).width(100).row();
         table.add(languageLabel).padRight(10);
         table.add(languageButton).width(100).row();
-        table.add(creditsButton).padTop(10).size(150, 50);
-        table.add(helpButton).padTop(10).size(150, 50).row();
-        table.add(backButton).padTop(20).size(200, 60).colspan(2).row();
+        table.add(creditsButton).size(150, 50);
+        table.add(helpButton).size(150, 50).row();
+        table.add(backButton).size(200, 60).colspan(2).row();
 
         stage.addActor(table);
     }

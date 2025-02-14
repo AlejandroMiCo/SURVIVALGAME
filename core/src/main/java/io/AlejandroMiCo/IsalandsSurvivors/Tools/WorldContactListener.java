@@ -9,8 +9,10 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Coin;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.CollectedItem;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Meat;
 
 public class WorldContactListener implements ContactListener {
 
@@ -65,15 +67,17 @@ public class WorldContactListener implements ContactListener {
                 }
                 break;
             case IslandsSurvivors.ITEM_BIT | IslandsSurvivors.PLAYER_BIT:
-                Coin coin;
+                CollectedItem coin;
                 if (fixA.getFilterData().categoryBits == IslandsSurvivors.ITEM_BIT) {
-                    coin = (Coin) fixA.getUserData();
+                    coin = (CollectedItem) fixA.getUserData();
                 } else {
-                    coin = (Coin) fixB.getUserData();
+                    coin = (CollectedItem) fixB.getUserData();
                 }
 
                 coin.collect();
-                knight.addCoin();
+                if (coin instanceof Meat) {
+                    knight.eat();
+                }
                 System.out.println("Ahora soy mas rico muahahahha");
                 break;
             default:
