@@ -70,7 +70,7 @@ public class Coin extends Sprite {
 
         // Movimiento hacia el jugador si está cerca
         if (distance < knight.getAbsorptionRadius()) { // 🔹 Radio de atracción
-            float attractionSpeed = 1f; // 🔹 Ajusta esto según el comportamiento deseado
+            float attractionSpeed = 2f; // 🔹 Ajusta esto según el comportamiento deseado
             body.setLinearVelocity(
                     -attractionSpeed * (dx / distance),
                     -attractionSpeed * (dy / distance));
