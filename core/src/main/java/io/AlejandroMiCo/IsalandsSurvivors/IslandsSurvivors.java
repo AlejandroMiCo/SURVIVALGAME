@@ -3,7 +3,7 @@ package io.AlejandroMiCo.IsalandsSurvivors;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
+import io.AlejandroMiCo.IsalandsSurvivors.Screens.MainMenuScreen;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all
@@ -24,7 +24,7 @@ public class IslandsSurvivors extends Game {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        setScreen(new PlayScreen(this));
+        setScreen(new MainMenuScreen(this));
     }
 
     @Override

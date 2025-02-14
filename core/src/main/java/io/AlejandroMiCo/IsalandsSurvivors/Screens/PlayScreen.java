@@ -242,7 +242,7 @@ public class PlayScreen implements Screen {
             spawnX = MathUtils.clamp((float) (Math.random() * (maxX - minX) + minX), minX, maxX);
             spawnY = MathUtils.clamp((float) (Math.random() * (maxY - minY) + minY), minY, maxY);
 
-            switch ((int) gameTime / 60) {
+            switch ((int) gameTime / 120) {
                 case 0 -> goblingList.add(new Coco(this, spawnX, spawnY, knight)); // 2min
                 case 1 -> goblingList.add(new TorchGobling(this, spawnX, spawnY, knight)); // 4min
                 case 2 -> goblingList.add(new TntGobling(this, spawnX, spawnY, knight)); // 6min

@@ -1,5 +1,6 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Scenes;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -61,14 +62,14 @@ public class Hud implements Disposable {
         expImage = new Image(new Texture("ui/exp.png"));
 
         countLabel = new Label(String.format("%02d:%02d", worldTimer / 60, worldTimer % 60),
-                new Label.LabelStyle(new BitmapFont(), com.badlogic.gdx.graphics.Color.ROYAL));
+                new Label.LabelStyle(new BitmapFont(), Color.ROYAL));
         hpLabel = new Label(String.format("%3.0f/%3.0f", knight.getCurrentHealth(), knight.getMaxHealth()),
-                new Label.LabelStyle(new BitmapFont(), com.badlogic.gdx.graphics.Color.WHITE));
+                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         expLabel = new Label(
                 String.format("%3.0f/%3.0f", knight.getCurrentExperience(), knight.getNextLevelExperience()),
-                new Label.LabelStyle(new BitmapFont(), com.badlogic.gdx.graphics.Color.WHITE));
+                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         coins = new Label(String.format("Coins: %4d", knight.getCoins()),
-                new Label.LabelStyle(new BitmapFont(), com.badlogic.gdx.graphics.Color.WHITE));
+                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 
         hpLabel.setAlignment(1);
         expLabel.setAlignment(1);

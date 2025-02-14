@@ -57,7 +57,7 @@ public class GameOverScreen implements Screen {
         mainMenuButton.addListener(new ClickListener() {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
-                // game.setScreen(new MainMenuScreen(game));
+                game.setScreen(new MainMenuScreen(game));
                 dispose();
             }
         });
