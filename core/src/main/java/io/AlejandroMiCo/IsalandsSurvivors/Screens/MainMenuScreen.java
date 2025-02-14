@@ -57,7 +57,7 @@ public class MainMenuScreen implements Screen {
         exitButton.padBottom(10);
 
         fondo = new Texture("img/map.png");
-        titulo = new Texture("ui/title.png");
+        titulo = new Texture("ui/title2.png");
 
         playButton.addListener(new ClickListener() {
             @Override
@@ -116,7 +116,7 @@ public class MainMenuScreen implements Screen {
         stage.draw();
 
         game.batch.begin();
-        game.batch.draw(titulo, 100, 320, titulo.getWidth(), titulo.getHeight());
+        game.batch.draw(titulo, 145, 312, titulo.getWidth(), titulo.getHeight());
         game.batch.end();
 
     }

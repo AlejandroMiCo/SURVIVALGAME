@@ -5,7 +5,7 @@
   <application
       android:allowBackup="true"
       android:fullBackupContent="true"
-      android:icon="@drawable/red_panda"
+      android:icon="@drawable/icon2"
       android:isGame="true"
       android:appCategory="game"
       android:label="@string/app_name"
