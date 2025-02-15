@@ -64,7 +64,7 @@ public class PlayScreen implements Screen {
 
     private int waveNumber = 1;
     private int enemiesPerWave = 10;
-    private final float WAVE_INTERVAL = 30; // Cada 30 segundos hay una nueva oleada
+    private final float WAVE_INTERVAL = 60; // Cada 30 segundos hay una nueva oleada
     private final int MAX_ENEMIES = 1000; // Máximo total de enemigos activos en pantalla
 
     private LevelUpScreen levelUpScreen;
@@ -251,8 +251,8 @@ public class PlayScreen implements Screen {
 
         // Aumenta la dificultad de los enemigos
         Enemy.INITIAL_HEALTH += 5;
-        Enemy.INITIAL_DAMAGE += 2;
-        Enemy.INITIAL_SPEED += 10f;
+        Enemy.INITIAL_DAMAGE += 1.5f;
+        Enemy.INITIAL_SPEED += 5f;
         // Cada oleada aumenta la cantidad de enemigos
         enemiesPerWave += 3; // 🔥 Aumenta en 2 enemigos por oleada
         System.out.println("⚔️ ¡Nueva Oleada! Enemigos en esta oleada: " + enemiesPerWave);
