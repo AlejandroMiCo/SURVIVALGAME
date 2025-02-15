@@ -75,7 +75,7 @@ public class Knight extends Sprite {
 
         iddleAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 0);
         movingAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 1);
-        deathAnimation = getAnimation(new Texture("img/DeadPlayer.png"));
+        deathAnimation = getAnimation(new Texture("img/deadPlayer.png"));
 
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
         this.level = 1;
@@ -130,7 +130,7 @@ public class Knight extends Sprite {
 
         timeB4Heal -= dt;
         if (timeB4Heal <= 0 && currentState != State.DEAD && currentHealth < getMaxHealth()) {
-            currentHealth += atributos.get("player_health_regenarition");
+            currentHealth += Math.min(atributos.get("player_health_regenarition"), atributos.get("max_health"));
             timeB4Heal = 1.0f;
         }
     }
