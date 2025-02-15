@@ -11,6 +11,7 @@ import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Coin;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.CollectedItem;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Experience;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Meat;
 
@@ -67,16 +68,20 @@ public class WorldContactListener implements ContactListener {
                 }
                 break;
             case IslandsSurvivors.ITEM_BIT | IslandsSurvivors.PLAYER_BIT:
-                CollectedItem coin;
+                CollectedItem item;
                 if (fixA.getFilterData().categoryBits == IslandsSurvivors.ITEM_BIT) {
-                    coin = (CollectedItem) fixA.getUserData();
+                    item = (CollectedItem) fixA.getUserData();
                 } else {
-                    coin = (CollectedItem) fixB.getUserData();
+                    item = (CollectedItem) fixB.getUserData();
                 }
 
-                coin.collect();
-                if (coin instanceof Meat) {
+                item.collect();
+                if (item instanceof Meat) {
                     knight.eat();
+                } else if (item instanceof Coin) {
+                    knight.addCoin();
+                } else if (item instanceof Experience) {
+                    knight.gainXP(20);
                 }
                 System.out.println("Ahora soy mas rico muahahahha");
                 break;

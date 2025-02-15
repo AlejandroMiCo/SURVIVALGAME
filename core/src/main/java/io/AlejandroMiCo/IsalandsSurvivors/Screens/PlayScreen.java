@@ -24,6 +24,7 @@ import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Coin;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.CollectedItem;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.EnemyWarrior;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Experience;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TntGobling;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TorchGobling;
@@ -52,7 +53,9 @@ public class PlayScreen implements Screen {
 
     public ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
     private ArrayList<Vector2> pendingCoins;
-    private ArrayList<CollectedItem> coinList = new ArrayList<>();
+    private ArrayList<Vector2> pendingExperience;
+    private ArrayList<Vector2> pendingMeat;
+    private ArrayList<CollectedItem> itemList = new ArrayList<>();
 
     private float bulletTimer = 0;
     private float bulletDelay; // disparo cada 2 segundos
@@ -95,6 +98,8 @@ public class PlayScreen implements Screen {
         bulletList.add(new Bullet(world, 0, 0, 0));
         levelUpScreen = new LevelUpScreen(knight);
         pendingCoins = new ArrayList<>();
+        pendingExperience = new ArrayList<>();
+        pendingMeat = new ArrayList<>();
     }
 
     @Override
@@ -104,6 +109,14 @@ public class PlayScreen implements Screen {
 
     public void addCoin(Vector2 position) {
         pendingCoins.add(position);
+    }
+
+    public void addExperience(Vector2 position) {
+        pendingExperience.add(position);
+    }
+
+    public void addMeat(Vector2 position) {
+        pendingMeat.add(position);
     }
 
     public void update(float dt) {
@@ -137,10 +150,19 @@ public class PlayScreen implements Screen {
         }
 
         for (Vector2 pos : pendingCoins) {
-            // coinList.add(new Coin(world, pos.x, pos.y, knight));
-            coinList.add(new Meat(world, pos.x, pos.y, knight));
+            itemList.add(new Coin(world, pos.x, pos.y, knight));
         }
         pendingCoins.clear();
+
+        for (Vector2 pos : pendingMeat) {
+            itemList.add(new Meat(world, pos.x, pos.y, knight));
+        }
+        pendingMeat.clear();
+
+        for (Vector2 pos : pendingExperience) {
+            itemList.add(new Experience(world, pos.x, pos.y, knight));
+        }
+        pendingExperience.clear();
 
         ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
 
@@ -203,7 +225,7 @@ public class PlayScreen implements Screen {
         // 🔹 Actualizar otros elementos del juego
         hud.update(dt);
 
-        for (CollectedItem coin : coinList) {
+        for (CollectedItem coin : itemList) {
             coin.update(dt);
         }
 
@@ -214,12 +236,12 @@ public class PlayScreen implements Screen {
 
         joystick.update();
         ArrayList<CollectedItem> coinsToRemove = new ArrayList<>();
-        for (CollectedItem coin : coinList) {
+        for (CollectedItem coin : itemList) {
             if (coin.isCollected()) {
                 coinsToRemove.add(coin);
             }
         }
-        coinList.removeAll(coinsToRemove);
+        itemList.removeAll(coinsToRemove);
 
         renderer.setView(gameCamera);
     }
@@ -335,7 +357,7 @@ public class PlayScreen implements Screen {
         }
         knight.draw(game.batch);
 
-        for (CollectedItem coin : coinList) {
+        for (CollectedItem coin : itemList) {
             coin.render(game.batch);
         }
 
@@ -344,7 +366,7 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.render();
         levelUpScreen.render();
-       // b2dr.render(world, gameCamera.combined);
+        // b2dr.render(world, gameCamera.combined);
     }
 
     @Override

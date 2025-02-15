@@ -94,8 +94,15 @@ public abstract class Enemy extends Sprite {
         // Si la vida llega a 0, destruir el enemigo
         if (health <= 0) {
             setToDestroy = true;
-            knight.gainXP(20); // 🔥 Da 20 XP al jugador al morir
-            screen.addCoin(new Vector2(b2body.getPosition().x, b2body.getPosition().y));
+            screen.addExperience(new Vector2(b2body.getPosition().x, b2body.getPosition().y));
+
+            if (Math.random() > 0.9) {
+                screen.addCoin(new Vector2(b2body.getPosition().x, b2body.getPosition().y));
+            }
+
+            if (Math.random() >= 0.99) {
+                screen.addMeat(new Vector2(b2body.getPosition().x, b2body.getPosition().y));
+            }
         }
         flashDamage();
     };
