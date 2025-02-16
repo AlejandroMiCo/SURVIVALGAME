@@ -147,6 +147,7 @@ public class PlayScreen implements Screen {
         if (knight.getLevel() > lastNivel) {
             levelUpScreen.show();
             lastNivel = knight.getLevel();
+            Gdx.input.vibrate(250);
         }
 
         for (Vector2 pos : pendingCoins) {
