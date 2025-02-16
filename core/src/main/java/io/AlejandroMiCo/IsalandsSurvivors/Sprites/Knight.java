@@ -62,7 +62,7 @@ public class Knight extends Sprite {
     private int enemiesDefeated;
 
     public Knight(PlayScreen screen, VirtualJoystick joy) {
-        super(new Texture("creatures/Warrior_Blue.png"), 196, 196);
+        super(new Texture("creatures/Archer_Blue.png"), 196, 196);
         this.joystick = joy;
         this.world = screen.getWorld();
         defineKnight();
@@ -74,8 +74,8 @@ public class Knight extends Sprite {
         coinCount = 0;
         timeB4Heal = 1.0f;
 
-        iddleAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 0);
-        movingAnimation = getAnimation(new Texture("creatures/Warrior_Blue.png"), 1);
+        iddleAnimation = getAnimation(new Texture("creatures/Archer_Blue.png"), 0);
+        movingAnimation = getAnimation(new Texture("creatures/Archer_Blue.png"), 1);
         deathAnimation = getAnimation(new Texture("img/deadPlayer.png"));
 
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
@@ -199,7 +199,7 @@ public class Knight extends Sprite {
 
     // Se encarga de establecer las animaciones basicas del personaje
     public Animation<TextureRegion> getAnimation(Texture imagen, int fila) {
-        tmp = TextureRegion.split(imagen, imagen.getWidth() / 6, imagen.getHeight() / 8);
+        tmp = TextureRegion.split(imagen, imagen.getWidth() / 8, imagen.getHeight() / 7);
         regionsMovimiento = new TextureRegion[6];
         for (int i = 0; i < 6; i++) {
             regionsMovimiento[i] = tmp[fila][i];

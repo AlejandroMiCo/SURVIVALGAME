@@ -2,6 +2,8 @@ package io.AlejandroMiCo.IsalandsSurvivors.Sprites;
 
 import java.util.Random;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -42,6 +44,8 @@ public abstract class Enemy extends Sprite {
     public boolean shouldFaceRight;
 
     public float damageTimer;
+    private Sound getHit;
+
 
     public Enemy(PlayScreen screen, float x, float y, Knight knight, String walkFile) {
         this.health = INITIAL_HEALTH;
@@ -63,6 +67,7 @@ public abstract class Enemy extends Sprite {
         defineEnemy();
         setBounds(getX(), getY(), 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
         setPosition(x, y);
+        getHit = Gdx.audio.newSound(Gdx.files.internal("sounds/pupa.ogg"));
     }
 
     public void defineEnemy() {
@@ -88,6 +93,7 @@ public abstract class Enemy extends Sprite {
     }
 
     public void takeDamage(int dmg) {
+        getHit.play();
         health -= dmg;
         System.out.println("¡Gobling recibió " + dmg + " de daño! Vida restante: " + health);
 

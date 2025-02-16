@@ -23,7 +23,7 @@ public class Bullet extends Sprite {
     private float size;
     private TextureRegion[][] tmp;
     private TextureRegion[] regionsMovimiento;
-    private Animation<TextureRegion> animacionMovimiento;
+    private Texture animacionMovimiento;
     private boolean shouldRemove = false;
 
     TextureRegion texture;
@@ -48,7 +48,7 @@ public class Bullet extends Sprite {
         // Son necesarios para el bdef
         this.angle = angle;
         this.world = world;
-        animacionMovimiento = getAnimation(new Texture("img/purplesun.png"));
+        animacionMovimiento = new Texture("img/arrow.png");
 
         size = 20 / IslandsSurvivors.PPM;
         setSize(size, size);
@@ -71,10 +71,9 @@ public class Bullet extends Sprite {
         setPosition(
                 body.getPosition().x - getWidth() / 2,
                 body.getPosition().y - getHeight() / 2);
-
-        setRegion(animacionMovimiento.getKeyFrame(stateTime, true));
+        setScale(size*10);
+        setRegion(animacionMovimiento);
         // Actualiza la rotación del sprite según el ángulo del body
-        // sprite.setRotation((float) Math.toDegrees(body.getAngle()));
         setRotation((float) Math.toDegrees(angle));
     }
 

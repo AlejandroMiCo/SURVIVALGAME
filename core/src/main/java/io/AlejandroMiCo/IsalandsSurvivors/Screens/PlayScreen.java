@@ -74,6 +74,7 @@ public class PlayScreen implements Screen {
     private boolean isGameOver = false;
 
     private Sound sonido;
+    private Sound sonidoAtaque;
 
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
@@ -106,6 +107,7 @@ public class PlayScreen implements Screen {
 
         sonido = Gdx.audio.newSound(Gdx.files.internal("music/a.ogg"));
         sonido.loop();
+        sonidoAtaque = Gdx.audio.newSound(Gdx.files.internal("sounds/attack.ogg"));
     }
 
     @Override
@@ -327,6 +329,7 @@ public class PlayScreen implements Screen {
 
             // 🔹 Crear la bala y añadirla a la lista
             bulletList.add(new Bullet(world, knightX, knightY, shootAngle));
+            sonidoAtaque.play();
         }
     }
 
