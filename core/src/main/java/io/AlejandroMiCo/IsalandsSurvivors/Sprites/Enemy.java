@@ -95,6 +95,7 @@ public abstract class Enemy extends Sprite {
         if (health <= 0) {
             setToDestroy = true;
             screen.addExperience(new Vector2(b2body.getPosition().x, b2body.getPosition().y));
+            knight.addEnemyDefeated();
 
             if (Math.random() > 0.9) {
                 screen.addCoin(new Vector2(b2body.getPosition().x, b2body.getPosition().y));

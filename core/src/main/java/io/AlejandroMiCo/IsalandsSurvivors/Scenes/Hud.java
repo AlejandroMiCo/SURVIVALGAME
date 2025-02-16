@@ -5,11 +5,16 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -37,8 +42,12 @@ public class Hud implements Disposable {
     private Label hpLabel;
     private Label expLabel;
     private Label coins;
+    private Label enemies;
 
     private Table table;
+
+    private ImageButton pauseButton;
+    private boolean isPaused;
 
     public Hud(SpriteBatch sb, Knight knight) {
         this.knight = knight;
@@ -46,12 +55,26 @@ public class Hud implements Disposable {
         worldTimer = 0;
         timeCount = 0;
 
+        isPaused = false;
+
         viewport = new FillViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
 
         table = new Table();
         table.top();
         table.setFillParent(true);
+
+        TextureRegionDrawable pauseDrawable = new TextureRegionDrawable(
+                new TextureRegion(new Texture("ui/pause_button.png")));
+        TextureRegionDrawable pausePressedDrawable = new TextureRegionDrawable(
+                new TextureRegion(new Texture("ui/pause_button_pressed.png")));
+        pauseButton = new ImageButton(pauseDrawable, pausePressedDrawable);
+        pauseButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                isPaused = !isPaused;
+            }
+        });
 
         // Cargar texturas y crear imágenes
         healthBarBgImage = new Image(new Texture("ui/health_bar_bg.png"));
@@ -68,7 +91,11 @@ public class Hud implements Disposable {
         expLabel = new Label(
                 String.format("%3.0f/%3.0f", knight.getCurrentExperience(), knight.getNextLevelExperience()),
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+
         coins = new Label(String.format("Coins: %4d", knight.getCoins()),
+                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+
+        enemies = new Label(String.format("Enemies: %6d", knight.getCoins()),
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 
         hpLabel.setAlignment(1);
@@ -102,6 +129,10 @@ public class Hud implements Disposable {
         table.add(barsTable).padTop(15).padLeft(5);
         table.add(countLabel).expandX().padBottom(10).padLeft(10);
         table.add(coins).pad(5);
+        table.add(enemies).pad(5);
+
+        // Agregar el botón a la tabla
+        table.add(pauseButton).padTop(10).padRight(10).expandX().right();
 
         stage.addActor(table);
     }
@@ -114,7 +145,8 @@ public class Hud implements Disposable {
             timeCount = 0;
         }
 
-        coins.setText(String.format("Coins: %4d",knight.getCoins()));
+        coins.setText(String.format("Coins: %4d", knight.getCoins()));
+        enemies.setText(String.format("Enemies: %6d", knight.getEnemiesDefeated()));
 
         expLabel.setText(String.format("%3.0f/%3.0f", knight.getCurrentExperience(), knight.getNextLevelExperience()));
         hpLabel.setText(String.format("%3.0f/%3.0f", knight.getCurrentHealth(), knight.getMaxHealth()));
@@ -142,5 +174,9 @@ public class Hud implements Disposable {
 
     public void setWorldTimer(Integer worldTimer) {
         this.worldTimer = worldTimer;
+    }
+
+    public boolean isPaused() {
+        return isPaused;
     }
 }

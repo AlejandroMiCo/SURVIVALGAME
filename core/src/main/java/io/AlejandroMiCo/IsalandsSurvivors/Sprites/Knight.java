@@ -59,6 +59,7 @@ public class Knight extends Sprite {
     private float currentHealth;
     private float timeB4Heal;
     private int coinCount;
+    private int enemiesDefeated;
 
     public Knight(PlayScreen screen, VirtualJoystick joy) {
         super(new Texture("creatures/Warrior_Blue.png"), 196, 196);
@@ -290,6 +291,14 @@ public class Knight extends Sprite {
             currentHealth += Math.min(10, getMaxHealth() - currentHealth);
         }
         System.out.println("ñam ñam ñam");
+    }
+
+    public int getEnemiesDefeated() {
+        return enemiesDefeated;
+    }
+
+    public void addEnemyDefeated() {
+        enemiesDefeated++;
     }
 
 }
