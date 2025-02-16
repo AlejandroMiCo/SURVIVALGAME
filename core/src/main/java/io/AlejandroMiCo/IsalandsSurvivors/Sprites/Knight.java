@@ -130,7 +130,8 @@ public class Knight extends Sprite {
 
         timeB4Heal -= dt;
         if (timeB4Heal <= 0 && currentState != State.DEAD && currentHealth < getMaxHealth()) {
-            currentHealth += Math.min(atributos.get("player_health_regenarition"), atributos.get("max_health"));
+            currentHealth += Math.min(atributos.get("player_health_regenarition"),
+                    atributos.get("player_max_health") - currentHealth);
             timeB4Heal = 1.0f;
         }
     }
