@@ -127,7 +127,7 @@ public class PlayScreen implements Screen {
             world.setGravity(new Vector2(0, 0));
 
             if (knight.getFrame(0).isFlipX()) {
-                knight.setFlip(false, false); // Evitar que se invierta la imagen de muerte
+                knight.setFlip(false, false);
             }
 
             if (knight.deathAnimation.isAnimationFinished(knight.stateTimer)) {
@@ -141,7 +141,7 @@ public class PlayScreen implements Screen {
 
         if (levelUpScreen.isVisible()) {
             levelUpScreen.update(dt);
-            return; // Pausar el juego mientras está activa la UI
+            return;
         }
 
         if (knight.getLevel() > lastNivel) {
@@ -150,6 +150,32 @@ public class PlayScreen implements Screen {
             Gdx.input.vibrate(250);
         }
 
+        if (hud.isPaused()) {
+            hud.update(dt);
+            return;
+        }
+
+        updateEntityes(dt);
+
+        if (hud.getWorldTimer() >= waveNumber * WAVE_INTERVAL) {
+            updateWave();
+        }
+
+        hud.update(dt);
+        updateWorld();
+        joystick.update();
+
+    }
+
+    public void updateWorld() {
+        world.step(1 / 60f, 6, 2);
+        gameCamera.position.x = knight.b2body.getPosition().x;
+        gameCamera.position.y = knight.b2body.getPosition().y;
+        gameCamera.update();
+        renderer.setView(gameCamera);
+    }
+
+    public void updateEntityes(float dt) {
         for (Vector2 pos : pendingCoins) {
             itemList.add(new Coin(world, pos.x, pos.y, knight));
         }
@@ -171,7 +197,6 @@ public class PlayScreen implements Screen {
             spawnEnemies(hud.getWorldTimer());
         }
 
-        // 🔹 Actualizar enemigos y marcar los que deben eliminarse
         for (Enemy gobling : goblingList) {
             gobling.update(dt);
             if (gobling.deathAnimationFinished) {
@@ -181,20 +206,17 @@ public class PlayScreen implements Screen {
         goblingList.removeAll(enemiesToRemove);
 
         if (!bulletList.isEmpty()) {
-            bulletDelay = bulletList.get(0).getCooldown(); // Obtiene el cooldown del primer disparo
+            bulletDelay = bulletList.get(0).getCooldown();
         }
 
-        // 🔸 Actualizar temporizador de disparo automático
         bulletTimer += dt;
         if (bulletTimer >= bulletDelay) {
             fireBullet();
-            bulletTimer = 0; // Reiniciar el temporizador
+            bulletTimer = 0;
         }
 
-        // 🔹 Lista temporal para almacenar balas que deben eliminarse
         ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
 
-        // 🔹 Actualizar balas y marcar para eliminación
         for (Bullet bullet : bulletList) {
             if (bullet.getBody() != null) {
                 bullet.update(dt);
@@ -205,37 +227,16 @@ public class PlayScreen implements Screen {
             }
         }
 
-        // 🔸 Realizar el step de Box2D (esto actualiza la física del mundo)
-        world.step(1 / 60f, 6, 2);
-
-        // 🔸 Ahora que el mundo ya ha actualizado su estado, eliminamos los cuerpos
         for (Bullet bullet : bulletsToRemove) {
-            world.destroyBody(bullet.getBody()); // Destruir el body en Box2D
-            bulletList.remove(bullet); // Eliminar la bala de la lista
+            world.destroyBody(bullet.getBody());
+            bulletList.remove(bullet);
         }
-        bulletsToRemove.clear(); // Limpiar la lista temporal
-
-        // 🔹 Actualizar temporizador de generación de enemigos
-
-        // 🔹 Lista temporal para almacenar enemigos eliminados
-
-        if (hud.getWorldTimer() >= waveNumber * WAVE_INTERVAL) {
-            updateWave();
-        }
-
-        // 🔹 Actualizar otros elementos del juego
-        hud.update(dt);
+        bulletsToRemove.clear();
 
         for (CollectedItem coin : itemList) {
             coin.update(dt);
         }
 
-        // 🔹 Mantener la cámara centrada en el personaje
-        gameCamera.position.x = knight.b2body.getPosition().x;
-        gameCamera.position.y = knight.b2body.getPosition().y;
-        gameCamera.update();
-
-        joystick.update();
         ArrayList<CollectedItem> coinsToRemove = new ArrayList<>();
         for (CollectedItem coin : itemList) {
             if (coin.isCollected()) {
@@ -243,8 +244,6 @@ public class PlayScreen implements Screen {
             }
         }
         itemList.removeAll(coinsToRemove);
-
-        renderer.setView(gameCamera);
     }
 
     private void updateWave() {
