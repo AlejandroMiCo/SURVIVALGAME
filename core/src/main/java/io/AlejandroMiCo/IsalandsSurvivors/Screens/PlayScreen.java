@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -72,6 +73,8 @@ public class PlayScreen implements Screen {
 
     private boolean isGameOver = false;
 
+    private Sound sonido;
+
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
         gameCamera = new OrthographicCamera();
@@ -100,6 +103,9 @@ public class PlayScreen implements Screen {
         pendingCoins = new ArrayList<>();
         pendingExperience = new ArrayList<>();
         pendingMeat = new ArrayList<>();
+
+        sonido = Gdx.audio.newSound(Gdx.files.internal("music/a.ogg"));
+        sonido.loop();
     }
 
     @Override
@@ -404,6 +410,7 @@ public class PlayScreen implements Screen {
         renderer.dispose();
         hud.dispose();
         joystick.dispose();
+        sonido.dispose();
     }
 
 }
