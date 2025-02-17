@@ -25,17 +25,14 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
 import io.AlejandroMiCo.IsalandsSurvivors.Scenes.Hud;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Coco;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Coin;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.CollectedItem;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.EnemyWarrior;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.EnemyPool;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Experience;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight.State;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Meat;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TntGobling;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TorchGobling;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.B2WorldCreator;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.VirtualJoystick;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.WorldContactListener;
@@ -66,7 +63,7 @@ public class PlayScreen implements Screen {
     private float bulletTimer = 0;
     private float bulletDelay; // disparo cada 2 segundos
 
-    private ArrayList<Enemy> goblingList = new ArrayList<>();
+    private ArrayList<Enemy> enemyList = new ArrayList<>();
 
     private int waveNumber = 1;
     private int enemiesPerWave = 10;
@@ -87,6 +84,8 @@ public class PlayScreen implements Screen {
             return new Bullet(world, 0, 0, 0);
         }
     };
+
+    private EnemyPool enemyPool;
 
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
@@ -137,6 +136,8 @@ public class PlayScreen implements Screen {
         Gdx.input.setInputProcessor(multiplexer);
 
         bulletList.add(bulletPool.obtain());
+        enemyPool = new EnemyPool(this, knight);
+
     }
 
     @Override
@@ -286,23 +287,35 @@ public class PlayScreen implements Screen {
     private void updateEnemies(float dt) {
         ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
 
-        if (goblingList.size() < MAX_ENEMIES) {
+        // Si la cantidad de enemigos activos es menor que el máximo permitido, se
+        // generan nuevos enemigos
+        if (enemyList.size() < MAX_ENEMIES) {
             spawnEnemies(hud.getWorldTimer());
         }
 
-        for (Enemy gobling : goblingList) {
+        // Actualizamos los enemigos existentes
+        for (Enemy gobling : enemyList) {
             gobling.update(dt);
+
+            // Si el enemigo ha terminado su animación de muerte, lo agregamos a la lista
+            // para ser eliminado
             if (gobling.deathAnimationFinished) {
                 enemiesToRemove.add(gobling);
             }
         }
+
+        // Eliminamos los enemigos que han muerto
         for (Enemy enemy : enemiesToRemove) {
             if (enemy.b2body != null) {
-                world.destroyBody(enemy.b2body); // 🔹 Elimina el cuerpo del enemigo de Box2D
-                enemy.b2body = null; // 🔹 Evita referencias a cuerpos ya eliminados
+                world.destroyBody(enemy.b2body); // Elimina el cuerpo de Box2D
+                enemy.b2body = null; // Evita referencias a cuerpos ya eliminados
             }
+            // En lugar de remover el enemigo de la lista, lo devolvemos al pool
+            enemyPool.free(enemy); // Libera el enemigo de vuelta al pool
         }
-        goblingList.removeAll(enemiesToRemove);
+
+        // Elimina los enemigos muertos de la lista
+        enemyList.removeAll(enemiesToRemove);
     }
 
     private void updateWave() {
@@ -314,7 +327,6 @@ public class PlayScreen implements Screen {
         Enemy.INITIAL_SPEED += 5f;
         // Cada oleada aumenta la cantidad de enemigos
         enemiesPerWave += 3; // 🔥 Aumenta en 2 enemigos por oleada
-        System.out.println("⚔️ ¡Nueva Oleada! Enemigos en esta oleada: " + enemiesPerWave);
     }
 
     private void spawnEnemies(float gameTime) {
@@ -322,30 +334,30 @@ public class PlayScreen implements Screen {
         float minX = 3, maxX = 23;
         float minY = 3, maxY = 23;
 
-        while (goblingList.size() < enemiesPerWave && goblingList.size() < MAX_ENEMIES) {
+        while (enemyList.size() < enemiesPerWave && enemyList.size() < MAX_ENEMIES) {
             spawnX = MathUtils.clamp((float) (Math.random() * (maxX - minX) + minX), minX, maxX);
             spawnY = MathUtils.clamp((float) (Math.random() * (maxY - minY) + minY), minY, maxY);
 
+            Enemy enemy = null;
             switch ((int) gameTime / 120) {
-                case 0 -> goblingList.add(new Coco(this, spawnX, spawnY, knight)); // 2min
-                case 1 -> goblingList.add(new TorchGobling(this, spawnX, spawnY, knight)); // 4min
-                case 2 -> goblingList.add(new TntGobling(this, spawnX, spawnY, knight)); // 6min
-                case 3 -> goblingList.add(new EnemyWarrior(this, spawnX, spawnY, knight)); // 8min
-                case 4 -> goblingList.add(new Coco(this, spawnX, spawnY, knight)); // 10min
+                case 0 -> enemy = enemyPool.obtain(spawnX, spawnY, 0); // 2min
+                case 1 -> enemy = enemyPool.obtain(spawnX, spawnY, 1); // 4min
+                case 2 -> enemy = enemyPool.obtain(spawnX, spawnY, 2); // 6min
+                case 3 -> enemy = enemyPool.obtain(spawnX, spawnY, 3); // 8min
+                //case 4 -> enemy = enemyPool.obtain(spawnX, spawnY, 0); // 10min
                 default -> {
-                    goblingList.add(new Coco(this, spawnX, spawnY, knight));
-                    goblingList.add(new TorchGobling(this, spawnX, spawnY, knight));
-                    goblingList.add(new TntGobling(this, spawnX, spawnY, knight));
-                    goblingList.add(new EnemyWarrior(this, spawnX, spawnY, knight));
-                    goblingList.add(new Coco(this, spawnX, spawnY, knight));
-                } // 10mi
-
+                    enemy = enemyPool.obtain(spawnX, spawnY, 0);
+                    enemyList.add(enemyPool.obtain(spawnX, spawnY, 1));
+                    enemyList.add(enemyPool.obtain(spawnX, spawnY, 2));
+                    enemyList.add(enemyPool.obtain(spawnX, spawnY, 3));
+                }
             }
+            enemyList.add(enemy);
         }
     }
 
     private void fireBullet() {
-        if (goblingList.isEmpty())
+        if (enemyList.isEmpty())
             return; // No disparar si no hay enemigos
 
         float knightX = knight.b2body.getPosition().x;
@@ -355,7 +367,7 @@ public class PlayScreen implements Screen {
         Enemy closestEnemy = null;
         float minDistance = Float.MAX_VALUE;
 
-        for (Enemy gobling : goblingList) {
+        for (Enemy gobling : enemyList) {
             if (gobling.b2body == null) // Evitar acceso a un body nulo
                 continue;
 
@@ -411,8 +423,8 @@ public class PlayScreen implements Screen {
         game.batch.begin();
 
         // 🔹 Dibujar todos los enemigos
-        for (Enemy gobling : goblingList) {
-            gobling.draw(game.batch);
+        for (Enemy enemy : enemyList) {
+            enemy.draw(game.batch);
         }
 
         for (Bullet bullet : bulletList) {
