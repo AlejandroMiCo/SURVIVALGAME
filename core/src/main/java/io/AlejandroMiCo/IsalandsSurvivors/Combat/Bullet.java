@@ -11,10 +11,11 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Pool.Poolable;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 
-public class Bullet extends Sprite {
+public class Bullet extends Sprite implements Poolable {
 
     private float angle;
     private float time;
@@ -40,24 +41,10 @@ public class Bullet extends Sprite {
 
     public Bullet(World world, float x, float y, float angle) {
         super();
-        time = 2f;
-        // speed = 1f;
-        stateTime = 0;
-
         // Son necesarios para el bdef
         this.angle = angle;
         this.world = world;
         animacionMovimiento = new Texture("img/arrow.png");
-
-        size = 20 / IslandsSurvivors.PPM;
-        setSize(size, size);
-        setOriginCenter();
-
-        setRotation((float) Math.toDegrees(angle));
-
-        defineBullet(x, y, size);
-        // Si se necesitara rotar el sprite para que apunte en la dirección del disparo
-        // sprite.setRotation((float) Math.toDegrees(angle));
     }
 
     public void update(float dt) {
@@ -65,12 +52,16 @@ public class Bullet extends Sprite {
         time -= dt;
         stateTime += dt;
 
+        size = 20 / IslandsSurvivors.PPM;
+        setSize(size, size);
+        setOriginCenter();
+
         // Sincroniza la posición del sprite con la del body (conversión de unidades del
         // mundo a píxeles)
         setPosition(
                 body.getPosition().x - getWidth() / 2,
                 body.getPosition().y - getHeight() / 2);
-        setScale(size*10);
+        setScale(size * 10);
         setRegion(animacionMovimiento);
         // Actualiza la rotación del sprite según el ángulo del body
         setRotation((float) Math.toDegrees(angle));
@@ -154,4 +145,21 @@ public class Bullet extends Sprite {
         atributos.put("critico_bala", 0f);
     }
 
+    public void init(float x, float y, float angle) {
+        // Establecer la posición, ángulo y otros parámetros de la bala
+        setPosition(x, y);
+        this.angle = angle;
+        time = 2f;
+        stateTime = 0;
+        shouldRemove = false;
+        defineBullet(x, y, size);
+
+        // Inicializa el cuerpo de Box2D o lo que necesites
+    }
+
+    @Override
+    public void reset() {
+        setPosition(0, 0);
+        body = null;
+    }
 }

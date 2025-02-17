@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -31,10 +32,10 @@ import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.EnemyWarrior;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Experience;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TntGobling;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TorchGobling;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight.State;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Meat;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TntGobling;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TorchGobling;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.B2WorldCreator;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.VirtualJoystick;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.WorldContactListener;
@@ -80,6 +81,13 @@ public class PlayScreen implements Screen {
     private Music music;
     private Sound sonidoAtaque;
 
+    private final Pool<Bullet> bulletPool = new Pool<Bullet>() {
+        @Override
+        protected Bullet newObject() {
+            return new Bullet(world, 0, 0, 0);
+        }
+    };
+
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
         gameCamera = new OrthographicCamera();
@@ -104,7 +112,7 @@ public class PlayScreen implements Screen {
 
         world.setContactListener(new WorldContactListener(knight));
 
-        bulletList.add(new Bullet(world, 0, 0, 0));
+        // bulletList.add(new Bullet(world, 0, 0, 0));
         levelUpScreen = new LevelUpScreen(knight, hud);
         pendingCoins = new ArrayList<>();
         pendingExperience = new HashMap<Vector2, Integer>();
@@ -127,6 +135,8 @@ public class PlayScreen implements Screen {
             }
         });
         Gdx.input.setInputProcessor(multiplexer);
+
+        bulletList.add(bulletPool.obtain());
     }
 
     @Override
@@ -203,6 +213,48 @@ public class PlayScreen implements Screen {
     }
 
     public void updateEntityes(float dt) {
+
+        updateEnemies(dt);
+
+        updateBullets(dt);
+
+        updateItems(dt);
+
+    }
+
+    public void updateBullets(float dt) {
+        if (!bulletList.isEmpty()) {
+            bulletDelay = bulletList.get(0).getCooldown();
+        }
+
+        bulletTimer += dt;
+        if (bulletTimer >= bulletDelay) {
+            fireBullet();
+            bulletTimer = 0;
+        }
+
+        ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
+
+        for (Bullet bullet : bulletList) {
+            if (bullet.getBody() != null) {
+                bullet.update(dt);
+                if (bullet.isDead()) {
+                    bulletsToRemove.add(bullet);
+                }
+            }
+        }
+
+        for (Bullet bullet : bulletsToRemove) {
+            if (bullet.getBody() != null) {
+                world.destroyBody(bullet.getBody()); // Elimina el cuerpo de Box2D
+            }
+            bulletList.remove(bullet);
+            bulletPool.free(bullet); // Liberar la bala de vuelta a la Pool
+        }
+        bulletsToRemove.clear();
+    }
+
+    public void updateItems(float dt) {
         for (Vector2 pos : pendingCoins) {
             itemList.add(new Coin(world, pos.x, pos.y, knight));
         }
@@ -218,6 +270,20 @@ public class PlayScreen implements Screen {
         }
         pendingExperience.clear();
 
+        for (CollectedItem item : itemList) {
+            item.update(dt);
+        }
+
+        ArrayList<CollectedItem> itemsToRemove = new ArrayList<>();
+        for (CollectedItem item : itemList) {
+            if (item.isCollected()) {
+                itemsToRemove.add(item);
+            }
+        }
+        itemList.removeAll(itemsToRemove);
+    }
+
+    private void updateEnemies(float dt) {
         ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
 
         if (goblingList.size() < MAX_ENEMIES) {
@@ -237,47 +303,6 @@ public class PlayScreen implements Screen {
             }
         }
         goblingList.removeAll(enemiesToRemove);
-
-
-        if (!bulletList.isEmpty()) {
-            bulletDelay = bulletList.get(0).getCooldown();
-        }
-
-        bulletTimer += dt;
-        if (bulletTimer >= bulletDelay) {
-            fireBullet();
-            bulletTimer = 0;
-        }
-
-        ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
-
-        for (Bullet bullet : bulletList) {
-            if (bullet.getBody() != null) {
-                bullet.update(dt);
-                if (bullet.isDead()) {
-                    bulletsToRemove.add(bullet);
-                    System.out.println(bullet.getCooldown());
-                }
-            }
-        }
-
-        for (Bullet bullet : bulletsToRemove) {
-            world.destroyBody(bullet.getBody());
-            bulletList.remove(bullet);
-        }
-        bulletsToRemove.clear();
-
-        for (CollectedItem coin : itemList) {
-            coin.update(dt);
-        }
-
-        ArrayList<CollectedItem> coinsToRemove = new ArrayList<>();
-        for (CollectedItem coin : itemList) {
-            if (coin.isCollected()) {
-                coinsToRemove.add(coin);
-            }
-        }
-        itemList.removeAll(coinsToRemove);
     }
 
     private void updateWave() {
@@ -354,7 +379,10 @@ public class PlayScreen implements Screen {
             float shootAngle = (float) Math.atan2(dy, dx); // Calcular ángulo en radianes
 
             // 🔹 Crear la bala y añadirla a la lista
-            bulletList.add(new Bullet(world, knightX, knightY, shootAngle));
+            Bullet bullet = bulletPool.obtain();
+            bullet.init(knightX, knightY, shootAngle); // Inicializar la bala con la posición y ángulo
+            bulletList.add(bullet); // Añadirla a la lista de balas activas
+
             sonidoAtaque.play();
         }
     }
