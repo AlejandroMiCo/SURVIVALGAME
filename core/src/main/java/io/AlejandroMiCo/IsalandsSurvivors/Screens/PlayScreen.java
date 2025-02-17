@@ -70,7 +70,7 @@ public class PlayScreen implements Screen {
     private int waveNumber = 1;
     private int enemiesPerWave = 10;
     private final float WAVE_INTERVAL = 60; // Cada 30 segundos hay una nueva oleada
-    private final int MAX_ENEMIES = 1000; // Máximo total de enemigos activos en pantalla
+    private final int MAX_ENEMIES = 100; // Máximo total de enemigos activos en pantalla
 
     private LevelUpScreen levelUpScreen;
     private int lastNivel = 1;
@@ -230,7 +230,14 @@ public class PlayScreen implements Screen {
                 enemiesToRemove.add(gobling);
             }
         }
+        for (Enemy enemy : enemiesToRemove) {
+            if (enemy.b2body != null) {
+                world.destroyBody(enemy.b2body); // 🔹 Elimina el cuerpo del enemigo de Box2D
+                enemy.b2body = null; // 🔹 Evita referencias a cuerpos ya eliminados
+            }
+        }
         goblingList.removeAll(enemiesToRemove);
+
 
         if (!bulletList.isEmpty()) {
             bulletDelay = bulletList.get(0).getCooldown();
