@@ -16,9 +16,7 @@ import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 
 public class Bullet extends Sprite {
 
-    private float stateTime;
     private float angle;
-    // private float speed;
     private float time;
     private float size;
     private TextureRegion[][] tmp;
@@ -26,6 +24,7 @@ public class Bullet extends Sprite {
     private Texture animacionMovimiento;
     private boolean shouldRemove = false;
 
+    float stateTime;
     TextureRegion texture;
     Body body;
     World world;

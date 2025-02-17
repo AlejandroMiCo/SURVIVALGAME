@@ -2,6 +2,7 @@ package io.AlejandroMiCo.IsalandsSurvivors.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -24,12 +25,16 @@ public class MainMenuScreen implements Screen {
     private Texture fondo, titulo;
     private IslandsSurvivors game;
     float escala = Gdx.graphics.getWidth() / IslandsSurvivors.V_WIDTH;
+    private Music music;
 
     public MainMenuScreen(final IslandsSurvivors game) {
         camera = new OrthographicCamera();
         stage = new Stage(new FitViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, camera));
         Gdx.input.setInputProcessor(stage);
         this.game = game;
+
+        music = Gdx.audio.newMusic(Gdx.files.internal("music/menuSong.ogg"));
+        music.play();
 
         Table table = new Table();
         table.setSize(500, 450);
@@ -145,6 +150,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
+        music.dispose();
         stage.dispose();
     }
 }

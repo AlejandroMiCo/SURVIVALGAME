@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -76,7 +77,7 @@ public class PlayScreen implements Screen {
 
     private boolean isGameOver = false;
 
-    private Sound sonido;
+    private Music music;
     private Sound sonidoAtaque;
 
     public PlayScreen(IslandsSurvivors game) {
@@ -109,8 +110,8 @@ public class PlayScreen implements Screen {
         pendingExperience = new HashMap<Vector2, Integer>();
         pendingMeat = new ArrayList<>();
 
-        sonido = Gdx.audio.newSound(Gdx.files.internal("music/a.ogg"));
-        sonido.loop();
+        music = Gdx.audio.newMusic(Gdx.files.internal("music/song.ogg"));
+        music.play();
         sonidoAtaque = Gdx.audio.newSound(Gdx.files.internal("sounds/attack.ogg"));
 
         InputMultiplexer multiplexer = new InputMultiplexer();
@@ -432,7 +433,7 @@ public class PlayScreen implements Screen {
         renderer.dispose();
         hud.dispose();
         joystick.dispose();
-        sonido.dispose();
+        music.dispose();
     }
 
 }
