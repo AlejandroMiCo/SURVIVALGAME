@@ -21,34 +21,32 @@ public class VirtualJoystick {
     }
 
     public void update() {
-        if (Gdx.input.isTouched()) {
-            if (!touched) {
-                for (int i = 0; i < 20; i++) { // 20 es el número máximo de toques simultáneos que libGDX soporta
-                    if (Gdx.input.isTouched(i)) {
-                        touchPointer = i;
-                        touched = true;
-                        basePosition.set(Gdx.input.getX(touchPointer),
-                                Gdx.graphics.getHeight() - Gdx.input.getY(touchPointer));
-                        knobPosition.set(basePosition);
-                        break;
-                    }
+        if (!touched) {
+            for (int i = 0; i < 20; i++) { // Máximo de 20 toques soportados por LibGDX
+                if (Gdx.input.isTouched(i)) {
+                    touchPointer = i; // Asigna el dedo que controla el joystick
+                    touched = true;
+                    basePosition.set(Gdx.input.getX(touchPointer),
+                            Gdx.graphics.getHeight() - Gdx.input.getY(touchPointer));
+                    knobPosition.set(basePosition);
+                    break;
                 }
             }
-            if (touched) {
+        } else if (Gdx.input.isTouched(touchPointer)) {
+            // Si el dedo que controla el joystick sigue tocando
+            float touchX = Gdx.input.getX(touchPointer);
+            float touchY = Gdx.graphics.getHeight() - Gdx.input.getY(touchPointer);
+            Vector2 touchPosition = new Vector2(touchX, touchY);
 
-                float touchX = Gdx.input.getX(touchPointer);
-                float touchY = Gdx.graphics.getHeight() - Gdx.input.getY(touchPointer);
-                Vector2 touchPosition = new Vector2(touchX, touchY);
-                if (touchPosition.dst(basePosition) <= baseRadius) {
-                    knobPosition.set(touchPosition);
-                } else {
-                    Vector2 direction = touchPosition.sub(basePosition).nor();
-                    knobPosition.set(basePosition.x + direction.x * baseRadius,
-                            basePosition.y + direction.y * baseRadius);
-                }
+            if (touchPosition.dst(basePosition) <= baseRadius) {
+                knobPosition.set(touchPosition);
+            } else {
+                Vector2 direction = touchPosition.sub(basePosition).nor();
+                knobPosition.set(basePosition.x + direction.x * baseRadius,
+                        basePosition.y + direction.y * baseRadius);
             }
         } else {
-            touched = false;
+            touched = false; // Libera el joystick cuando se suelta el dedo
         }
     }
 

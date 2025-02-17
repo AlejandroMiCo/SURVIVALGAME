@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -69,10 +71,13 @@ public class Hud implements Disposable {
         TextureRegionDrawable pausePressedDrawable = new TextureRegionDrawable(
                 new TextureRegion(new Texture("ui/pause_button_pressed.png")));
         pauseButton = new ImageButton(pauseDrawable, pausePressedDrawable);
-        pauseButton.addListener(new ClickListener() {
+        pauseButton.setTouchable(Touchable.enabled);
+        pauseButton.addListener(new InputListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                isPaused = !isPaused;
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                System.out.println("patata");
+                togglePause();
+                return true; // Indica que el evento ha sido manejado
             }
         });
 
@@ -134,7 +139,18 @@ public class Hud implements Disposable {
         // Agregar el botón a la tabla
         table.add(pauseButton).padTop(10).padRight(10).expandX().right();
 
+        pauseButton.toFront();
+
+        table.debug();
         stage.addActor(table);
+    }
+
+    public void togglePause() {
+        isPaused = !isPaused;
+    }
+
+    public boolean isPaused() {
+        return isPaused;
     }
 
     public void update(float dt) {
@@ -174,9 +190,5 @@ public class Hud implements Disposable {
 
     public void setWorldTimer(Integer worldTimer) {
         this.worldTimer = worldTimer;
-    }
-
-    public boolean isPaused() {
-        return isPaused;
     }
 }

@@ -75,7 +75,7 @@ public abstract class Enemy extends Sprite {
     public void defineEnemy() {
 
         BodyDef bdef = new BodyDef();
-        bdef.position.set((float) ((Math.random() * 20) + 3), (float) ((Math.random() * 20) + 3));
+        bdef.position.set((float) ((Math.random() * 22) + 5), (float) ((Math.random() * 23) + 5));
 
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);

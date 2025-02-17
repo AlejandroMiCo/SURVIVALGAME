@@ -76,7 +76,7 @@ public class Knight extends Sprite {
 
         iddleAnimation = getAnimation(new Texture("creatures/Archer_Blue.png"), 0);
         movingAnimation = getAnimation(new Texture("creatures/Archer_Blue.png"), 1);
-        deathAnimation = getAnimation(new Texture("img/deadPlayer.png"));
+        deathAnimation = getAnimation(new Texture("img/DeadPlayer.png"));
 
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
         this.level = 1;
@@ -135,6 +135,7 @@ public class Knight extends Sprite {
                     atributos.get("player_max_health") - currentHealth);
             timeB4Heal = 1.0f;
         }
+        System.out.println(b2body.getPosition());
     }
 
     // Devuelve la animacion en funcion del estado actual del personaje
@@ -178,7 +179,7 @@ public class Knight extends Sprite {
     // Define el cuerpo 2d del personaje
     public void defineKnight() {
         BodyDef bdef = new BodyDef();
-        bdef.position.set(300 / IslandsSurvivors.PPM, 300 / IslandsSurvivors.PPM);
+        bdef.position.set(500 / IslandsSurvivors.PPM, 500 / IslandsSurvivors.PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
 
         b2body = world.createBody(bdef);

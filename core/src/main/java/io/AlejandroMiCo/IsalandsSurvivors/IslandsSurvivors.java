@@ -1,9 +1,13 @@
 package io.AlejandroMiCo.IsalandsSurvivors;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 import io.AlejandroMiCo.IsalandsSurvivors.Screens.MainMenuScreen;
+
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all
@@ -18,12 +22,17 @@ public class IslandsSurvivors extends Game {
     public static final short ENEMY_BIT = 4;
     public static final short BULLET_BIT = 8;
     public static final short ITEM_BIT = 16;
-
+    public static BitmapFont font;
     public SpriteBatch batch;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font/EagleLake-Regular.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 16;
+        font = generator.generateFont(parameter);
+
         setScreen(new MainMenuScreen(this));
     }
 

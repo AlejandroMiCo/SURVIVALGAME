@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
@@ -97,6 +99,7 @@ public class PlayScreen implements Screen {
 
         knight = new Knight(this, joystick);
         hud = new Hud(game.batch, knight);
+        Gdx.input.setInputProcessor(hud.stage);
 
         world.setContactListener(new WorldContactListener(knight));
 
@@ -109,6 +112,19 @@ public class PlayScreen implements Screen {
         sonido = Gdx.audio.newSound(Gdx.files.internal("music/a.ogg"));
         sonido.loop();
         sonidoAtaque = Gdx.audio.newSound(Gdx.files.internal("sounds/attack.ogg"));
+
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(hud.stage);
+        multiplexer.addProcessor(new InputAdapter() {
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                if (!joystick.isTouched()) {
+                    joystick.update();
+                }
+                return false;
+            }
+        });
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     @Override
@@ -120,7 +136,7 @@ public class PlayScreen implements Screen {
         pendingCoins.add(position);
     }
 
-    public void addExperience(Vector2 position,int value) { ///Sumar en caso de posicion ocupada
+    public void addExperience(Vector2 position, int value) { /// Sumar en caso de posicion ocupada
         pendingExperience.put(position, value);
     }
 
@@ -344,7 +360,9 @@ public class PlayScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        update(delta);
+        if (!hud.isPaused()) {
+            update(delta);
+        }
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
