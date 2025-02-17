@@ -4,7 +4,7 @@ import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
 
 public class Coco extends Enemy {
     public Coco(PlayScreen screen, float x, float y, Knight knight) {
-        super(screen, x, y, knight, "creatures/coco.png");
+        super(screen, x, y, knight, "creatures/coco.png", 25);
         this.knight = knight;
 
         damage = INITIAL_DAMAGE + 5;

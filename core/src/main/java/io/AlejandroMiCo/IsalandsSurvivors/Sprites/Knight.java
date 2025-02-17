@@ -109,7 +109,7 @@ public class Knight extends Sprite {
     private void levelUp() {
         level++;
         xp -= xpToNextLevel; // Mantiene el exceso de XP
-        xpToNextLevel *= 1.2; // La siguiente subida de nivel requiere más XP
+        xpToNextLevel *= 1.1; // La siguiente subida de nivel requiere más XP
 
     }
 

@@ -46,14 +46,16 @@ public abstract class Enemy extends Sprite {
     public float damageTimer;
     private Sound getHit;
 
+    private int value;
 
-    public Enemy(PlayScreen screen, float x, float y, Knight knight, String walkFile) {
+    public Enemy(PlayScreen screen, float x, float y, Knight knight, String walkFile, int value) {
         this.health = INITIAL_HEALTH;
         this.damage = INITIAL_DAMAGE;
         this.speed = INITIAL_SPEED;
         this.world = screen.getWorld();
         this.screen = screen;
         this.knight = knight;
+        this.value = value;
 
         walkAnimation = getAnimation(new Texture(walkFile));
         deathAnimation = getAnimation(new Texture("img/Dead_custom.png"));
@@ -100,7 +102,7 @@ public abstract class Enemy extends Sprite {
         // Si la vida llega a 0, destruir el enemigo
         if (health <= 0) {
             setToDestroy = true;
-            screen.addExperience(new Vector2(b2body.getPosition().x, b2body.getPosition().y));
+            screen.addExperience(new Vector2(b2body.getPosition().x, b2body.getPosition().y), value);
             knight.addEnemyDefeated();
 
             if (Math.random() > 0.9) {

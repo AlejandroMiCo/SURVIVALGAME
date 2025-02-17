@@ -1,6 +1,7 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Screens;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -54,7 +55,7 @@ public class PlayScreen implements Screen {
 
     public ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
     private ArrayList<Vector2> pendingCoins;
-    private ArrayList<Vector2> pendingExperience;
+    private HashMap<Vector2, Integer> pendingExperience;
     private ArrayList<Vector2> pendingMeat;
     private ArrayList<CollectedItem> itemList = new ArrayList<>();
 
@@ -102,7 +103,7 @@ public class PlayScreen implements Screen {
         bulletList.add(new Bullet(world, 0, 0, 0));
         levelUpScreen = new LevelUpScreen(knight);
         pendingCoins = new ArrayList<>();
-        pendingExperience = new ArrayList<>();
+        pendingExperience = new HashMap<Vector2, Integer>();
         pendingMeat = new ArrayList<>();
 
         sonido = Gdx.audio.newSound(Gdx.files.internal("music/a.ogg"));
@@ -119,8 +120,8 @@ public class PlayScreen implements Screen {
         pendingCoins.add(position);
     }
 
-    public void addExperience(Vector2 position) {
-        pendingExperience.add(position);
+    public void addExperience(Vector2 position,int value) { ///Sumar en caso de posicion ocupada
+        pendingExperience.put(position, value);
     }
 
     public void addMeat(Vector2 position) {
@@ -194,8 +195,8 @@ public class PlayScreen implements Screen {
         }
         pendingMeat.clear();
 
-        for (Vector2 pos : pendingExperience) {
-            itemList.add(new Experience(world, pos.x, pos.y, knight));
+        for (var pos : pendingExperience.keySet()) {
+            itemList.add(new Experience(world, pos.x, pos.y, knight, pendingExperience.get(pos)));
         }
         pendingExperience.clear();
 

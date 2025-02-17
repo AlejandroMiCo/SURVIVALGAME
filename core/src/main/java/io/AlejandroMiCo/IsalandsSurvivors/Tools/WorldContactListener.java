@@ -81,7 +81,7 @@ public class WorldContactListener implements ContactListener {
                 } else if (item instanceof Coin) {
                     knight.addCoin();
                 } else if (item instanceof Experience) {
-                    knight.gainXP(20);
+                    knight.gainXP(((Experience)item).getExpValue());
                 }
                 System.out.println("Ahora soy mas rico muahahahha");
                 break;

@@ -3,7 +3,15 @@ package io.AlejandroMiCo.IsalandsSurvivors.Sprites;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Experience extends CollectedItem {
-    public Experience(World world, float x, float y, Knight knight) {
+    public int expValue;
+
+    public Experience(World world, float x, float y, Knight knight, int value) {
         super(world, x, y, knight, "img/W_Spawn.png");
+        this.expValue = value;
+
+    }
+
+    public int getExpValue() {
+        return expValue;
     }
 }
