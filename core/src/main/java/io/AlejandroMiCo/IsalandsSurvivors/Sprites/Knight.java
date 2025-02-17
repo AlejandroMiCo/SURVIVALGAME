@@ -135,7 +135,6 @@ public class Knight extends Sprite {
                     atributos.get("player_max_health") - currentHealth);
             timeB4Heal = 1.0f;
         }
-        System.out.println(b2body.getPosition());
     }
 
     // Devuelve la animacion en funcion del estado actual del personaje

@@ -104,7 +104,7 @@ public class PlayScreen implements Screen {
         world.setContactListener(new WorldContactListener(knight));
 
         bulletList.add(new Bullet(world, 0, 0, 0));
-        levelUpScreen = new LevelUpScreen(knight);
+        levelUpScreen = new LevelUpScreen(knight, hud);
         pendingCoins = new ArrayList<>();
         pendingExperience = new HashMap<Vector2, Integer>();
         pendingMeat = new ArrayList<>();

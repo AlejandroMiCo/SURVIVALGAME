@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
@@ -23,6 +23,7 @@ public class MainMenuScreen implements Screen {
     private OrthographicCamera camera;
     private Texture fondo, titulo;
     private IslandsSurvivors game;
+    float escala = Gdx.graphics.getWidth() / IslandsSurvivors.V_WIDTH;
 
     public MainMenuScreen(final IslandsSurvivors game) {
         camera = new OrthographicCamera();
@@ -34,16 +35,20 @@ public class MainMenuScreen implements Screen {
         table.setSize(500, 450);
         table.setPosition((IslandsSurvivors.V_WIDTH / 2) - (table.getWidth() / 2), -60);
 
+        Skin skin = new Skin();
+        skin.add("default-font", IslandsSurvivors.font);
+        skin.getFont("default-font").getData().setScale(escala/2.5f);
+
         TextButtonStyle btnStyle = new TextButtonStyle();
         btnStyle.up = new TextureRegionDrawable(new Texture(Gdx.files.internal("ui/boton_azul.png")));
         btnStyle.down = new TextureRegionDrawable(new Texture(Gdx.files.internal("ui/boton_azul_press.png")));
-        btnStyle.font = IslandsSurvivors.font;
+        btnStyle.font = skin.getFont("default-font");
         btnStyle.fontColor = Color.BLACK;
 
         TextButtonStyle btnExitStyle = new TextButtonStyle();
         btnExitStyle.up = new TextureRegionDrawable(new Texture(Gdx.files.internal("ui/boton_rojo.png")));
         btnExitStyle.down = new TextureRegionDrawable(new Texture(Gdx.files.internal("ui/boton_rojo_press.png")));
-        btnExitStyle.font = IslandsSurvivors.font;
+        btnExitStyle.font = skin.getFont("default-font");
         btnExitStyle.fontColor = Color.BLACK;
 
         TextButton playButton = new TextButton("Jugar", btnStyle);

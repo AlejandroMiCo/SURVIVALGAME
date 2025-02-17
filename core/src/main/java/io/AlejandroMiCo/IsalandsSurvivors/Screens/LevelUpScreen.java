@@ -9,7 +9,6 @@ import java.util.Random;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -21,6 +20,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
+import io.AlejandroMiCo.IsalandsSurvivors.Scenes.Hud;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 
 public class LevelUpScreen {
@@ -45,8 +45,11 @@ public class LevelUpScreen {
 
     float escala = Gdx.graphics.getWidth() / IslandsSurvivors.V_WIDTH;
 
-    public LevelUpScreen(Knight knight) {
+    public Hud hud;
+
+    public LevelUpScreen(Knight knight, Hud hud) {
         this.knight = knight;
+        this.hud = hud;
         stage = new Stage(new ScreenViewport());
 
         cargarMejoras();
@@ -88,7 +91,8 @@ public class LevelUpScreen {
         // Crear botones con imágenes como fondo
         Skin skin = new Skin();
         skin.add("default-font", IslandsSurvivors.font);
-        //skin.getFont("default-font").getData().setScale(1f); // Restablecer la escala a la original
+        // skin.getFont("default-font").getData().setScale(1f); // Restablecer la escala
+        // a la original
         skin.getFont("default-font").getData().setScale(escala);
 
         TextButton.TextButtonStyle azulStyle = new TextButton.TextButtonStyle();
@@ -178,7 +182,10 @@ public class LevelUpScreen {
     }
 
     public void hide() {
-        Gdx.input.setInputProcessor(null);
+        if (hud != null) {
+            System.out.println("hola");
+            Gdx.input.setInputProcessor(hud.stage);
+        }
         isVisible = false;
     }
 
