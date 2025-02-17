@@ -111,6 +111,7 @@ public class PlayScreen implements Screen {
         pendingMeat = new ArrayList<>();
 
         music = Gdx.audio.newMusic(Gdx.files.internal("music/song.ogg"));
+        music.setLooping(true);
         music.play();
         sonidoAtaque = Gdx.audio.newSound(Gdx.files.internal("sounds/attack.ogg"));
 

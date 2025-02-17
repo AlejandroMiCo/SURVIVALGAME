@@ -34,6 +34,7 @@ public class MainMenuScreen implements Screen {
         this.game = game;
 
         music = Gdx.audio.newMusic(Gdx.files.internal("music/menuSong.ogg"));
+        music.setLooping(true);
         music.play();
 
         Table table = new Table();
