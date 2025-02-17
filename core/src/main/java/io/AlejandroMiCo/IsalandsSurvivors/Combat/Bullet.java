@@ -33,7 +33,7 @@ public class Bullet extends Sprite {
     private static HashMap<String, Float> atributos = new HashMap<>() {
         {
             put("daño_bala", 10f);
-            put("velocidad_bala", 1f);
+            put("velocidad_bala", 1.5f);
             put("cooldown_bala", 2f);
             put("critico_bala", 0f);
         }
@@ -150,7 +150,7 @@ public class Bullet extends Sprite {
 
     public static void resetBullet() {
         atributos.put("daño_bala", 10f);
-        atributos.put("velocidad_bala", 1f);
+        atributos.put("velocidad_bala", 1.5f);
         atributos.put("cooldown_bala", 2f);
         atributos.put("critico_bala", 0f);
     }

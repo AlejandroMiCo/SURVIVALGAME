@@ -37,13 +37,13 @@ public class MainMenuScreen implements Screen {
         TextButtonStyle btnStyle = new TextButtonStyle();
         btnStyle.up = new TextureRegionDrawable(new Texture(Gdx.files.internal("ui/boton_azul.png")));
         btnStyle.down = new TextureRegionDrawable(new Texture(Gdx.files.internal("ui/boton_azul_press.png")));
-        btnStyle.font = new BitmapFont();
+        btnStyle.font = IslandsSurvivors.font;
         btnStyle.fontColor = Color.BLACK;
 
         TextButtonStyle btnExitStyle = new TextButtonStyle();
         btnExitStyle.up = new TextureRegionDrawable(new Texture(Gdx.files.internal("ui/boton_rojo.png")));
         btnExitStyle.down = new TextureRegionDrawable(new Texture(Gdx.files.internal("ui/boton_rojo_press.png")));
-        btnExitStyle.font = new BitmapFont();
+        btnExitStyle.font = IslandsSurvivors.font;
         btnExitStyle.fontColor = Color.BLACK;
 
         TextButton playButton = new TextButton("Jugar", btnStyle);

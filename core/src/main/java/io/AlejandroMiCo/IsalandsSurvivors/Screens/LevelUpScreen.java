@@ -87,8 +87,9 @@ public class LevelUpScreen {
 
         // Crear botones con imágenes como fondo
         Skin skin = new Skin();
-        skin.add("default-font", new BitmapFont());
-        skin.getFont("default-font").getData().scale(escala);
+        skin.add("default-font", IslandsSurvivors.font);
+        //skin.getFont("default-font").getData().setScale(1f); // Restablecer la escala a la original
+        skin.getFont("default-font").getData().setScale(escala);
 
         TextButton.TextButtonStyle azulStyle = new TextButton.TextButtonStyle();
         azulStyle.up = new TextureRegionDrawable(btnAzulTexture);
