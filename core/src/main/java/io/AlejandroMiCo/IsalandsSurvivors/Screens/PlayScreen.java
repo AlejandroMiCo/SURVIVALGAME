@@ -190,10 +190,10 @@ public class PlayScreen implements Screen {
             Gdx.input.vibrate(250);
         }
 
-        if (hud.isPaused()) {
-            hud.update(dt);
-            return;
-        }
+        // if (hud.isPaused()) {
+        //     hud.update(dt);
+        //     return;
+        // }
 
         updateEntityes(dt);
 
@@ -201,7 +201,7 @@ public class PlayScreen implements Screen {
             updateWave();
         }
 
-        hud.update(dt);
+       // hud.update(dt);
         updateWorld();
         joystick.update();
 
@@ -217,11 +217,11 @@ public class PlayScreen implements Screen {
 
     public void updateEntityes(float dt) {
 
-        updateEnemies(dt);
+        // updateEnemies(dt);
 
-        updateBullets(dt);
+        // updateBullets(dt);
 
-        updateItems(dt);
+        // updateItems(dt);
 
     }
 
@@ -377,11 +377,6 @@ public class PlayScreen implements Screen {
             Bullet bullet = bulletPool.obtain();
             bullet.init(knightX, knightY, shootAngle); // Inicializar la bala con la posición y ángulo
             bulletList.add(bullet); // Añadirla a la lista de balas activas
-
-            if (!((Music) sonidoAtaque).isPlaying()) {
-                sonidoAtaque.play();
-            }
-
         }
     }
 
