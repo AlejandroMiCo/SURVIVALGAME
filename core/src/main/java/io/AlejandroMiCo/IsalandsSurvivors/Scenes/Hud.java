@@ -6,10 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -28,7 +25,6 @@ public class Hud implements Disposable {
     private Viewport viewport;
 
     private Integer worldTimer;
-
     private float timeCount;
     private Label countLabel;
 
@@ -38,109 +34,92 @@ public class Hud implements Disposable {
     private Image experienceBarFillImage;
     private Image heartImage;
     private Image expImage;
-    private Knight knight;
 
     private Label hpLabel;
     private Label expLabel;
     private Label coins;
     private Label enemies;
 
-    private Table table;
-
     private ImageButton pauseButton;
     private boolean isPaused;
+    private Knight knight;
+
+    // **Recursos compartidos para evitar fugas de memoria**
+    private static BitmapFont font;
+    private static Texture healthBgTexture, healthFillTexture, expBgTexture, expFillTexture, heartTexture, expTexture;
+    private static Texture pauseTexture, pausePressedTexture;
+
+    static {
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);
+
+        healthBgTexture = new Texture("ui/health_bar_bg.png");
+        healthFillTexture = new Texture("ui/health_bar_fill.png");
+        expBgTexture = new Texture("ui/health_bar_bg.png");
+        expFillTexture = new Texture("ui/exp_bar_fill.png");
+        heartTexture = new Texture("ui/heart.png");
+        expTexture = new Texture("ui/exp.png");
+
+        pauseTexture = new Texture("ui/pause_button.png");
+        pausePressedTexture = new Texture("ui/pause_button_pressed.png");
+    }
 
     public Hud(SpriteBatch sb, Knight knight) {
         this.knight = knight;
-
         worldTimer = 0;
         timeCount = 0;
-
         isPaused = false;
 
         viewport = new FillViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
 
-        table = new Table();
+        Table table = new Table();
         table.top();
         table.setFillParent(true);
 
-        TextureRegionDrawable pauseDrawable = new TextureRegionDrawable(
-                new TextureRegion(new Texture("ui/pause_button.png")));
-        TextureRegionDrawable pausePressedDrawable = new TextureRegionDrawable(
-                new TextureRegion(new Texture("ui/pause_button_pressed.png")));
-        pauseButton = new ImageButton(pauseDrawable, pausePressedDrawable);
-        pauseButton.setTouchable(Touchable.enabled);
-        pauseButton.addListener(new InputListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                System.out.println("patata");
-                togglePause();
-                return true; // Indica que el evento ha sido manejado
-            }
+        pauseButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(pauseTexture)),
+                new TextureRegionDrawable(new TextureRegion(pausePressedTexture)));
+        pauseButton.addListener(event -> {
+            togglePause();
+            return true;
         });
 
-        // Cargar texturas y crear imágenes
-        healthBarBgImage = new Image(new Texture("ui/health_bar_bg.png"));
-        healthBarFillImage = new Image(new Texture("ui/health_bar_fill.png"));
-        experienceBarBgImage = new Image(new Texture("ui/health_bar_bg.png"));
-        experienceBarFillImage = new Image(new Texture("ui/exp_bar_fill.png"));
-        heartImage = new Image(new Texture("ui/heart.png"));
-        expImage = new Image(new Texture("ui/exp.png"));
+        healthBarBgImage = new Image(healthBgTexture);
+        healthBarFillImage = new Image(healthFillTexture);
+        experienceBarBgImage = new Image(expBgTexture);
+        experienceBarFillImage = new Image(expFillTexture);
+        heartImage = new Image(heartTexture);
+        expImage = new Image(expTexture);
 
-        countLabel = new Label(String.format("%02d:%02d", worldTimer / 60, worldTimer % 60),
-                new Label.LabelStyle(new BitmapFont(), Color.ROYAL));
-        hpLabel = new Label(String.format("%3.0f/%3.0f", knight.getCurrentHealth(), knight.getMaxHealth()),
-                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        expLabel = new Label(
-                String.format("%3.0f/%3.0f", knight.getCurrentExperience(), knight.getNextLevelExperience()),
-                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        countLabel = new Label("00:00", new Label.LabelStyle(font, Color.ROYAL));
+        hpLabel = new Label("100/100", new Label.LabelStyle(font, Color.WHITE));
+        expLabel = new Label("0/100", new Label.LabelStyle(font, Color.WHITE));
+        coins = new Label("Coins: 0000", new Label.LabelStyle(font, Color.WHITE));
+        enemies = new Label("Enemies: 0000", new Label.LabelStyle(font, Color.WHITE));
 
-        coins = new Label(String.format("Coins: %4d", knight.getCoins()),
-                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-
-        enemies = new Label(String.format("Enemies: %6d", knight.getCoins()),
-                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-
-        hpLabel.setAlignment(1);
-        expLabel.setAlignment(1);
-
-        // Crear Stack para la barra de vida
         Stack healthStack = new Stack();
-        Table barsTable = new Table();
-        // Table healthTable = new Table();
-        barsTable.add(heartImage).size(30).padRight(0);
         healthStack.add(healthBarBgImage);
         healthStack.add(healthBarFillImage);
         healthStack.add(hpLabel);
-        barsTable.add(healthStack).size(200, 20);
-        barsTable.row();
 
-        // Crear Stack para la barra de experiencia
         Stack experienceStack = new Stack();
-        Table expTable = new Table();
-
-        barsTable.add(expImage).size(30).padLeft(0);
         experienceStack.add(experienceBarBgImage);
         experienceStack.add(experienceBarFillImage);
         experienceStack.add(expLabel);
-        barsTable.add(experienceStack).size(200, 20).right();
 
-        barsTable.add(expTable).expandX().padBottom(5).left();
+        Table barsTable = new Table();
+        barsTable.add(heartImage).size(30);
+        barsTable.add(healthStack).size(200, 20);
+        barsTable.row();
+        barsTable.add(expImage).size(30);
+        barsTable.add(experienceStack).size(200, 20);
 
-        // Agregar a la tabla
-        table.row();
         table.add(barsTable).padTop(15).padLeft(5);
-        table.add(countLabel).expandX().padBottom(10).padLeft(10);
+        table.add(countLabel).expandX().padLeft(10);
         table.add(coins).pad(5);
         table.add(enemies).pad(5);
-
-        // Agregar el botón a la tabla
         table.add(pauseButton).padTop(10).padRight(10).expandX().right();
 
-        pauseButton.toFront();
-
-        table.debug();
         stage.addActor(table);
     }
 
@@ -160,16 +139,15 @@ public class Hud implements Disposable {
             timeCount = 0;
         }
 
-        coins.setText(String.format("Coins: %4d", knight.getCoins()));
-        enemies.setText(String.format("Enemies: %6d", knight.getEnemiesDefeated()));
+        coins.setText("Coins: " + knight.getCoins());
+        enemies.setText("Enemies: " + knight.getEnemiesDefeated());
 
-        expLabel.setText(String.format("%3.0f/%3.0f", knight.getCurrentExperience(), knight.getNextLevelExperience()));
-        hpLabel.setText(String.format("%3.0f/%3.0f", knight.getCurrentHealth(), knight.getMaxHealth()));
+        expLabel.setText((int) knight.getCurrentExperience() + "/" + (int) knight.getNextLevelExperience());
+        hpLabel.setText((int) knight.getCurrentHealth() + "/" + (int) knight.getMaxHealth());
 
         float healthPercentage = Math.max(knight.getCurrentHealth() / knight.getMaxHealth(), 0);
         float experiencePercentage = Math.max(knight.getCurrentExperience() / knight.getNextLevelExperience(), 0);
 
-        // Actualizar el tamaño de las barras de relleno
         healthBarFillImage.setSize(200 * healthPercentage, 20);
         experienceBarFillImage.setSize(200 * experiencePercentage, 20);
     }
@@ -181,13 +159,10 @@ public class Hud implements Disposable {
     @Override
     public void dispose() {
         stage.dispose();
+        font.dispose();
     }
 
-    public Integer getWorldTimer() {
+    public float getWorldTimer(){
         return worldTimer;
-    }
-
-    public void setWorldTimer(Integer worldTimer) {
-        this.worldTimer = worldTimer;
     }
 }

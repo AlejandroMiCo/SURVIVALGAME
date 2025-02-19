@@ -2,6 +2,7 @@ package io.AlejandroMiCo.IsalandsSurvivors.Screens;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -54,16 +56,16 @@ public class PlayScreen implements Screen {
 
     private Knight knight;
 
-    public ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
     private ArrayList<Vector2> pendingCoins;
     private HashMap<Vector2, Integer> pendingExperience;
     private ArrayList<Vector2> pendingMeat;
-    private ArrayList<CollectedItem> itemList = new ArrayList<>();
 
     private float bulletTimer = 0;
     private float bulletDelay; // disparo cada 2 segundos
 
-    private ArrayList<Enemy> enemyList = new ArrayList<>();
+    public Array<Bullet> bulletList = new Array<Bullet>();
+    private Array<CollectedItem> itemList = new Array<>();
+    private Array<Enemy> enemyList = new Array<>();
 
     private int waveNumber = 1;
     private int enemiesPerWave = 10;
@@ -234,25 +236,17 @@ public class PlayScreen implements Screen {
             bulletTimer = 0;
         }
 
-        ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
-
-        for (Bullet bullet : bulletList) {
+        for (Iterator<Bullet> it = bulletList.iterator(); it.hasNext();) {
+            Bullet bullet = it.next();
             if (bullet.getBody() != null) {
                 bullet.update(dt);
                 if (bullet.isDead()) {
-                    bulletsToRemove.add(bullet);
+                    world.destroyBody(bullet.getBody()); // Limpieza de memoria
+                    bulletPool.free(bullet);
+                    it.remove();
                 }
             }
         }
-
-        for (Bullet bullet : bulletsToRemove) {
-            if (bullet.getBody() != null) {
-                world.destroyBody(bullet.getBody()); // Elimina el cuerpo de Box2D
-            }
-            bulletList.remove(bullet);
-            bulletPool.free(bullet); // Liberar la bala de vuelta a la Pool
-        }
-        bulletsToRemove.clear();
     }
 
     public void updateItems(float dt) {
@@ -281,7 +275,7 @@ public class PlayScreen implements Screen {
                 itemsToRemove.add(item);
             }
         }
-        itemList.removeAll(itemsToRemove);
+        itemList.removeAll(itemList, true);
     }
 
     private void updateEnemies(float dt) {
@@ -289,33 +283,22 @@ public class PlayScreen implements Screen {
 
         // Si la cantidad de enemigos activos es menor que el máximo permitido, se
         // generan nuevos enemigos
-        if (enemyList.size() < MAX_ENEMIES) {
+        if (enemyList.size < MAX_ENEMIES) {
             spawnEnemies(hud.getWorldTimer());
         }
 
         // Actualizamos los enemigos existentes
-        for (Enemy gobling : enemyList) {
-            gobling.update(dt);
-
-            // Si el enemigo ha terminado su animación de muerte, lo agregamos a la lista
-            // para ser eliminado
-            if (gobling.deathAnimationFinished) {
-                enemiesToRemove.add(gobling);
+        for (Iterator<Enemy> it = enemyList.iterator(); it.hasNext();) {
+            Enemy enemy = it.next();
+            if (enemy.getBody() != null) {
+                enemy.update(dt);
+                if (enemy.isDead()) {
+                    world.destroyBody(enemy.getBody()); // Limpieza de memoria
+                    enemyPool.free(enemy);
+                    it.remove();
+                }
             }
         }
-
-        // Eliminamos los enemigos que han muerto
-        for (Enemy enemy : enemiesToRemove) {
-            if (enemy.b2body != null) {
-                world.destroyBody(enemy.b2body); // Elimina el cuerpo de Box2D
-                enemy.b2body = null; // Evita referencias a cuerpos ya eliminados
-            }
-            // En lugar de remover el enemigo de la lista, lo devolvemos al pool
-            enemyPool.free(enemy); // Libera el enemigo de vuelta al pool
-        }
-
-        // Elimina los enemigos muertos de la lista
-        enemyList.removeAll(enemiesToRemove);
     }
 
     private void updateWave() {
@@ -334,7 +317,7 @@ public class PlayScreen implements Screen {
         float minX = 3, maxX = 23;
         float minY = 3, maxY = 23;
 
-        while (enemyList.size() < enemiesPerWave && enemyList.size() < MAX_ENEMIES) {
+        while (enemyList.size < enemiesPerWave && enemyList.size < MAX_ENEMIES) {
             spawnX = MathUtils.clamp((float) (Math.random() * (maxX - minX) + minX), minX, maxX);
             spawnY = MathUtils.clamp((float) (Math.random() * (maxY - minY) + minY), minY, maxY);
 
@@ -344,7 +327,7 @@ public class PlayScreen implements Screen {
                 case 1 -> enemy = enemyPool.obtain(spawnX, spawnY, 1); // 4min
                 case 2 -> enemy = enemyPool.obtain(spawnX, spawnY, 2); // 6min
                 case 3 -> enemy = enemyPool.obtain(spawnX, spawnY, 3); // 8min
-                //case 4 -> enemy = enemyPool.obtain(spawnX, spawnY, 0); // 10min
+                // case 4 -> enemy = enemyPool.obtain(spawnX, spawnY, 0); // 10min
                 default -> {
                     enemy = enemyPool.obtain(spawnX, spawnY, 0);
                     enemyList.add(enemyPool.obtain(spawnX, spawnY, 1));
@@ -368,11 +351,11 @@ public class PlayScreen implements Screen {
         float minDistance = Float.MAX_VALUE;
 
         for (Enemy gobling : enemyList) {
-            if (gobling.b2body == null) // Evitar acceso a un body nulo
+            if (gobling.getBody() == null) // Evitar acceso a un body nulo
                 continue;
 
-            float enemyX = gobling.b2body.getPosition().x;
-            float enemyY = gobling.b2body.getPosition().y;
+            float enemyX = gobling.getBody().getPosition().x;
+            float enemyY = gobling.getBody().getPosition().y;
 
             float distance = Vector2.dst(knightX, knightY, enemyX, enemyY);
             if (distance < minDistance) {
@@ -382,9 +365,9 @@ public class PlayScreen implements Screen {
         }
 
         // 🔹 Si encontramos un enemigo más cercano, disparamos hacia él
-        if (closestEnemy != null && closestEnemy.b2body != null) {
-            float enemyX = closestEnemy.b2body.getPosition().x;
-            float enemyY = closestEnemy.b2body.getPosition().y;
+        if (closestEnemy != null && closestEnemy.getBody() != null) {
+            float enemyX = closestEnemy.getBody().getPosition().x;
+            float enemyY = closestEnemy.getBody().getPosition().y;
 
             float dx = enemyX - knightX;
             float dy = enemyY - knightY;
@@ -395,7 +378,10 @@ public class PlayScreen implements Screen {
             bullet.init(knightX, knightY, shootAngle); // Inicializar la bala con la posición y ángulo
             bulletList.add(bullet); // Añadirla a la lista de balas activas
 
-            sonidoAtaque.play();
+            if (!((Music) sonidoAtaque).isPlaying()) {
+                sonidoAtaque.play();
+            }
+
         }
     }
 

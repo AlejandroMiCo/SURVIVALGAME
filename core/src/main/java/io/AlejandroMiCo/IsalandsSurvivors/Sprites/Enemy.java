@@ -22,7 +22,7 @@ import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
 public abstract class Enemy extends Sprite {
     protected World world;
     protected PlayScreen screen;
-    public Body b2body;
+    private Body b2body;
     public boolean setToDestroy;
     public boolean destroyed;
     public Knight knight;
@@ -185,5 +185,17 @@ public abstract class Enemy extends Sprite {
         INITIAL_HEALTH = 20;
         INITIAL_DAMAGE = 5;
         INITIAL_SPEED = 45;
+    }
+
+    public void setBody(Body b2body) {
+        this.b2body = b2body;
+    }
+
+    public Body getBody() {
+        return b2body;
+    }
+
+    public boolean isDead() {
+        return health <= 0;
     }
 }
