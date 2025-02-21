@@ -43,14 +43,20 @@ public class Hud implements Disposable {
     private ImageButton pauseButton;
     private boolean isPaused;
     private Knight knight;
+    private float healthPercentage;
+    private float experiencePercentage;
 
     // **Recursos compartidos para evitar fugas de memoria**
-    private static BitmapFont font;
+    private static BitmapFont font = new BitmapFont();
     private static Texture healthBgTexture, healthFillTexture, expBgTexture, expFillTexture, heartTexture, expTexture;
     private static Texture pauseTexture, pausePressedTexture;
 
+    private static final Label.LabelStyle defaultLabelStyle = new Label.LabelStyle(font, Color.WHITE);
+
+    private TextureRegion healthBarFillRegion;
+    private TextureRegion experienceBarFillRegion;
+
     static {
-        font = new BitmapFont();
         font.setColor(Color.WHITE);
 
         healthBgTexture = new Texture("ui/health_bar_bg.png");
@@ -84,6 +90,12 @@ public class Hud implements Disposable {
             return true;
         });
 
+        healthBarFillRegion = new TextureRegion(healthFillTexture, 0, 0, 200, 20);
+        experienceBarFillRegion = new TextureRegion(expFillTexture, 0, 0, 200, 20);
+
+        healthBarFillImage = new Image(new TextureRegionDrawable(healthBarFillRegion));
+        experienceBarFillImage = new Image(new TextureRegionDrawable(experienceBarFillRegion));
+
         healthBarBgImage = new Image(healthBgTexture);
         healthBarFillImage = new Image(healthFillTexture);
         experienceBarBgImage = new Image(expBgTexture);
@@ -92,10 +104,10 @@ public class Hud implements Disposable {
         expImage = new Image(expTexture);
 
         countLabel = new Label("00:00", new Label.LabelStyle(font, Color.ROYAL));
-        hpLabel = new Label("100/100", new Label.LabelStyle(font, Color.WHITE));
-        expLabel = new Label("0/100", new Label.LabelStyle(font, Color.WHITE));
-        coins = new Label("Coins: 0000", new Label.LabelStyle(font, Color.WHITE));
-        enemies = new Label("Enemies: 0000", new Label.LabelStyle(font, Color.WHITE));
+        hpLabel = new Label("100/100", defaultLabelStyle);
+        expLabel = new Label("0/100", defaultLabelStyle);
+        coins = new Label("Coins: 0000", defaultLabelStyle);
+        enemies = new Label("Enemies: 0000", defaultLabelStyle);
 
         Stack healthStack = new Stack();
         healthStack.add(healthBarBgImage);
@@ -145,11 +157,16 @@ public class Hud implements Disposable {
         expLabel.setText((int) knight.getCurrentExperience() + "/" + (int) knight.getNextLevelExperience());
         hpLabel.setText((int) knight.getCurrentHealth() + "/" + (int) knight.getMaxHealth());
 
-        float healthPercentage = Math.max(knight.getCurrentHealth() / knight.getMaxHealth(), 0);
-        float experiencePercentage = Math.max(knight.getCurrentExperience() / knight.getNextLevelExperience(), 0);
+        healthPercentage = Math.max(knight.getCurrentHealth() / knight.getMaxHealth(), 0);
+        experiencePercentage = Math.max(knight.getCurrentExperience() / knight.getNextLevelExperience(), 0);
 
-        healthBarFillImage.setSize(200 * healthPercentage, 20);
-        experienceBarFillImage.setSize(200 * experiencePercentage, 20);
+        // Modificar el tamaño de las regiones en lugar de redimensionar imágenes
+        healthBarFillRegion.setRegionWidth((int) (200 * healthPercentage));
+        experienceBarFillRegion.setRegionWidth((int) (200 * experiencePercentage));
+
+        // Actualizar las texturas en la UI
+        healthBarFillImage.setDrawable(new TextureRegionDrawable(healthBarFillRegion));
+        experienceBarFillImage.setDrawable(new TextureRegionDrawable(experienceBarFillRegion));
     }
 
     public void render() {
@@ -160,9 +177,18 @@ public class Hud implements Disposable {
     public void dispose() {
         stage.dispose();
         font.dispose();
+
+        healthBgTexture.dispose();
+        healthFillTexture.dispose();
+        expBgTexture.dispose();
+        expFillTexture.dispose();
+        heartTexture.dispose();
+        expTexture.dispose();
+        pauseTexture.dispose();
+        pausePressedTexture.dispose();
     }
 
-    public float getWorldTimer(){
+    public float getWorldTimer() {
         return worldTimer;
     }
 }
