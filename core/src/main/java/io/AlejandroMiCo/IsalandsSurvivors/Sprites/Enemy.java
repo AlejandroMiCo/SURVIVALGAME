@@ -15,11 +15,12 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Pool.Poolable;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
 
-public abstract class Enemy extends Sprite {
+public abstract class Enemy extends Sprite implements Poolable {
     protected World world;
     protected PlayScreen screen;
     private Body b2body;
@@ -45,7 +46,7 @@ public abstract class Enemy extends Sprite {
 
     public float damageTimer;
     private Sound getHit;
-
+    private Vector2 direction;
     private int value;
 
     public Enemy(PlayScreen screen, float x, float y, Knight knight, String walkFile, int value) {
@@ -56,6 +57,8 @@ public abstract class Enemy extends Sprite {
         this.screen = screen;
         this.knight = knight;
         this.value = value;
+
+        direction = new Vector2();
 
         walkAnimation = getAnimation(new Texture(walkFile));
         deathAnimation = getAnimation(new Texture("img/Dead_custom.png"));
@@ -102,16 +105,16 @@ public abstract class Enemy extends Sprite {
         // Si la vida llega a 0, destruir el enemigo
         if (health <= 0) {
             setToDestroy = true;
-            screen.addExperience(new Vector2(b2body.getPosition().x, b2body.getPosition().y), value);
+            // screen.addExperience(new Vector2(b2body.getPosition().x,b2body.getPosition().y), value);
             knight.addEnemyDefeated();
 
-            if (Math.random() > 0.9) {
-                screen.addCoin(new Vector2(b2body.getPosition().x, b2body.getPosition().y));
-            }
+            // if (Math.random() > 0.9) {
+            // screen.addCoin(new Vector2(b2body.getPosition().x, b2body.getPosition().y));
+            // }
 
-            if (Math.random() >= 0.99) {
-                screen.addMeat(new Vector2(b2body.getPosition().x, b2body.getPosition().y));
-            }
+            // if (Math.random() >= 0.99) {
+            // screen.addMeat(new Vector2(b2body.getPosition().x, b2body.getPosition().y));
+            // }
         }
         flashDamage();
     };
@@ -141,6 +144,7 @@ public abstract class Enemy extends Sprite {
             // Animacion de muerte
             world.destroyBody(b2body);
             b2body = null;
+            direction = null;
             destroyed = true;
             stateTime = 0;
         }
@@ -152,7 +156,7 @@ public abstract class Enemy extends Sprite {
             }
         } else {
             // Movimiento del enemigo
-            Vector2 direction = new Vector2(knight.b2body.getPosition()).sub(b2body.getPosition()).nor();
+            direction.set(knight.b2body.getPosition()).sub(b2body.getPosition()).nor();
             b2body.setLinearVelocity(direction.scl(speed * dt));
 
             setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
@@ -197,5 +201,21 @@ public abstract class Enemy extends Sprite {
 
     public boolean isDead() {
         return health <= 0;
+    }
+
+    @Override
+    public void reset() {
+        // Restablece todos los campos relevantes del enemigo para que pueda ser
+        // reutilizado desde la pool
+        health = INITIAL_HEALTH;
+        damage = INITIAL_DAMAGE;
+        speed = INITIAL_SPEED;
+        stateTime = 0;
+        setToDestroy = false;
+        destroyed = false;
+        deathAnimationFinished = false;
+        direction.set(0, 0); // Limpiar el vector
+        setPosition(0, 0); // Puedes restablecer la posición a cualquier valor que sea necesario
+        // Reiniciar otras propiedades del enemigo según sea necesario.
     }
 }

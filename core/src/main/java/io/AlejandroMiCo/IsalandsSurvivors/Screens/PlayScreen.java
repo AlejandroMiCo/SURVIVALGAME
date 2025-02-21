@@ -86,6 +86,8 @@ public class PlayScreen implements Screen {
             return new Bullet(world, 0, 0, 0);
         }
     };
+    private static Array<Enemy> toRemove = new Array<>(); // Lista temporal para eliminaciones
+    private ArrayList<CollectedItem> itemsToRemove = new ArrayList<>();
 
     private EnemyPool enemyPool;
 
@@ -164,7 +166,6 @@ public class PlayScreen implements Screen {
 
         if (knight.getState() == State.DEAD) {
             isGameOver = true;
-            world.setGravity(new Vector2(0, 0));
 
             if (knight.getFrame(0).isFlipX()) {
                 knight.setFlip(false, false);
@@ -221,7 +222,7 @@ public class PlayScreen implements Screen {
 
         updateBullets(dt);
 
-        updateItems(dt);
+       // updateItems(dt);
 
     }
 
@@ -250,6 +251,12 @@ public class PlayScreen implements Screen {
     }
 
     public void updateItems(float dt) {
+        for (CollectedItem item : itemList) {
+            if (item.isCollected()) {
+                itemsToRemove.add(item);
+            }
+        }
+        itemList.removeAll(itemList, true);
         for (Vector2 pos : pendingCoins) {
             itemList.add(new Coin(world, pos.x, pos.y, knight));
         }
@@ -269,34 +276,31 @@ public class PlayScreen implements Screen {
             item.update(dt);
         }
 
-        ArrayList<CollectedItem> itemsToRemove = new ArrayList<>();
-        for (CollectedItem item : itemList) {
-            if (item.isCollected()) {
-                itemsToRemove.add(item);
-            }
-        }
-        itemList.removeAll(itemList, true);
     }
 
     private void updateEnemies(float dt) {
-        ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
-
-        // Si la cantidad de enemigos activos es menor que el máximo permitido, se
-        // generan nuevos enemigos
         if (enemyList.size < MAX_ENEMIES) {
             spawnEnemies(hud.getWorldTimer());
         }
 
-        // Actualizamos los enemigos existentes
-        for (Iterator<Enemy> it = enemyList.iterator(); it.hasNext();) {
-            Enemy enemy = it.next();
+        for (Enemy enemy : enemyList) {
+            if (enemy.isDead()) {
+                toRemove.add(enemy);
+            }
+        }
+
+        // 2. Eliminar enemigos marcados
+        for (Enemy enemy : toRemove) {
+            world.destroyBody(enemy.getBody()); // Eliminar del mundo físico
+            enemyPool.free(enemy); // Liberar en el pool de objetos
+            enemyList.removeValue(enemy, true); // Remover de la lista principal
+        }
+        toRemove.clear(); // Limpiar lista de eliminados
+
+        // 3. Ahora solo actualizamos enemigos vivos
+        for (Enemy enemy : enemyList) {
             if (enemy.getBody() != null) {
                 enemy.update(dt);
-                if (enemy.isDead()) {
-                    world.destroyBody(enemy.getBody()); // Limpieza de memoria
-                    enemyPool.free(enemy);
-                    it.remove();
-                }
             }
         }
     }

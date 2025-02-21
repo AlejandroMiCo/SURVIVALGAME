@@ -11,4 +11,9 @@ public class Coco extends Enemy {
         health = (int) (INITIAL_HEALTH * 0.7f);
         speed = INITIAL_SPEED + 10f;
     }
+
+    @Override
+    public void reset() {
+        super.reset();
+    }
 }

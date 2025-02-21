@@ -55,6 +55,7 @@ public class Hud implements Disposable {
 
     private TextureRegion healthBarFillRegion;
     private TextureRegion experienceBarFillRegion;
+    private final StringBuilder sb = new StringBuilder();
 
     static {
         font.setColor(Color.WHITE);
@@ -151,11 +152,7 @@ public class Hud implements Disposable {
             timeCount = 0;
         }
 
-        coins.setText("Coins: " + knight.getCoins());
-        enemies.setText("Enemies: " + knight.getEnemiesDefeated());
-
-        expLabel.setText((int) knight.getCurrentExperience() + "/" + (int) knight.getNextLevelExperience());
-        hpLabel.setText((int) knight.getCurrentHealth() + "/" + (int) knight.getMaxHealth());
+        updateUI();
 
         healthPercentage = Math.max(knight.getCurrentHealth() / knight.getMaxHealth(), 0);
         experiencePercentage = Math.max(knight.getCurrentExperience() / knight.getNextLevelExperience(), 0);
@@ -165,12 +162,34 @@ public class Hud implements Disposable {
         experienceBarFillRegion.setRegionWidth((int) (200 * experiencePercentage));
 
         // Actualizar las texturas en la UI
-        healthBarFillImage.setDrawable(new TextureRegionDrawable(healthBarFillRegion));
-        experienceBarFillImage.setDrawable(new TextureRegionDrawable(experienceBarFillRegion));
+        ((TextureRegionDrawable) healthBarFillImage.getDrawable()).setRegion(healthBarFillRegion);
+        ((TextureRegionDrawable) experienceBarFillImage.getDrawable()).setRegion(experienceBarFillRegion);
     }
 
     public void render() {
         stage.draw();
+    }
+
+    public void updateUI() {
+        sb.setLength(0); // Resetear el StringBuilder
+        sb.append("Coins: ").append(knight.getCoins());
+        coins.setText(sb.toString());
+
+        sb.setLength(0);
+        sb.append("Enemies: ").append(knight.getEnemiesDefeated());
+        enemies.setText(sb.toString());
+
+        sb.setLength(0);
+        sb.append((int) knight.getCurrentExperience())
+                .append("/")
+                .append((int) knight.getNextLevelExperience());
+        expLabel.setText(sb.toString());
+
+        sb.setLength(0);
+        sb.append((int) knight.getCurrentHealth())
+                .append("/")
+                .append((int) knight.getMaxHealth());
+        hpLabel.setText(sb.toString());
     }
 
     @Override

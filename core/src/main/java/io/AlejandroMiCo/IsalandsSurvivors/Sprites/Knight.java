@@ -88,7 +88,7 @@ public class Knight extends Sprite {
         atributos.put("player_speed", 100f);
         atributos.put("player_damage", 10f);
         atributos.put("player_critical_chance", 0f);
-        atributos.put("player_health_regenarition", 0f);
+        atributos.put("player_health_regenarition", 5f);
         atributos.put("player_absorption_radius", 0.75f);
 
         timebetweenattacks = 0;
