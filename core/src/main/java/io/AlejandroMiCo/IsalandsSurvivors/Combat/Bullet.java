@@ -132,9 +132,7 @@ public class Bullet extends Sprite implements Poolable {
 
     public static void mejorarAtributo(String atributo, float cantidad) {
         if (atributos.containsKey(atributo)) {
-            System.out.println("entro");
             atributos.put(atributo, atributos.get(atributo) + cantidad);
-            System.out.println("Se mejoró " + atributo + " en " + cantidad);
         }
     }
 

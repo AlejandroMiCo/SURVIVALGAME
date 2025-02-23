@@ -20,11 +20,7 @@ public class DamageCalculator {
 
         // Determinar si el golpe es crítico
         boolean isCritical = (random.nextFloat()*100) < critChance;
-        if (isCritical) {
-            System.out.println("CRÍTICO!");
-        }
         int finalDamage = isCritical ? Math.round(totalBaseDamage * critMultiplier) : totalBaseDamage;
-        System.out.println(finalDamage);
         return finalDamage;
     }
 }

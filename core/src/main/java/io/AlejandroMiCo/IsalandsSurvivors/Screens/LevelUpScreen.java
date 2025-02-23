@@ -183,7 +183,6 @@ public class LevelUpScreen {
 
     public void hide() {
         if (hud != null) {
-            System.out.println("hola");
             Gdx.input.setInputProcessor(hud.stage);
         }
         isVisible = false;

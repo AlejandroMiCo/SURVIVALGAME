@@ -234,7 +234,6 @@ public class Knight extends Sprite {
     public void mejorarAtributo(String atributo, float cantidad) {
         if (atributos.containsKey(atributo)) {
             atributos.put(atributo, atributos.get(atributo) + cantidad);
-            System.out.println("Se mejoró " + atributo + " en " + cantidad);
         }
     }
 
@@ -246,10 +245,7 @@ public class Knight extends Sprite {
             b2body.setLinearVelocity(0, 0);
             stateTimer = 0;
             // Aquí puedes agregar lógica de muerte, como una animación o reiniciar el juego
-            System.out.println("El personaje ha muerto.");
         }
-
-        System.out.println("El personaje recibió " + damage + " de daño. Vida restante: " + currentHealth);
         flashDamage();
     }
 
@@ -290,7 +286,6 @@ public class Knight extends Sprite {
         if (currentHealth < getMaxHealth()) {
             currentHealth += Math.min(10, getMaxHealth() - currentHealth);
         }
-        System.out.println("ñam ñam ñam");
     }
 
     public int getEnemiesDefeated() {

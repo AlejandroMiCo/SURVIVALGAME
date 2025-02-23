@@ -100,7 +100,6 @@ public abstract class Enemy extends Sprite implements Poolable {
     public void takeDamage(int dmg) {
         getHit.play();
         health -= dmg;
-        System.out.println("¡Gobling recibió " + dmg + " de daño! Vida restante: " + health);
 
         // Si la vida llega a 0, destruir el enemigo
         if (health <= 0) {
