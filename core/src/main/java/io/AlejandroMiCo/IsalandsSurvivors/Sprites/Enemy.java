@@ -24,8 +24,6 @@ public abstract class Enemy extends Sprite implements Poolable {
     protected World world;
     protected PlayScreen screen;
     private Body b2body;
-    public boolean setToDestroy;
-    public boolean destroyed;
     public Knight knight;
 
     public static int INITIAL_HEALTH = 20;
@@ -48,6 +46,15 @@ public abstract class Enemy extends Sprite implements Poolable {
     private Sound getHit;
     private Vector2 direction;
     private int value;
+    private static final Vector2 tempVector = new Vector2(); // Vector reutilizable
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
 
     public Enemy(PlayScreen screen, float x, float y, Knight knight, String walkFile, int value) {
         this.health = INITIAL_HEALTH;
@@ -64,9 +71,6 @@ public abstract class Enemy extends Sprite implements Poolable {
         deathAnimation = getAnimation(new Texture("img/Dead_custom.png"));
 
         stateTime = 0;
-
-        setToDestroy = false;
-        destroyed = false;
         deathAnimationFinished = false;
 
         defineEnemy();
@@ -103,17 +107,7 @@ public abstract class Enemy extends Sprite implements Poolable {
 
         // Si la vida llega a 0, destruir el enemigo
         if (health <= 0) {
-            setToDestroy = true;
-            // screen.addExperience(new Vector2(b2body.getPosition().x,b2body.getPosition().y), value);
-            knight.addEnemyDefeated();
 
-            // if (Math.random() > 0.9) {
-            // screen.addCoin(new Vector2(b2body.getPosition().x, b2body.getPosition().y));
-            // }
-
-            // if (Math.random() >= 0.99) {
-            // screen.addMeat(new Vector2(b2body.getPosition().x, b2body.getPosition().y));
-            // }
         }
         flashDamage();
     };
@@ -139,32 +133,16 @@ public abstract class Enemy extends Sprite implements Poolable {
     public void update(float dt) {
         stateTime += dt;
 
-        if (setToDestroy && !destroyed) {
-            // Animacion de muerte
-            world.destroyBody(b2body);
-            b2body = null;
-            direction = null;
-            destroyed = true;
-            stateTime = 0;
-        }
-        if (destroyed) {
-            setRegion(deathAnimation.getKeyFrame(stateTime, false));
+        // Reutilizar un Vector2 temporal para evitar crear objetos innecesarios
+        tempVector.set(knight.b2body.getPosition()).sub(b2body.getPosition()).nor();
+        direction.set(tempVector); // Actualizar 'direction' sin generar nuevas instancias
+        b2body.setLinearVelocity(direction.scl(speed * dt));
 
-            if (deathAnimation.isAnimationFinished(stateTime)) {
-                deathAnimationFinished = true;
-            }
-        } else {
-            // Movimiento del enemigo
-            direction.set(knight.b2body.getPosition()).sub(b2body.getPosition()).nor();
-            b2body.setLinearVelocity(direction.scl(speed * dt));
+        setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
+        setRegion(walkAnimation.getKeyFrame(stateTime, true));
 
-            setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
-            setRegion(walkAnimation.getKeyFrame(stateTime, true));
-
-            shouldFaceRight = knight.b2body.getPosition().x > b2body.getPosition().x;
-            if (!shouldFaceRight) {
-                flip(true, false);
-            }
+        if (b2body.getLinearVelocity().x < 0) {
+            flip(true, false);
         }
 
         if (damageTimer > 0) {
@@ -210,8 +188,6 @@ public abstract class Enemy extends Sprite implements Poolable {
         damage = INITIAL_DAMAGE;
         speed = INITIAL_SPEED;
         stateTime = 0;
-        setToDestroy = false;
-        destroyed = false;
         deathAnimationFinished = false;
         direction.set(0, 0); // Limpiar el vector
         setPosition(0, 0); // Puedes restablecer la posición a cualquier valor que sea necesario

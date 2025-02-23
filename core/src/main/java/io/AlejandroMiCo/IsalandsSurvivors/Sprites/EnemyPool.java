@@ -14,16 +14,7 @@ public class EnemyPool extends Pool<Enemy> {
     }
 
     // Método para obtener un enemigo del pool
-    @Override
-    protected Enemy newObject() {
-        // Este método debe devolver una nueva instancia de una clase que extienda Enemy
-        // Aquí, puedes elegir crear diferentes tipos de enemigos (por ejemplo, Goblin,
-        // Skeleton, etc.)
-        // O puedes hacerlo de una forma más general, si quieres tener más flexibilidad.
 
-        // Supongamos que creamos un Goblin:
-        return new Coco(screen, 0, 0, knight); // Cambia el tipo según la clase que deseas
-    }
 
     public Enemy obtain(float x, float y, int enemyType) {
         // Obtén un enemigo reciclado de la pool
@@ -56,5 +47,10 @@ public class EnemyPool extends Pool<Enemy> {
     public void free(Enemy enemy) {
         // Aquí puedes hacer alguna limpieza específica antes de liberar el enemigo
         super.free(enemy);
+    }
+
+    @Override
+    protected Enemy newObject() {
+        return new TorchGobling(screen, max, max, knight);   ///Esto genera los cuadrados vacios
     }
 }

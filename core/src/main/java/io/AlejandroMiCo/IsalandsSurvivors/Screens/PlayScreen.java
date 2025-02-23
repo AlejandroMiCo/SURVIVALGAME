@@ -222,7 +222,7 @@ public class PlayScreen implements Screen {
 
         updateBullets(dt);
 
-       // updateItems(dt);
+        // updateItems(dt);
 
     }
 
@@ -291,6 +291,18 @@ public class PlayScreen implements Screen {
 
         // 2. Eliminar enemigos marcados
         for (Enemy enemy : toRemove) {
+            knight.addEnemyDefeated();
+            
+            // addExperience(enemy.getBody().getPosition(), enemy.getValue());
+            
+            // if (Math.random() > 0.9) {
+            //     addCoin(enemy.getBody().getPosition());
+            // }
+            
+            // if (Math.random() >= 0.99) {
+            //     addMeat(enemy.getBody().getPosition());
+            // }
+            
             world.destroyBody(enemy.getBody()); // Eliminar del mundo físico
             enemyPool.free(enemy); // Liberar en el pool de objetos
             enemyList.removeValue(enemy, true); // Remover de la lista principal
@@ -428,7 +440,7 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.render();
         levelUpScreen.render();
-        // b2dr.render(world, gameCamera.combined);
+        b2dr.render(world, gameCamera.combined);
     }
 
     @Override
