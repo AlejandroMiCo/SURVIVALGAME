@@ -159,9 +159,12 @@ public class Knight extends Sprite {
         }
 
         // Gira la animacion en funcion de la direccion del personaje
-        if ((b2body.getLinearVelocity().x < 0 && movingRight) || (b2body.getLinearVelocity().x > 0 && !movingRight)) {
+        if ((b2body.getLinearVelocity().x < 0 || !movingRight) && !region.isFlipX()) {
             region.flip(true, false);
-            movingRight = !movingRight;
+            movingRight = false;
+        } else if ((b2body.getLinearVelocity().x > 0 || movingRight) && region.isFlipX()) {
+            region.flip(true, false);
+            movingRight = true;
         }
 
         stateTimer = currentState == previousState ? stateTimer + dt : 0;
