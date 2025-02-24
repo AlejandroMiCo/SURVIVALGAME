@@ -91,6 +91,10 @@ public class PlayScreen implements Screen {
 
     private EnemyPool enemyPool;
 
+    private float spawnX, spawnY;
+
+    private float minX, minY, maxX, maxY;
+
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
         gameCamera = new OrthographicCamera();
@@ -210,8 +214,8 @@ public class PlayScreen implements Screen {
 
     public void updateWorld() {
         world.step(1 / 60f, 6, 2);
-        gameCamera.position.x = knight.b2body.getPosition().x;
-        gameCamera.position.y = knight.b2body.getPosition().y;
+        gameCamera.position.x = knight.getB2body().getPosition().x;
+        gameCamera.position.y = knight.getB2body().getPosition().y;
         gameCamera.update();
         renderer.setView(gameCamera);
     }
@@ -220,7 +224,7 @@ public class PlayScreen implements Screen {
 
         updateEnemies(dt);
 
-        updateBullets(dt);
+        // updateBullets(dt);
 
         // updateItems(dt);
 
@@ -292,17 +296,17 @@ public class PlayScreen implements Screen {
         // 2. Eliminar enemigos marcados
         for (Enemy enemy : toRemove) {
             knight.addEnemyDefeated();
-            
+
             // addExperience(enemy.getBody().getPosition(), enemy.getValue());
-            
+
             // if (Math.random() > 0.9) {
-            //     addCoin(enemy.getBody().getPosition());
+            // addCoin(enemy.getBody().getPosition());
             // }
-            
+
             // if (Math.random() >= 0.99) {
-            //     addMeat(enemy.getBody().getPosition());
+            // addMeat(enemy.getBody().getPosition());
             // }
-            
+            // enemy.setPosition(0, 0);
             world.destroyBody(enemy.getBody()); // Eliminar del mundo físico
             enemyPool.free(enemy); // Liberar en el pool de objetos
             enemyList.removeValue(enemy, true); // Remover de la lista principal
@@ -329,9 +333,10 @@ public class PlayScreen implements Screen {
     }
 
     private void spawnEnemies(float gameTime) {
-        float spawnX, spawnY;
-        float minX = 3, maxX = 23;
-        float minY = 3, maxY = 23;
+        minX = 3;
+        maxX = 23;
+        minY = 3;
+        maxY = 23;
 
         while (enemyList.size < enemiesPerWave && enemyList.size < MAX_ENEMIES) {
             spawnX = MathUtils.clamp((float) (Math.random() * (maxX - minX) + minX), minX, maxX);
@@ -359,8 +364,8 @@ public class PlayScreen implements Screen {
         if (enemyList.isEmpty())
             return; // No disparar si no hay enemigos
 
-        float knightX = knight.b2body.getPosition().x;
-        float knightY = knight.b2body.getPosition().y;
+        float knightX = knight.getB2body().getPosition().x;
+        float knightY = knight.getB2body().getPosition().y;
 
         // 🔹 Encontrar el enemigo más cercano
         Enemy closestEnemy = null;
@@ -477,7 +482,6 @@ public class PlayScreen implements Screen {
         map.dispose();
         renderer.dispose();
         hud.dispose();
-        joystick.dispose();
         music.dispose();
     }
 

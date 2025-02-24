@@ -5,17 +5,19 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 
 public class VirtualJoystick {
-    private Texture baseTexture;
-    private Texture knobTexture;
-    private Vector2 basePosition;
-    private Vector2 knobPosition;
-    private float baseRadius;
+    private final Vector2 basePosition;
+    private final Vector2 knobPosition;
+    private final Vector2 touchPosition;
+    private final Vector2 direction;
+    private final float baseRadius;
     private boolean touched;
     private int touchPointer;
 
     public VirtualJoystick(float baseRadius) {
         this.basePosition = new Vector2();
         this.knobPosition = new Vector2();
+        this.touchPosition = new Vector2();
+        this.direction = new Vector2();
         this.baseRadius = baseRadius;
         this.touched = false;
     }
@@ -29,21 +31,18 @@ public class VirtualJoystick {
                     basePosition.set(Gdx.input.getX(touchPointer),
                             Gdx.graphics.getHeight() - Gdx.input.getY(touchPointer));
                     knobPosition.set(basePosition);
-                    break;
+                    return;
                 }
             }
         } else if (Gdx.input.isTouched(touchPointer)) {
             // Si el dedo que controla el joystick sigue tocando
-            float touchX = Gdx.input.getX(touchPointer);
-            float touchY = Gdx.graphics.getHeight() - Gdx.input.getY(touchPointer);
-            Vector2 touchPosition = new Vector2(touchX, touchY);
+            touchPosition.set(Gdx.input.getX(touchPointer), Gdx.graphics.getHeight() - Gdx.input.getY(touchPointer));
 
-            if (touchPosition.dst(basePosition) <= baseRadius) {
+            if (touchPosition.dst(basePosition) <= baseRadius * baseRadius) {
                 knobPosition.set(touchPosition);
             } else {
-                Vector2 direction = touchPosition.sub(basePosition).nor();
-                knobPosition.set(basePosition.x + direction.x * baseRadius,
-                        basePosition.y + direction.y * baseRadius);
+                direction.set(touchPosition).sub(basePosition).nor();
+                knobPosition.set(basePosition).mulAdd(direction, baseRadius);
             }
         } else {
             touched = false; // Libera el joystick cuando se suelta el dedo
@@ -51,10 +50,7 @@ public class VirtualJoystick {
     }
 
     public Vector2 getDirection() {
-        if (touched) {
-            return new Vector2(knobPosition.x - basePosition.x, knobPosition.y - basePosition.y).nor();
-        }
-        return new Vector2(0, 0);
+         return touched ? direction.set(knobPosition).sub(basePosition).nor() : direction.set(0, 0);
     }
 
     public boolean isTouched() {
@@ -63,10 +59,5 @@ public class VirtualJoystick {
 
     public boolean isActive() {
         return touched;
-    }
-
-    public void dispose() {
-        baseTexture.dispose();
-        knobTexture.dispose();
     }
 }

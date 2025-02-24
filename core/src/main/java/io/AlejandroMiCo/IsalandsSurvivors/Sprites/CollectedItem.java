@@ -60,8 +60,8 @@ public class CollectedItem extends Sprite {
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
 
         // Posiciones del jugador
-        float knightX = knight.b2body.getPosition().x;
-        float knightY = knight.b2body.getPosition().y;
+        float knightX = knight.getB2body().getPosition().x;
+        float knightY = knight.getB2body().getPosition().y;
 
         // Distancia entre moneda y jugador
         float dx = body.getPosition().x - knightX;

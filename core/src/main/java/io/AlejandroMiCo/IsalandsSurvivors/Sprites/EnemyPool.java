@@ -15,29 +15,33 @@ public class EnemyPool extends Pool<Enemy> {
 
     // Método para obtener un enemigo del pool
 
-
     public Enemy obtain(float x, float y, int enemyType) {
-        // Obtén un enemigo reciclado de la pool
-        Enemy enemy = super.obtain();
-        enemy.setPosition(x, y);
+        System.out.println("entro");
+        Enemy enemy = super.obtain(); // Obtiene un enemigo de la pool
 
-        // Basado en el tipo de enemigo, puedes asignar un tipo específico
-        switch (enemyType) {
-            case 0:
-                enemy = new Coco(screen, x, y, knight);
-                break;
-            case 1:
-                enemy = new TorchGobling(screen, x, y, knight);
-                break;
-            case 2:
-                enemy = new TntGobling(screen, x, y, knight);
-                break;
-            case 3:
-                enemy = new EnemyWarrior(screen, x, y, knight);
-                break;
-            default:
-                enemy = new Coco(screen, x, y, knight);
-                break;
+        if (enemy == null) {
+            System.out.println("entro");
+            // Si no hay enemigos disponibles en la pool, crea uno nuevo según el tipo
+            switch (enemyType) {
+                case 0:
+                    enemy = new Coco(screen, x, y, knight);
+                    break;
+                case 1:
+                    enemy = new TorchGobling(screen, x, y, knight);
+                    break;
+                case 2:
+                    enemy = new TntGobling(screen, x, y, knight);
+                    break;
+                case 3:
+                    enemy = new EnemyWarrior(screen, x, y, knight);
+                    break;
+                default:
+                    enemy = new Coco(screen, x, y, knight);
+                    break;
+            }
+        } else {
+            // Reutilizar el enemigo de la pool y resetear sus valores
+            enemy.reinitialize(x, y); // <- Necesitas crear este método en Enemy
         }
 
         return enemy;
@@ -45,12 +49,13 @@ public class EnemyPool extends Pool<Enemy> {
 
     @Override
     public void free(Enemy enemy) {
-        // Aquí puedes hacer alguna limpieza específica antes de liberar el enemigo
-        super.free(enemy);
+        enemy.getBody().setLinearVelocity(0, 0); // Detener movimiento
+        enemy.setPosition(0, 0); // Reiniciar posición
     }
 
     @Override
     protected Enemy newObject() {
-        return new TorchGobling(screen, max, max, knight);   ///Esto genera los cuadrados vacios
+        return new Coco(screen, 0, 0, knight); // Enemigo base con coordenadas iniciales válidas
     }
+
 }

@@ -34,6 +34,8 @@ public abstract class Enemy extends Sprite implements Poolable {
     protected int damage;
     protected float speed;
 
+    private boolean active; // Flag para saber si el enemigo está en uso
+
     public boolean deathAnimationFinished;
     public Random rdn;
 
@@ -64,6 +66,7 @@ public abstract class Enemy extends Sprite implements Poolable {
         this.screen = screen;
         this.knight = knight;
         this.value = value;
+        this.active = false; // Se inicia inactivo
 
         direction = new Vector2();
 
@@ -80,11 +83,10 @@ public abstract class Enemy extends Sprite implements Poolable {
     }
 
     public void defineEnemy() {
-
         BodyDef bdef = new BodyDef();
-        bdef.position.set((float) ((Math.random() * 22) + 5), (float) ((Math.random() * 23) + 5));
-
+        bdef.position.set(0, 0); // (float) ((Math.random() * 22) + 5), (float) ((Math.random() * 23) + 5)
         bdef.type = BodyDef.BodyType.DynamicBody;
+
         b2body = world.createBody(bdef);
 
         FixtureDef fedef = new FixtureDef();
@@ -102,12 +104,15 @@ public abstract class Enemy extends Sprite implements Poolable {
     }
 
     public void takeDamage(int dmg) {
+        if (!active)
+            return;
+
         getHit.play();
         health -= dmg;
 
         // Si la vida llega a 0, destruir el enemigo
         if (health <= 0) {
-
+            active = false;
         }
         flashDamage();
     };
@@ -131,10 +136,12 @@ public abstract class Enemy extends Sprite implements Poolable {
     }
 
     public void update(float dt) {
+        if (!active)
+            return;
         stateTime += dt;
 
         // Reutilizar un Vector2 temporal para evitar crear objetos innecesarios
-        tempVector.set(knight.b2body.getPosition()).sub(b2body.getPosition()).nor();
+        tempVector.set(knight.getB2body().getPosition()).sub(b2body.getPosition()).nor();
         direction.set(tempVector); // Actualizar 'direction' sin generar nuevas instancias
         b2body.setLinearVelocity(direction.scl(speed * dt));
 
@@ -184,6 +191,7 @@ public abstract class Enemy extends Sprite implements Poolable {
     public void reset() {
         // Restablece todos los campos relevantes del enemigo para que pueda ser
         // reutilizado desde la pool
+        active = false;
         health = INITIAL_HEALTH;
         damage = INITIAL_DAMAGE;
         speed = INITIAL_SPEED;
@@ -191,6 +199,27 @@ public abstract class Enemy extends Sprite implements Poolable {
         deathAnimationFinished = false;
         direction.set(0, 0); // Limpiar el vector
         setPosition(0, 0); // Puedes restablecer la posición a cualquier valor que sea necesario
-        // Reiniciar otras propiedades del enemigo según sea necesario.
+        b2body.setLinearVelocity(0, 0);// Reiniciar otras propiedades del enemigo según sea necesario.
     }
+
+    public void reinitialize(float x, float y) {
+        setPosition(x, y);
+        health = INITIAL_HEALTH;
+        active = true;
+        deathAnimationFinished = false;
+        stateTime = 0;
+        damageTimer = 0;
+        setColor(1, 1, 1, 1);
+        b2body.setTransform(x, y, 0);
+        b2body.setLinearVelocity(0, 0);
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
 }

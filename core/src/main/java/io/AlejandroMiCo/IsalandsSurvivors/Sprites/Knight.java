@@ -35,15 +35,8 @@ public class Knight extends Sprite {
     private TextureRegion[][] tmp;
     private TextureRegion[] regionsMovimiento;
 
-    // Mundo y cuerpo del personaje
-    public World world;
-    public Body b2body;
-
     public float stateTimer;
     private boolean movingRight;
-
-    // Joystick para mover el personaje
-    private VirtualJoystick joystick;
 
     // Estadisticas del personaje
     public float timebetweenattacks;
@@ -61,10 +54,28 @@ public class Knight extends Sprite {
     private int coinCount;
     private int enemiesDefeated;
 
+    private final Vector2 velocity;
+    private final Vector2 direction;
+    private final VirtualJoystick joystick;
+    private final World world;
+    private Body b2body;
+    private TextureRegion region;
+
+    public Body getB2body() {
+        return b2body;
+    }
+
+    public void setB2body(Body b2body) {
+        this.b2body = b2body;
+    }
+
     public Knight(PlayScreen screen, VirtualJoystick joy) {
         super(new Texture("creatures/Archer_Blue.png"), 196, 196);
+
         this.joystick = joy;
         this.world = screen.getWorld();
+        this.velocity = new Vector2();
+        this.direction = new Vector2();
         defineKnight();
 
         currentState = State.IDDLE;
@@ -115,13 +126,14 @@ public class Knight extends Sprite {
 
     // Se encarga de actualizar la camara y la animacion
     public void update(float dt) {
+        direction.set(joystick.getDirection());
+        velocity.set(direction).scl(atributos.get("player_speed") * dt);
+        b2body.setLinearVelocity(velocity);
+
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
         setRegion(getFrame(dt));
+
         timebetweenattacks += dt;
-
-        Vector2 direction = joystick.getDirection();
-        b2body.setLinearVelocity(direction.scl(atributos.get("player_speed") * dt));
-
         if (damageTimer > 0) {
             damageTimer -= dt;
             if (damageTimer <= 0) {
@@ -140,9 +152,6 @@ public class Knight extends Sprite {
     // Devuelve la animacion en funcion del estado actual del personaje
     public TextureRegion getFrame(float dt) {
         currentState = getState();
-
-        TextureRegion region;
-
         switch (currentState) {
             case DEAD -> region = deathAnimation.getKeyFrame(stateTimer, false);
             case MOVING -> region = movingAnimation.getKeyFrame(stateTimer, true);
@@ -150,12 +159,9 @@ public class Knight extends Sprite {
         }
 
         // Gira la animacion en funcion de la direccion del personaje
-        if ((b2body.getLinearVelocity().x < 0 || !movingRight) && !region.isFlipX()) {
+        if ((b2body.getLinearVelocity().x < 0 && movingRight) || (b2body.getLinearVelocity().x > 0 && !movingRight)) {
             region.flip(true, false);
-            movingRight = false;
-        } else if ((b2body.getLinearVelocity().x > 0 || movingRight) && region.isFlipX()) {
-            region.flip(true, false);
-            movingRight = true;
+            movingRight = !movingRight;
         }
 
         stateTimer = currentState == previousState ? stateTimer + dt : 0;
@@ -186,9 +192,6 @@ public class Knight extends Sprite {
         FixtureDef fedef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(12 / IslandsSurvivors.PPM, 12 / IslandsSurvivors.PPM);
-
-        fedef.friction = 1;
-        fedef.density = 200;
 
         fedef.filter.categoryBits = IslandsSurvivors.PLAYER_BIT;
         fedef.filter.maskBits = IslandsSurvivors.DEFAULT_BIT | IslandsSurvivors.ENEMY_BIT | IslandsSurvivors.ITEM_BIT;
