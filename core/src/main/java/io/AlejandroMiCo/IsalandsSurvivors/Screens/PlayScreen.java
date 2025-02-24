@@ -80,6 +80,8 @@ public class PlayScreen implements Screen {
     private Music music;
     private Sound sonidoAtaque;
 
+    
+
     private final Pool<Bullet> bulletPool = new Pool<Bullet>() {
         @Override
         protected Bullet newObject() {
@@ -224,7 +226,7 @@ public class PlayScreen implements Screen {
 
         updateEnemies(dt);
 
-        // updateBullets(dt);
+        updateBullets(dt);
 
         // updateItems(dt);
 

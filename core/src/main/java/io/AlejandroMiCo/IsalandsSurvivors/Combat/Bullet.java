@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -24,6 +25,9 @@ public class Bullet extends Sprite implements Poolable {
     private TextureRegion[] regionsMovimiento;
     private Texture animacionMovimiento;
     private boolean shouldRemove = false;
+
+    private static final Vector2 tmpPosition = new Vector2();
+    private static final Vector2 tmpVelocity = new Vector2();
 
     float stateTime;
     TextureRegion texture;
@@ -58,9 +62,10 @@ public class Bullet extends Sprite implements Poolable {
 
         // Sincroniza la posición del sprite con la del body (conversión de unidades del
         // mundo a píxeles)
-        setPosition(
-                body.getPosition().x - getWidth() / 2,
-                body.getPosition().y - getHeight() / 2);
+        if (body != null) {
+            setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
+            setRotation((float) Math.toDegrees(angle));
+        }
         setScale(size * 10);
         setRegion(animacionMovimiento);
         // Actualiza la rotación del sprite según el ángulo del body
@@ -83,11 +88,13 @@ public class Bullet extends Sprite implements Poolable {
         float offset = 0.3f;
 
         BodyDef bdef = new BodyDef();
-        bdef.position.set(x + offset * (float) Math.cos(angle), y + offset * (float) Math.sin(angle));
+        tmpPosition.set(x, y).add((float) Math.cos(angle) * offset, (float) Math.sin(angle) * offset); // Reutilizando
+                                                                                                       // Vector2
+        bdef.position.set(tmpPosition);
         bdef.angle = angle;
         bdef.type = BodyDef.BodyType.DynamicBody;
-
         bdef.bullet = true;
+
         body = world.createBody(bdef);
 
         CircleShape shape = new CircleShape();
@@ -105,8 +112,8 @@ public class Bullet extends Sprite implements Poolable {
         body.createFixture(fedef).setUserData(this);
         shape.dispose();
 
-        body.setLinearVelocity(atributos.get("velocidad_bala") * (float) Math.cos(angle),
-                atributos.get("velocidad_bala") * (float) Math.sin(angle));
+        tmpVelocity.set((float) Math.cos(angle), (float) Math.sin(angle)).scl(atributos.get("velocidad_bala"));
+        body.setLinearVelocity(tmpVelocity);
     }
 
     public Animation<TextureRegion> getAnimation(Texture imagen) {
@@ -158,6 +165,7 @@ public class Bullet extends Sprite implements Poolable {
     @Override
     public void reset() {
         setPosition(0, 0);
+        body.setLinearVelocity(0, 0);
         body = null;
     }
 }
