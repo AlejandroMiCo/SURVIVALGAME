@@ -17,6 +17,14 @@ import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 public class CollectedItem extends Sprite {
     private World world;
     private Body body;
+    public Body getBody() {
+        return body;
+    }
+
+    public void setBody(Body body) {
+        this.body = body;
+    }
+
     private boolean collected = false;
 
     public Animation<TextureRegion> animation;
@@ -108,12 +116,6 @@ public class CollectedItem extends Sprite {
 
     public boolean isCollected() {
         return collected;
-    }
-
-    public void dispose() {
-        if (body != null) {
-            world.destroyBody(body);
-        }
     }
 
     public Animation<TextureRegion> getAnimation(Texture imagen) {

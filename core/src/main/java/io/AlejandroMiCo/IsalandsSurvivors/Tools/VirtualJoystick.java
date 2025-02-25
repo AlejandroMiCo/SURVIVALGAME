@@ -1,7 +1,6 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Tools;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 
 public class VirtualJoystick {

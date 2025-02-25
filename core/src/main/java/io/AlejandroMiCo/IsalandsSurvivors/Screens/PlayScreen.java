@@ -15,7 +15,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
@@ -226,7 +225,7 @@ public class PlayScreen implements Screen {
 
         updateBullets(dt);
 
-        // updateItems(dt);
+        updateItems(dt);
 
     }
 
@@ -255,12 +254,21 @@ public class PlayScreen implements Screen {
     }
 
     public void updateItems(float dt) {
+        // 1. Revisar qué ítems han sido recogidos y marcarlos para eliminación
         for (CollectedItem item : itemList) {
             if (item.isCollected()) {
                 itemsToRemove.add(item);
             }
         }
-        itemList.removeAll(itemList, true);
+
+        // 2. Eliminar los ítems marcados de la lista principal y del mundo
+        for (CollectedItem item : itemsToRemove) {
+            world.destroyBody(item.getBody()); // Eliminar el cuerpo de Box2D
+            itemList.removeValue(item, true);  // Remover de la lista
+        }
+        itemsToRemove.clear(); // Ahora sí, limpiar la lista de objetos eliminados
+
+        // 3. Agregar nuevos ítems pendientes
         for (Vector2 pos : pendingCoins) {
             itemList.add(new Coin(world, pos.x, pos.y, knight));
         }
@@ -276,11 +284,14 @@ public class PlayScreen implements Screen {
         }
         pendingExperience.clear();
 
+        // 4. Actualizar solo los ítems que aún existen
         for (CollectedItem item : itemList) {
-            item.update(dt);
+            if (item.getBody() != null) { // Verificar que el objeto aún tiene un body válido
+                item.update(dt);
+            }
         }
-
     }
+
 
     private void updateEnemies(float dt) {
         if (enemyList.size < MAX_ENEMIES) {
@@ -297,16 +308,16 @@ public class PlayScreen implements Screen {
         for (Enemy enemy : toRemove) {
             knight.addEnemyDefeated();
 
-            // addExperience(enemy.getBody().getPosition(), enemy.getValue());
+            addExperience(enemy.getBody().getPosition(), enemy.getValue());
 
-            // if (Math.random() > 0.9) {
-            // addCoin(enemy.getBody().getPosition());
-            // }
+            if (Math.random() > 0.9) {
+                addCoin(enemy.getBody().getPosition());
+            }
 
-            // if (Math.random() >= 0.99) {
-            // addMeat(enemy.getBody().getPosition());
-            // }
-            // enemy.setPosition(0, 0);
+            if (Math.random() >= 0.99) {
+                addMeat(enemy.getBody().getPosition());
+            }
+
             world.destroyBody(enemy.getBody()); // Eliminar del mundo físico
             enemyPool.free(enemy); // Liberar en el pool de objetos
             enemyList.removeValue(enemy, true); // Remover de la lista principal
