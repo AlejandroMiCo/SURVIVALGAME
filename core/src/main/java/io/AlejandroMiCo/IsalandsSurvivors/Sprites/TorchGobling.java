@@ -10,4 +10,9 @@ public class TorchGobling extends Enemy {
         damage = INITIAL_DAMAGE + 10;
         health = INITIAL_HEALTH + 20;
     }
+
+    @Override
+    public void reset() {
+        super.reset();
+    }
 }

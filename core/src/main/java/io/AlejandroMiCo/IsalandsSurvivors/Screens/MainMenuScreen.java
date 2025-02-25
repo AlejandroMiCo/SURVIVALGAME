@@ -58,12 +58,12 @@ public class MainMenuScreen implements Screen {
         btnExitStyle.fontColor = Color.BLACK;
 
         TextButton playButton = new TextButton("Jugar", btnStyle);
-        TextButton storeButton = new TextButton("Store", btnStyle);
+      //  TextButton storeButton = new TextButton("Store", btnStyle);
         TextButton optionButton = new TextButton("Opciones", btnStyle);
         TextButton exitButton = new TextButton("Salir", btnExitStyle);
 
         playButton.padBottom(10);
-        storeButton.padBottom(10);
+       // storeButton.padBottom(10);
         optionButton.padBottom(10);
         exitButton.padBottom(10);
 
@@ -86,13 +86,13 @@ public class MainMenuScreen implements Screen {
             }
         });
 
-        storeButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                // game.setScreen(new StoreScreen(game));
-                dispose();
-            }
-        });
+        // storeButton.addListener(new ClickListener() {
+        //     @Override
+        //     public void clicked(InputEvent event, float x, float y) {
+        //         // game.setScreen(new StoreScreen(game));
+        //         dispose();
+        //     }
+        // });
 
         exitButton.addListener(new ClickListener() {
             @Override
@@ -103,7 +103,7 @@ public class MainMenuScreen implements Screen {
 
         table.background(new TextureRegionDrawable(new Texture("ui/pergamino.png")));
         table.add(playButton).padBottom(5).size(150, 50).row();
-        table.add(storeButton).padBottom(5).size(150, 50).row();
+    //    table.add(storeButton).padBottom(5).size(150, 50).row();
         table.add(optionButton).padBottom(5).size(150, 50).row();
         table.add(exitButton).padBottom(5).size(150, 50).row();
 

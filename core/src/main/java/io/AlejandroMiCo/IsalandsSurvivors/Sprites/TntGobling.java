@@ -11,4 +11,9 @@ public class TntGobling extends Enemy {
         health = INITIAL_HEALTH + 40;
         speed = INITIAL_SPEED - 20f;
     }
+
+    @Override
+    public void reset() {
+        super.reset();
+    }
 }

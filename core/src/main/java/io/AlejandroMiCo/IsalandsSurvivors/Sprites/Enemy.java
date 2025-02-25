@@ -15,16 +15,15 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Pool.Poolable;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
 
-public abstract class Enemy extends Sprite {
+public abstract class Enemy extends Sprite implements Poolable {
     protected World world;
     protected PlayScreen screen;
     private Body b2body;
-    public boolean setToDestroy;
-    public boolean destroyed;
     public Knight knight;
 
     public static int INITIAL_HEALTH = 20;
@@ -34,6 +33,8 @@ public abstract class Enemy extends Sprite {
     protected int health;
     protected int damage;
     protected float speed;
+
+    private boolean active; // Flag para saber si el enemigo está en uso
 
     public boolean deathAnimationFinished;
     public Random rdn;
@@ -45,8 +46,17 @@ public abstract class Enemy extends Sprite {
 
     public float damageTimer;
     private Sound getHit;
-
+    private Vector2 direction;
     private int value;
+    private static final Vector2 tempVector = new Vector2(); // Vector reutilizable
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
 
     public Enemy(PlayScreen screen, float x, float y, Knight knight, String walkFile, int value) {
         this.health = INITIAL_HEALTH;
@@ -56,14 +66,14 @@ public abstract class Enemy extends Sprite {
         this.screen = screen;
         this.knight = knight;
         this.value = value;
+        this.active = false; // Se inicia inactivo
+
+        direction = new Vector2();
 
         walkAnimation = getAnimation(new Texture(walkFile));
         deathAnimation = getAnimation(new Texture("img/Dead_custom.png"));
 
         stateTime = 0;
-
-        setToDestroy = false;
-        destroyed = false;
         deathAnimationFinished = false;
 
         defineEnemy();
@@ -73,11 +83,10 @@ public abstract class Enemy extends Sprite {
     }
 
     public void defineEnemy() {
-
         BodyDef bdef = new BodyDef();
-        bdef.position.set((float) ((Math.random() * 22) + 5), (float) ((Math.random() * 23) + 5));
-
+        bdef.position.set(0, 0); // (float) ((Math.random() * 22) + 5), (float) ((Math.random() * 23) + 5)
         bdef.type = BodyDef.BodyType.DynamicBody;
+
         b2body = world.createBody(bdef);
 
         FixtureDef fedef = new FixtureDef();
@@ -95,23 +104,15 @@ public abstract class Enemy extends Sprite {
     }
 
     public void takeDamage(int dmg) {
+        if (!active)
+            return;
+
         getHit.play();
         health -= dmg;
-        System.out.println("¡Gobling recibió " + dmg + " de daño! Vida restante: " + health);
 
         // Si la vida llega a 0, destruir el enemigo
         if (health <= 0) {
-            setToDestroy = true;
-            screen.addExperience(new Vector2(b2body.getPosition().x, b2body.getPosition().y), value);
-            knight.addEnemyDefeated();
-
-            if (Math.random() > 0.9) {
-                screen.addCoin(new Vector2(b2body.getPosition().x, b2body.getPosition().y));
-            }
-
-            if (Math.random() >= 0.99) {
-                screen.addMeat(new Vector2(b2body.getPosition().x, b2body.getPosition().y));
-            }
+            active = false;
         }
         flashDamage();
     };
@@ -135,33 +136,20 @@ public abstract class Enemy extends Sprite {
     }
 
     public void update(float dt) {
+        if (!active)
+            return;
         stateTime += dt;
 
-        if (setToDestroy && !destroyed) {
-            // Animacion de muerte
-            world.destroyBody(b2body);
-            b2body = null;
-            destroyed = true;
-            stateTime = 0;
-        }
-        if (destroyed) {
-            setRegion(deathAnimation.getKeyFrame(stateTime, false));
+        // Reutilizar un Vector2 temporal para evitar crear objetos innecesarios
+        tempVector.set(knight.getB2body().getPosition()).sub(b2body.getPosition()).nor();
+        direction.set(tempVector); // Actualizar 'direction' sin generar nuevas instancias
+        b2body.setLinearVelocity(direction.scl(speed * dt));
 
-            if (deathAnimation.isAnimationFinished(stateTime)) {
-                deathAnimationFinished = true;
-            }
-        } else {
-            // Movimiento del enemigo
-            Vector2 direction = new Vector2(knight.b2body.getPosition()).sub(b2body.getPosition()).nor();
-            b2body.setLinearVelocity(direction.scl(speed * dt));
+        setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
+        setRegion(walkAnimation.getKeyFrame(stateTime, true));
 
-            setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
-            setRegion(walkAnimation.getKeyFrame(stateTime, true));
-
-            shouldFaceRight = knight.b2body.getPosition().x > b2body.getPosition().x;
-            if (!shouldFaceRight) {
-                flip(true, false);
-            }
+        if (b2body.getLinearVelocity().x < 0) {
+            flip(true, false);
         }
 
         if (damageTimer > 0) {
@@ -198,4 +186,41 @@ public abstract class Enemy extends Sprite {
     public boolean isDead() {
         return health <= 0;
     }
+
+    @Override
+    public void reset() {
+        // Restablece todos los campos relevantes del enemigo para que pueda ser
+        // reutilizado desde la pool
+        active = false;
+        health = INITIAL_HEALTH;
+        damage = INITIAL_DAMAGE;
+        speed = INITIAL_SPEED;
+        stateTime = 0;
+        setRegion(deathAnimation.getKeyFrame(stateTime, false));
+        deathAnimationFinished = false;
+        direction.set(0, 0); // Limpiar el vector
+        setPosition(0, 0); // Puedes restablecer la posición a cualquier valor que sea necesario
+        b2body.setLinearVelocity(0, 0);// Reiniciar otras propiedades del enemigo según sea necesario.
+    }
+
+    public void reinitialize(float x, float y) {
+        setPosition(x, y);
+        health = INITIAL_HEALTH;
+        active = true;
+        deathAnimationFinished = false;
+        stateTime = 0;
+        damageTimer = 0;
+        setColor(1, 1, 1, 1);
+        b2body.setTransform(x, y, 0);
+        b2body.setLinearVelocity(0, 0);
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
 }

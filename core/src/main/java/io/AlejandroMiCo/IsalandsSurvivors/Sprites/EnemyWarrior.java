@@ -11,4 +11,9 @@ public class EnemyWarrior extends Enemy {
         health = INITIAL_HEALTH + 100;
         speed = INITIAL_SPEED *1.2F;
     }
+
+    @Override
+    public void reset() {
+        super.reset();
+    }
 }

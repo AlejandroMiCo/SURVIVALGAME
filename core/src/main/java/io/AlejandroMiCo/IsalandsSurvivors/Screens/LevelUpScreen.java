@@ -66,7 +66,7 @@ public class LevelUpScreen {
 
         mejorasBala.put("daño_bala", 5f);
         mejorasBala.put("velocidad_bala", 1f);
-        mejorasBala.put("cooldown_bala", -0.5f);
+        mejorasBala.put("cooldown_bala", -0.1f);
         mejorasBala.put("critico_bala", 5f);
     }
 
@@ -183,7 +183,6 @@ public class LevelUpScreen {
 
     public void hide() {
         if (hud != null) {
-            System.out.println("hola");
             Gdx.input.setInputProcessor(hud.stage);
         }
         isVisible = false;

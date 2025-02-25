@@ -30,14 +30,10 @@ public class WorldContactListener implements ContactListener {
 
         int cDef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
 
-        // System.out.println("Colisión detectada: " + fixA.getFilterData().categoryBits
-        // + " con "
-        // + fixB.getFilterData().categoryBits);
-
         switch (cDef) {
             case IslandsSurvivors.BULLET_BIT | IslandsSurvivors.ENEMY_BIT:
                 Bullet bullet;
-                Enemy enemy; // Suponiendo que tenemos una referencia al jugador
+                Enemy enemy;
 
                 if (fixA.getFilterData().categoryBits == IslandsSurvivors.BULLET_BIT) {
                     bullet = (Bullet) fixA.getUserData();
@@ -53,8 +49,6 @@ public class WorldContactListener implements ContactListener {
                 break;
 
             case IslandsSurvivors.PLAYER_BIT | IslandsSurvivors.ENEMY_BIT:
-                System.out.println("¡Colisión con el jugador!");
-
                 Enemy enemySource;
 
                 if (fixA.getFilterData().categoryBits == IslandsSurvivors.ENEMY_BIT) {
@@ -83,7 +77,6 @@ public class WorldContactListener implements ContactListener {
                 } else if (item instanceof Experience) {
                     knight.gainXP(((Experience)item).getExpValue());
                 }
-                System.out.println("Ahora soy mas rico muahahahha");
                 break;
             default:
                 break;
