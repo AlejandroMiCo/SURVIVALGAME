@@ -14,7 +14,6 @@ import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Experience;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Meat;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.TorchGobling;
 
 public class WorldContactListener implements ContactListener {
 
@@ -34,7 +33,7 @@ public class WorldContactListener implements ContactListener {
         switch (cDef) {
             case IslandsSurvivors.BULLET_BIT | IslandsSurvivors.ENEMY_BIT:
                 Bullet bullet;
-                Enemy enemy; // Suponiendo que tenemos una referencia al jugador
+                Enemy enemy;
 
                 if (fixA.getFilterData().categoryBits == IslandsSurvivors.BULLET_BIT) {
                     bullet = (Bullet) fixA.getUserData();
@@ -59,11 +58,7 @@ public class WorldContactListener implements ContactListener {
                 }
 
                 if (enemySource != null) {
-                    //knight.receiveDamage(enemySource.getDamage());
-                    enemySource.takeDamage(100);
-                    if (enemySource.getClass().equals(TorchGobling.class)) {
-                        System.out.println("torch");
-                    }
+                    knight.receiveDamage(enemySource.getDamage());
                 }
                 break;
             case IslandsSurvivors.ITEM_BIT | IslandsSurvivors.PLAYER_BIT:

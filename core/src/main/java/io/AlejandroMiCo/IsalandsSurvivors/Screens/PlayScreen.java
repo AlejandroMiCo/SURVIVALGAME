@@ -80,8 +80,6 @@ public class PlayScreen implements Screen {
     private Music music;
     private Sound sonidoAtaque;
 
-    
-
     private final Pool<Bullet> bulletPool = new Pool<Bullet>() {
         @Override
         protected Bullet newObject() {
@@ -335,14 +333,14 @@ public class PlayScreen implements Screen {
     }
 
     private void spawnEnemies(float gameTime) {
-        minX = 3;
+        minX = 5;
         maxX = 23;
-        minY = 3;
+        minY = 5;
         maxY = 23;
 
         while (enemyList.size < enemiesPerWave && enemyList.size < MAX_ENEMIES) {
-            spawnX = MathUtils.clamp((float) (Math.random() * (maxX - minX) + minX), minX, maxX);
-            spawnY = MathUtils.clamp((float) (Math.random() * (maxY - minY) + minY), minY, maxY);
+            spawnX = (float) (Math.random() * maxX + minX);
+            spawnY = (float) (Math.random() * maxY + minY);
 
             Enemy enemy = null;
             switch ((int) gameTime / 120) {

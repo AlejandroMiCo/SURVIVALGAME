@@ -55,7 +55,7 @@ public class EnemyPool extends Pool<Enemy> {
 
     @Override
     protected Enemy newObject() {
-        return new Coco(screen, 0, 0, knight); // Enemigo base con coordenadas iniciales válidas
+        return new Coco(screen, (float) ((Math.random() * 23) + 5), (float) ((Math.random() * 23) + 5), knight); // Enemigo base con coordenadas iniciales válidas
     }
 
 }

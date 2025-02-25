@@ -196,6 +196,7 @@ public abstract class Enemy extends Sprite implements Poolable {
         damage = INITIAL_DAMAGE;
         speed = INITIAL_SPEED;
         stateTime = 0;
+        setRegion(deathAnimation.getKeyFrame(stateTime, false));
         deathAnimationFinished = false;
         direction.set(0, 0); // Limpiar el vector
         setPosition(0, 0); // Puedes restablecer la posición a cualquier valor que sea necesario

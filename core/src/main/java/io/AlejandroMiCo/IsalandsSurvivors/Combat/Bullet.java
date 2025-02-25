@@ -37,8 +37,8 @@ public class Bullet extends Sprite implements Poolable {
     private static HashMap<String, Float> atributos = new HashMap<>() {
         {
             put("daño_bala", 10f);
-            put("velocidad_bala", 5f);
-            put("cooldown_bala", 0f);
+            put("velocidad_bala", 2f);
+            put("cooldown_bala", 2.0f);
             put("critico_bala", 0f);
         }
     };

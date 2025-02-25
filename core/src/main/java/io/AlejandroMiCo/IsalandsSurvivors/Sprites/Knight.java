@@ -96,7 +96,7 @@ public class Knight extends Sprite {
 
         atributos = new HashMap<>();
         atributos.put("player_max_health", 100f);
-        atributos.put("player_speed", 100f);
+        atributos.put("player_speed", 80f);
         atributos.put("player_damage", 10f);
         atributos.put("player_critical_chance", 0f);
         atributos.put("player_health_regenarition", 5f);
