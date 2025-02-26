@@ -126,6 +126,7 @@ public class PlayScreen implements Screen {
         music.setLooping(true);
         music.play();
         sonidoAtaque = Gdx.audio.newSound(Gdx.files.internal("sounds/attack.ogg"));
+        
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(hud.stage);
@@ -176,6 +177,7 @@ public class PlayScreen implements Screen {
                 enemyPool.clear();
                 enemyList.clear();
 
+                music.dispose();
                 game.setScreen(new GameOverScreen(game));
                 return;
             }
@@ -401,6 +403,7 @@ public class PlayScreen implements Screen {
 
             // 🔹 Crear la bala y añadirla a la lista
             Bullet bullet = bulletPool.obtain();
+            sonidoAtaque.play();
             bullet.init(knightX, knightY, shootAngle); // Inicializar la bala con la posición y ángulo
             bulletList.add(bullet); // Añadirla a la lista de balas activas
         }
