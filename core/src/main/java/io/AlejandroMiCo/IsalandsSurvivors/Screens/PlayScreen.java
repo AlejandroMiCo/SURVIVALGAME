@@ -173,6 +173,9 @@ public class PlayScreen implements Screen {
             }
 
             if (knight.deathAnimation.isAnimationFinished(knight.stateTimer)) {
+                enemyPool.clear();
+                enemyList.clear();
+
                 game.setScreen(new GameOverScreen(game));
                 return;
             }
@@ -350,7 +353,7 @@ public class PlayScreen implements Screen {
             spawnX = (float) (Math.random() * maxX + minX);
             spawnY = (float) (Math.random() * maxY + minY);
 
-            switch ((int) gameTime / 20) {
+            switch ((int) gameTime / 120) {
                 case 0 -> enemyPool.setEnemyType(0);
                 case 1 -> enemyPool.setEnemyType(1);
                 case 2 -> enemyPool.setEnemyType(2);

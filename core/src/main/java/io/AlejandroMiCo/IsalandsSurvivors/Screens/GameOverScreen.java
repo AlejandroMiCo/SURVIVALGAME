@@ -45,11 +45,12 @@ public class GameOverScreen implements Screen {
         TextButton retryButton = new TextButton("Reintentar", btnStyle);
         TextButton mainMenuButton = new TextButton("Menu Principal", btnStyle);
 
+        Bullet.resetBullet();
+        Enemy.resetEnemiesStats();
+
         retryButton.addListener(new ClickListener() {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
-                Bullet.resetBullet();
-                Enemy.resetEnemiesStats();
                 game.setScreen(new PlayScreen(game));
                 dispose();
             }
@@ -76,7 +77,7 @@ public class GameOverScreen implements Screen {
 
     @Override
     public void render(float delta) {
-         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         stage.draw();
 
