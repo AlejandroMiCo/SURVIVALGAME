@@ -117,8 +117,6 @@ public class PlayScreen implements Screen {
         Gdx.input.setInputProcessor(hud.stage);
 
         world.setContactListener(new WorldContactListener(knight));
-
-        // bulletList.add(new Bullet(world, 0, 0, 0));
         levelUpScreen = new LevelUpScreen(knight, hud);
         pendingCoins = new ArrayList<>();
         pendingExperience = new HashMap<Vector2, Integer>();
@@ -345,7 +343,7 @@ public class PlayScreen implements Screen {
 
     private void spawnEnemies(float gameTime) {
         minX = 5;
-        maxX = 23;
+        maxX = 22;
         minY = 5;
         maxY = 23;
 
