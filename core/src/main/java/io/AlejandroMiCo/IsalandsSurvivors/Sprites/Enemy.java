@@ -164,6 +164,10 @@ public abstract class Enemy extends Sprite implements Poolable {
         return damage;
     }
 
+    public int getHealth() {
+        return health;
+    }
+
     private void flashDamage() {
         setColor(1, 0, 0, 0.8f);
         damageTimer = 0.1f;
@@ -205,7 +209,6 @@ public abstract class Enemy extends Sprite implements Poolable {
 
     public void reinitialize(float x, float y) {
         setPosition(x, y);
-        health = INITIAL_HEALTH;
         active = true;
         deathAnimationFinished = false;
         stateTime = 0;
