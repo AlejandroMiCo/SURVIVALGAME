@@ -1,5 +1,7 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Sprites;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
@@ -8,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -19,6 +22,7 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.DamageText;
 
 public abstract class Enemy extends Sprite implements Poolable {
     protected World world;
@@ -49,6 +53,7 @@ public abstract class Enemy extends Sprite implements Poolable {
     private Vector2 direction;
     private int value;
     private static final Vector2 tempVector = new Vector2(); // Vector reutilizable
+    private ArrayList<DamageText> damageTexts = new ArrayList<>();
 
     public int getValue() {
         return value;
@@ -110,6 +115,8 @@ public abstract class Enemy extends Sprite implements Poolable {
         getHit.play();
         health -= dmg;
 
+        damageTexts.add(new DamageText(getX(), getY() + getHeight(), dmg));
+
         // Si la vida llega a 0, destruir el enemigo
         if (health <= 0) {
             active = false;
@@ -133,12 +140,25 @@ public abstract class Enemy extends Sprite implements Poolable {
         if (!deathAnimationFinished) {
             super.draw(batch);
         }
+
+        for (DamageText text : damageTexts) {
+            text.render((SpriteBatch) batch);
+        }
     }
 
     public void update(float dt) {
         if (!active)
             return;
         stateTime += dt;
+
+        // Actualizar los números de daño y eliminar los expirados
+        Iterator<DamageText> iterator = damageTexts.iterator();
+        while (iterator.hasNext()) {
+            DamageText text = iterator.next();
+            if (text.update(dt)) {
+                iterator.remove();
+            }
+        }
 
         // Reutilizar un Vector2 temporal para evitar crear objetos innecesarios
         tempVector.set(knight.getB2body().getPosition()).sub(b2body.getPosition()).nor();
