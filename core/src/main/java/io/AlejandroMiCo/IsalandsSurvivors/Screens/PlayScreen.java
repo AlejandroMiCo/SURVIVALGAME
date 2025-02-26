@@ -262,7 +262,7 @@ public class PlayScreen implements Screen {
         // 2. Eliminar los ítems marcados de la lista principal y del mundo
         for (CollectedItem item : itemsToRemove) {
             world.destroyBody(item.getBody()); // Eliminar el cuerpo de Box2D
-            itemList.removeValue(item, true);  // Remover de la lista
+            itemList.removeValue(item, true); // Remover de la lista
         }
         itemsToRemove.clear(); // Ahora sí, limpiar la lista de objetos eliminados
 
@@ -290,7 +290,6 @@ public class PlayScreen implements Screen {
         }
     }
 
-
     private void updateEnemies(float dt) {
         if (enemyList.size < MAX_ENEMIES) {
             spawnEnemies(hud.getWorldTimer());
@@ -316,8 +315,8 @@ public class PlayScreen implements Screen {
                 addMeat(enemy.getBody().getPosition());
             }
 
-            world.destroyBody(enemy.getBody()); // Eliminar del mundo físico
             enemyPool.free(enemy); // Liberar en el pool de objetos
+            world.destroyBody(enemy.getBody()); // Eliminar del mundo físico
             enemyList.removeValue(enemy, true); // Remover de la lista principal
         }
         toRemove.clear(); // Limpiar lista de eliminados
@@ -351,20 +350,14 @@ public class PlayScreen implements Screen {
             spawnX = (float) (Math.random() * maxX + minX);
             spawnY = (float) (Math.random() * maxY + minY);
 
-            Enemy enemy = null;
-            switch ((int) gameTime / 120) {
-                case 0 -> enemy = enemyPool.obtain(spawnX, spawnY, 0); // 2min
-                case 1 -> enemy = enemyPool.obtain(spawnX, spawnY, 1); // 4min
-                case 2 -> enemy = enemyPool.obtain(spawnX, spawnY, 2); // 6min
-                case 3 -> enemy = enemyPool.obtain(spawnX, spawnY, 3); // 8min
-                // case 4 -> enemy = enemyPool.obtain(spawnX, spawnY, 0); // 10min
-                default -> {
-                    enemy = enemyPool.obtain(spawnX, spawnY, 0);
-                    enemyList.add(enemyPool.obtain(spawnX, spawnY, 1));
-                    enemyList.add(enemyPool.obtain(spawnX, spawnY, 2));
-                    enemyList.add(enemyPool.obtain(spawnX, spawnY, 3));
-                }
+            switch ((int) gameTime / 20) {
+                case 0 -> enemyPool.setEnemyType(0);
+                case 1 -> enemyPool.setEnemyType(1);
+                case 2 -> enemyPool.setEnemyType(2);
+                default -> enemyPool.setEnemyType(3);
             }
+
+            Enemy enemy = enemyPool.obtain(spawnX, spawnY);
             enemyList.add(enemy);
         }
     }
