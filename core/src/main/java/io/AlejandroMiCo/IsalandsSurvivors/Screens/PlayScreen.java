@@ -34,6 +34,7 @@ import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Experience;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight.State;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Meat;
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.B2WorldCreator;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.VirtualJoystick;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.WorldContactListener;
@@ -126,7 +127,6 @@ public class PlayScreen implements Screen {
         music.setLooping(true);
         music.play();
         sonidoAtaque = Gdx.audio.newSound(Gdx.files.internal("sounds/attack.ogg"));
-        
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(hud.stage);

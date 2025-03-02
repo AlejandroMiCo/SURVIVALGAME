@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 import io.AlejandroMiCo.IsalandsSurvivors.Screens.MainMenuScreen;
-
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all
@@ -30,6 +30,7 @@ public class IslandsSurvivors extends Game {
         batch = new SpriteBatch();
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font/EagleLake-Regular.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        Assets.load();
         parameter.size = 16;
         font = generator.generateFont(parameter);
 

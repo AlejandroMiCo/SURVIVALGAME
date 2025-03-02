@@ -301,5 +301,4 @@ public class Knight extends Sprite {
     public void addEnemyDefeated() {
         enemiesDefeated++;
     }
-
 }
