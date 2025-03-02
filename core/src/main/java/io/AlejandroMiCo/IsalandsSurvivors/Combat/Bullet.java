@@ -36,10 +36,8 @@ public class Bullet extends Sprite implements Poolable {
 
     private static HashMap<String, Float> atributos = new HashMap<>() {
         {
-            put("daño_bala", 1f);
             put("velocidad_bala", 1f);
             put("cooldown_bala", 2.0f);
-            put("critico_bala", 0f);
         }
     };
 
@@ -125,13 +123,13 @@ public class Bullet extends Sprite implements Poolable {
         return new Animation<>(0.075f, regionsMovimiento);
     }
 
-    public int getDamage() {
-        return atributos.get("daño_bala").intValue(); // Daño base de la bala
-    }
+    // public int getDamage() {
+    //     return atributos.get("daño_bala").intValue(); // Daño base de la bala
+    // }
 
-    public float getCritChance() {
-        return atributos.get("critico_bala"); // Daño base de la bala
-    }
+    // public float getCritChance() {
+    //     return atributos.get("critico_bala"); // Daño base de la bala
+    // }
 
     public float getCooldown() {
         return atributos.get("cooldown_bala"); // Devuelve el valor del cooldown
@@ -144,10 +142,8 @@ public class Bullet extends Sprite implements Poolable {
     }
 
     public static void resetBullet() {
-        atributos.put("daño_bala", 10f);
         atributos.put("velocidad_bala", 1.5f);
         atributos.put("cooldown_bala", 2f);
-        atributos.put("critico_bala", 0f);
     }
 
     public void init(float x, float y, float angle) {
