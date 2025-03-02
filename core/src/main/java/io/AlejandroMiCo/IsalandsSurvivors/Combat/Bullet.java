@@ -36,8 +36,8 @@ public class Bullet extends Sprite implements Poolable {
 
     private static HashMap<String, Float> atributos = new HashMap<>() {
         {
-            put("velocidad_bala", 1f);
-            put("cooldown_bala", 2.0f);
+            put("bullet_speed", 1f);
+            put("bullet_cooldown", 2.0f);
         }
     };
 
@@ -110,7 +110,7 @@ public class Bullet extends Sprite implements Poolable {
         body.createFixture(fedef).setUserData(this);
         shape.dispose();
 
-        tmpVelocity.set((float) Math.cos(angle), (float) Math.sin(angle)).scl(atributos.get("velocidad_bala"));
+        tmpVelocity.set((float) Math.cos(angle), (float) Math.sin(angle)).scl(atributos.get("bullet_speed"));
         body.setLinearVelocity(tmpVelocity);
     }
 
@@ -132,7 +132,7 @@ public class Bullet extends Sprite implements Poolable {
     // }
 
     public float getCooldown() {
-        return atributos.get("cooldown_bala"); // Devuelve el valor del cooldown
+        return atributos.get("bullet_cooldown"); // Devuelve el valor del cooldown
     }
 
     public static void mejorarAtributo(String atributo, float cantidad) {
@@ -142,8 +142,8 @@ public class Bullet extends Sprite implements Poolable {
     }
 
     public static void resetBullet() {
-        atributos.put("velocidad_bala", 1.5f);
-        atributos.put("cooldown_bala", 2f);
+        atributos.put("bullet_speed", 1.5f);
+        atributos.put("bullet_cooldown", 2f);
     }
 
     public void init(float x, float y, float angle) {

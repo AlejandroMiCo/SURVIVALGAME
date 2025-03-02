@@ -32,16 +32,11 @@ public class LevelUpScreen {
 
     Random random = new Random();
 
-    // private String[] posiblesMejoras = { "vida", "velocidad", "daño",
-    // "velocidad_ataque" };
-    // private float[] valoresMejora = { 20f, 10f, 5f, 0.3f };
-
     private HashMap<String, Float> mejorasCaballero = new HashMap<>();
-    private HashMap<String, Float> mejorasBala = new HashMap<>();
 
     private String[] posiblesMejoras = { "player_max_health", "player_speed", "player_damage", "player_critical_chance",
             "player_health_regenarition", "player_absorption_radius",
-            "velocidad_bala", "cooldown_bala"};
+            "bullet_speed", "bullet_cooldown" };
 
     float escala = Gdx.graphics.getWidth() / IslandsSurvivors.V_WIDTH;
 
@@ -63,9 +58,8 @@ public class LevelUpScreen {
         mejorasCaballero.put("player_critical_chance", 5f);
         mejorasCaballero.put("player_health_regenarition", 1f);
         mejorasCaballero.put("player_absorption_radius", 1f);
-
-        mejorasBala.put("velocidad_bala", 1f);
-        mejorasBala.put("cooldown_bala", -0.1f);
+        mejorasCaballero.put("bullet_speed", 1f);
+        mejorasCaballero.put("bullet_cooldown", -0.1f);
     }
 
     private void generarOpcionesDeMejora() {
@@ -89,8 +83,6 @@ public class LevelUpScreen {
         // Crear botones con imágenes como fondo
         Skin skin = new Skin();
         skin.add("default-font", IslandsSurvivors.font);
-        // skin.getFont("default-font").getData().setScale(1f); // Restablecer la escala
-        // a la original
         skin.getFont("default-font").getData().setScale(escala);
 
         TextButton.TextButtonStyle azulStyle = new TextButton.TextButtonStyle();
@@ -110,9 +102,9 @@ public class LevelUpScreen {
 
         // Crear botones
         TextButton[] buttons = new TextButton[3];
-        TextButton btnAzul = new TextButton("Aumentar Fuerza", azulStyle);
-        TextButton btnAmarillo = new TextButton("Mejorar Defensa", amarilloStyle);
-        TextButton btnRojo = new TextButton("Subir Vida", rojoStyle);
+        TextButton btnAzul = new TextButton("", azulStyle);
+        TextButton btnAmarillo = new TextButton("", amarilloStyle);
+        TextButton btnRojo = new TextButton("", rojoStyle);
 
         buttons[0] = btnAzul;
         buttons[1] = btnAmarillo;
@@ -159,16 +151,14 @@ public class LevelUpScreen {
         // Devuelve el valor de la mejora dependiendo de su tipo
         if (mejorasCaballero.containsKey(mejora)) {
             return mejorasCaballero.get(mejora);
-        } else if (mejorasBala.containsKey(mejora)) {
-            return mejorasBala.get(mejora);
         }
         return 0f; // Valor por defecto
     }
 
     private void aplicarMejora(String mejora, float cantidad) {
-        if (mejorasCaballero.containsKey(mejora)) {
+        if (mejora.split("_")[0].equals("player")) {
             knight.mejorarAtributo(mejora, cantidad);
-        } else if (mejorasBala.containsKey(mejora)) {
+        } else {
             Bullet.mejorarAtributo(mejora, cantidad);
         }
     }
