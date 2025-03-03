@@ -35,6 +35,9 @@ public class MainMenuScreen implements Screen {
         stage = new Stage(new FitViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, camera));
         Gdx.input.setInputProcessor(stage);
 
+        String language = PreferencesManager.getLanguage();
+        Assets.loadLanguage(language);
+
         // Cargar música y aplicar el volumen desde preferencias o valor guardado
         music = Assets.manager.get("music/menuSong.ogg");
         music.setLooping(true);

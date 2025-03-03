@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
 
 public class VictoryScreen implements Screen {
     private IslandsSurvivors game;
@@ -40,16 +41,23 @@ public class VictoryScreen implements Screen {
         table.setFillParent(true);
 
         TextButtonStyle btnStyle = new TextButtonStyle();
-        btnStyle.up = new TextureRegionDrawable(new Texture((Gdx.files.internal("ui/boton_azul.png"))));
+        btnStyle.up = new TextureRegionDrawable(Assets.manager.get("ui/boton_azul.png", Texture.class));
         btnStyle.font = new BitmapFont();
         btnStyle.fontColor = Color.BLACK;
 
-        Label victoryLabel = new Label("¡VICTORIA!", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        Label statsLabel = new Label("Nivel: " + playerLevel + "\nEnemigos eliminados: " + enemiesDefeated,
-                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        // Obtener textos traducidos
+        String victoryText = Assets.getText("game.victory");
+        String statsText = String.format(Assets.getText("game.stats"), playerLevel, enemiesDefeated);
+        String continueText = Assets.getText("game.continue");
+        String mainMenuText = Assets.getText("game.main_menu");
 
-        TextButton continueButton = new TextButton("Continuar", btnStyle);
-        TextButton mainMenuButton = new TextButton("Menu Principal", btnStyle);
+        // Crear labels con traducción
+        Label victoryLabel = new Label(victoryText, new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        Label statsLabel = new Label(statsText, new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        
+        // Botones con traducción
+        TextButton continueButton = new TextButton(continueText, btnStyle);
+        TextButton mainMenuButton = new TextButton(mainMenuText, btnStyle);
 
         continueButton.addListener(new ClickListener() {
             @Override
