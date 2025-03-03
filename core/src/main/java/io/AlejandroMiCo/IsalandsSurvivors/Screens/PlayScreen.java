@@ -206,11 +206,6 @@ public class PlayScreen implements Screen {
             Gdx.input.vibrate(250);
         }
 
-        if (hud.isPaused()) {
-            hud.update(dt);
-            return;
-        }
-
         updateEntityes(dt);
 
         if (hud.getWorldTimer() >= waveNumber * WAVE_INTERVAL) {
@@ -427,9 +422,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        if (!hud.isPaused()) {
-            update(delta);
-        }
+        update(delta);
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

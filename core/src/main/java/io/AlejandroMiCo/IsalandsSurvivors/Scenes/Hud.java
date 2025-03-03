@@ -75,7 +75,7 @@ public class Hud implements Disposable {
         this.knight = knight;
         worldTimer = 0;
         timeCount = 0;
-        isPaused = false;
+        // isPaused = false;
 
         viewport = new FillViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
@@ -84,12 +84,12 @@ public class Hud implements Disposable {
         table.top();
         table.setFillParent(true);
 
-        pauseButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(pauseTexture)),
-                new TextureRegionDrawable(new TextureRegion(pausePressedTexture)));
-        pauseButton.addListener(event -> {
-            togglePause();
-            return true;
-        });
+        // pauseButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(pauseTexture)),
+        //         new TextureRegionDrawable(new TextureRegion(pausePressedTexture)));
+        // pauseButton.addListener(event -> {
+        //     togglePause();
+        //     return true;
+        // });
 
         healthBarFillRegion = new TextureRegion(healthFillTexture, 0, 0, 200, 20);
         experienceBarFillRegion = new TextureRegion(expFillTexture, 0, 0, 200, 20);
@@ -126,22 +126,28 @@ public class Hud implements Disposable {
         barsTable.add(expImage).size(30);
         barsTable.add(experienceStack).size(200, 20);
 
+
+        Table countsTable = new Table();
+        countsTable.add(coins).pad(5);
+        countsTable.row();
+        countsTable.add(enemies).pad(5);
+        // table.add(pauseButton).padTop(10).padRight(10).expandX().right();
+        
+
         table.add(barsTable).padTop(15).padLeft(5);
-        table.add(countLabel).expandX().padLeft(10);
-        table.add(coins).pad(5);
-        table.add(enemies).pad(5);
-        table.add(pauseButton).padTop(10).padRight(10).expandX().right();
+        table.add(countLabel).expandX();
+        table.add(countsTable).padTop(15).padLeft(5);
 
         stage.addActor(table);
     }
 
-    public void togglePause() {
-        isPaused = !isPaused;
-    }
+    // public void togglePause() {
+    //     isPaused = !isPaused;
+    // }
 
-    public boolean isPaused() {
-        return isPaused;
-    }
+    // public boolean isPaused() {
+    //     return isPaused;
+    // }
 
     public void update(float dt) {
         timeCount += dt;
