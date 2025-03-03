@@ -36,6 +36,7 @@ import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight.State;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Meat;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.B2WorldCreator;
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.PreferencesManager;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.VirtualJoystick;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.WorldContactListener;
 
@@ -94,6 +95,7 @@ public class PlayScreen implements Screen {
     private float spawnX, spawnY;
 
     private float minX, minY, maxX, maxY;
+    float volume;
 
     public PlayScreen(IslandsSurvivors game) {
         this.game = game;
@@ -123,10 +125,15 @@ public class PlayScreen implements Screen {
         pendingExperience = new HashMap<Vector2, Integer>();
         pendingMeat = new ArrayList<>();
 
+        // Ajustamos el volumen de la música y el sonido de ataque desde
+        // PreferencesManager
         music = Assets.manager.get("music/song.ogg");
         music.setLooping(true);
+        music.setVolume(PreferencesManager.getMusicVolume()); // Ajustamos el volumen de la música
         music.play();
+
         sonidoAtaque = Assets.manager.get("sounds/attack.ogg");
+        volume = PreferencesManager.getSoundVolume(); // Retrieve the volume setting from preferences.
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(hud.stage);
@@ -144,6 +151,7 @@ public class PlayScreen implements Screen {
         bulletList.add(bulletPool.obtain());
         enemyPool = new EnemyPool(this, knight);
 
+        
     }
 
     @Override
@@ -203,7 +211,10 @@ public class PlayScreen implements Screen {
         if (knight.getLevel() > lastNivel) {
             levelUpScreen.show();
             lastNivel = knight.getLevel();
-            Gdx.input.vibrate(250);
+
+            if (PreferencesManager.isVibrationEnabled()) {
+                Gdx.input.vibrate(250); // Vibrar por 250 milisegundos
+            }
         }
 
         updateEntityes(dt);
@@ -406,7 +417,7 @@ public class PlayScreen implements Screen {
 
             // 🔹 Crear la bala y añadirla a la lista
             Bullet bullet = bulletPool.obtain();
-            sonidoAtaque.play();
+            sonidoAtaque.play(volume);
             bullet.init(knightX, knightY, shootAngle); // Inicializar la bala con la posición y ángulo
             bulletList.add(bullet); // Añadirla a la lista de balas activas
         }
