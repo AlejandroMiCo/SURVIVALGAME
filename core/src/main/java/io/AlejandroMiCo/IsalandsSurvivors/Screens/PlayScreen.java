@@ -183,6 +183,14 @@ public class PlayScreen implements Screen {
             }
         }
 
+        if (hud.getWorldTimer() >= 480 && knight.getState() != State.DEAD) { // 8 minutos en segundos
+            enemyPool.clear();
+            enemyList.clear();
+            music.dispose();
+            game.setScreen(new VictoryScreen(game, knight.getLevel(), knight.getEnemiesDefeated()));
+            return;
+        }
+
         if (isGameOver)
             return;
 
