@@ -25,7 +25,7 @@ public class MainMenuScreen implements Screen {
     private final Stage stage;
     private final OrthographicCamera camera;
     private final Texture fondo, titulo, pergamino;
-    private Music music;  // La música se manejará aquí
+    private Music music; // La música se manejará aquí
     private final TextButtonStyle blueStyle, redStyle;
 
     public MainMenuScreen(final IslandsSurvivors game) {
@@ -41,7 +41,7 @@ public class MainMenuScreen implements Screen {
         // Cargar música y aplicar el volumen desde preferencias o valor guardado
         music = Assets.manager.get("music/menuSong.ogg");
         music.setLooping(true);
-        music.setVolume(PreferencesManager.getMusicVolume());  // Usamos PreferencesManager para obtener el volumen
+        music.setVolume(PreferencesManager.getMusicVolume()); // Usamos PreferencesManager para obtener el volumen
         music.play();
 
         // Cargar texturas
@@ -61,6 +61,7 @@ public class MainMenuScreen implements Screen {
 
         TextButton playButton = createButton("menu.play", blueStyle);
         TextButton optionButton = createButton("menu.options", blueStyle);
+        TextButton recordsButton = createButton("menu.options", blueStyle);
         TextButton exitButton = createButton("menu.exit", redStyle);
 
         // Listeners
@@ -81,6 +82,14 @@ public class MainMenuScreen implements Screen {
             }
         });
 
+        recordsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new RecordsScreen(game));
+                dispose();
+            }
+        });
+
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -91,6 +100,7 @@ public class MainMenuScreen implements Screen {
         // Agregar botones a la tabla
         table.add(playButton).padBottom(5).size(150, 50).row();
         table.add(optionButton).padBottom(5).size(150, 50).row();
+        table.add(recordsButton).padBottom(5).size(150, 50).row();
         table.add(exitButton).padBottom(5).size(150, 50).row();
 
         stage.addActor(table);

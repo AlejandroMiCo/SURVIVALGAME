@@ -1,5 +1,7 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Screens;
 
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -18,6 +20,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.PreferencesManager;
 
 public class VictoryScreen implements Screen {
     private IslandsSurvivors game;
@@ -27,7 +30,7 @@ public class VictoryScreen implements Screen {
     private int playerLevel;
     private int enemiesDefeated;
 
-    public VictoryScreen(final IslandsSurvivors game, int playerLevel, int enemiesDefeated) {
+    public VictoryScreen(final IslandsSurvivors game, int playerLevel, int enemiesDefeated, int coins) {
         this.game = game;
         this.playerLevel = playerLevel;
         this.enemiesDefeated = enemiesDefeated;
@@ -35,6 +38,10 @@ public class VictoryScreen implements Screen {
         camera = new OrthographicCamera();
         stage = new Stage(new FitViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, camera));
         Gdx.input.setInputProcessor(stage);
+
+        int score = playerLevel * Math.max(enemiesDefeated, 1) * Math.max(coins, 1);
+
+        PreferencesManager.saveHighScore(score);
 
         Table table = new Table();
         table.center();
@@ -54,7 +61,17 @@ public class VictoryScreen implements Screen {
         // Crear labels con traducción
         Label victoryLabel = new Label(victoryText, new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         Label statsLabel = new Label(statsText, new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        
+
+        // // Obtener las mejores puntuaciones
+        // List<Integer> highScores = PreferencesManager.getHighScores();
+        // StringBuilder highScoreText = new StringBuilder("🏆 Top Scores:\n");
+        // for (int i = 0; i < highScores.size(); i++) {
+        // highScoreText.append(i + 1).append(".
+        // ").append(highScores.get(i)).append("\n");
+        // }
+        // Label highScoreLabel = new Label(highScoreText.toString(),
+        // new Label.LabelStyle(IslandsSurvivors.font, Color.YELLOW));
+
         // Botones con traducción
         TextButton continueButton = new TextButton(continueText, btnStyle);
         TextButton mainMenuButton = new TextButton(mainMenuText, btnStyle);

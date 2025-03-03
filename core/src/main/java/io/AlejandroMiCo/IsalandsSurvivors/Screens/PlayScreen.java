@@ -196,7 +196,7 @@ public class PlayScreen implements Screen {
             enemyPool.clear();
             enemyList.clear();
             music.dispose();
-            game.setScreen(new VictoryScreen(game, knight.getLevel(), knight.getEnemiesDefeated()));
+            game.setScreen(new VictoryScreen(game, knight.getLevel(), knight.getEnemiesDefeated(), knight.getCoins()));
             return;
         }
 
