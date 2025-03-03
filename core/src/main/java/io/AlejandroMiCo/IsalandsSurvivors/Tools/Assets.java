@@ -23,6 +23,7 @@ public class Assets {
         manager.load("ui/boton_azul_press.png", Texture.class);
         manager.load("ui/boton_rojo.png", Texture.class);
         manager.load("ui/boton_rojo_press.png", Texture.class);
+        manager.load("ui/boton_amarillo.png", Texture.class);
         manager.load("ui/pergamino.png", Texture.class);
         manager.load("ui/slider.png", Texture.class);
         manager.load("ui/sliderKnob.png", Texture.class);

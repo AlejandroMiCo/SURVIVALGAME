@@ -22,6 +22,7 @@ import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
 import io.AlejandroMiCo.IsalandsSurvivors.Scenes.Hud;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
 
 public class LevelUpScreen {
     private Stage stage;
@@ -35,7 +36,7 @@ public class LevelUpScreen {
     private HashMap<String, Float> mejorasCaballero = new HashMap<>();
 
     private String[] posiblesMejoras = { "player_max_health", "player_speed", "player_damage", "player_critical_chance",
-            "player_health_regenarition", "player_absorption_radius",
+            "player_health_regeneration", "player_absorption_radius",
             "bullet_speed", "bullet_cooldown" };
 
     float escala = Gdx.graphics.getWidth() / IslandsSurvivors.V_WIDTH;
@@ -56,7 +57,7 @@ public class LevelUpScreen {
         mejorasCaballero.put("player_speed", 10f);
         mejorasCaballero.put("player_damage", 5f);
         mejorasCaballero.put("player_critical_chance", 5f);
-        mejorasCaballero.put("player_health_regenarition", 1f);
+        mejorasCaballero.put("player_health_regeneration", 1f);
         mejorasCaballero.put("player_absorption_radius", 1f);
         mejorasCaballero.put("bullet_speed", 1f);
         mejorasCaballero.put("bullet_cooldown", -0.1f);
@@ -68,10 +69,10 @@ public class LevelUpScreen {
         Gdx.input.setInputProcessor(stage);
 
         // Cargar imágenes
-        pergaminoTexture = new Texture(Gdx.files.internal("ui/pergamino.png"));
-        btnAzulTexture = new Texture(Gdx.files.internal("ui/boton_azul.png"));
-        btnAmarilloTexture = new Texture(Gdx.files.internal("ui/boton_amarillo.png"));
-        btnRojoTexture = new Texture(Gdx.files.internal("ui/boton_rojo.png"));
+        pergaminoTexture = Assets.manager.get("ui/pergamino.png", Texture.class);
+        btnAzulTexture = Assets.manager.get("ui/boton_azul.png", Texture.class);
+        btnAmarilloTexture = Assets.manager.get("ui/boton_amarillo.png", Texture.class);
+        btnRojoTexture = Assets.manager.get("ui/boton_rojo.png", Texture.class);
 
         // Agregar fondo del pergamino
         Image pergamino = new Image(new TextureRegionDrawable(pergaminoTexture));
@@ -125,7 +126,9 @@ public class LevelUpScreen {
             float cantidad = obtenerValorMejora(mejora);
             TextButton button = buttons[i];
 
-            button.setText("+" + cantidad + " " + mejora);
+            // Cambiar el texto del botón para usar el texto de los recursos
+            String nombreMejora = Assets.getText("game." + mejora); // Obtiene el nombre localizado
+            button.setText("+" + cantidad + " " + nombreMejora); // Accede a la mejora con el nombre localizable
             button.padBottom(15 * escala);
             button.addListener(new ClickListener() {
                 @Override
