@@ -63,6 +63,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new PlayScreen(game));
+                music.stop();
                 dispose();
             }
         });
@@ -126,7 +127,6 @@ public class MainMenuScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        Assets.manager.unload("music/menuSong.ogg");
     }
 
     // Métodos vacíos necesarios por la interfaz Screen
