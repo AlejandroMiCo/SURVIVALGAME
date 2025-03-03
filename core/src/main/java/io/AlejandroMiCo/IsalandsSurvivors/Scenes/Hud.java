@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -19,6 +18,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
 
 public class Hud implements Disposable {
     public Stage stage;
@@ -40,8 +40,8 @@ public class Hud implements Disposable {
     private Label coins;
     private Label enemies;
 
-    private ImageButton pauseButton;
-    private boolean isPaused;
+    // private ImageButton pauseButton;
+    // private boolean isPaused;
     private Knight knight;
     private float healthPercentage;
     private float experiencePercentage;
@@ -56,6 +56,8 @@ public class Hud implements Disposable {
     private TextureRegion healthBarFillRegion;
     private TextureRegion experienceBarFillRegion;
     private final StringBuilder sb = new StringBuilder();
+    private String goldText;
+    private String enemiesText;
 
     static {
         font.setColor(Color.WHITE);
@@ -72,6 +74,10 @@ public class Hud implements Disposable {
     }
 
     public Hud(SpriteBatch sb, Knight knight) {
+
+        goldText = Assets.getText("hud.gold");
+        enemiesText = Assets.getText("hud.enemies");
+
         this.knight = knight;
         worldTimer = 0;
         timeCount = 0;
@@ -84,11 +90,12 @@ public class Hud implements Disposable {
         table.top();
         table.setFillParent(true);
 
-        // pauseButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(pauseTexture)),
-        //         new TextureRegionDrawable(new TextureRegion(pausePressedTexture)));
+        // pauseButton = new ImageButton(new TextureRegionDrawable(new
+        // TextureRegion(pauseTexture)),
+        // new TextureRegionDrawable(new TextureRegion(pausePressedTexture)));
         // pauseButton.addListener(event -> {
-        //     togglePause();
-        //     return true;
+        // togglePause();
+        // return true;
         // });
 
         healthBarFillRegion = new TextureRegion(healthFillTexture, 0, 0, 200, 20);
@@ -106,8 +113,8 @@ public class Hud implements Disposable {
         countLabel = new Label("00:00", new Label.LabelStyle(font, Color.ROYAL));
         hpLabel = new Label("100/100", defaultLabelStyle);
         expLabel = new Label("0/100", defaultLabelStyle);
-        coins = new Label("Coins: 0000", defaultLabelStyle);
-        enemies = new Label("Enemies: 0000", defaultLabelStyle);
+        coins = new Label(goldText + " : 0000", defaultLabelStyle);
+        enemies = new Label(enemiesText + " : 0000", defaultLabelStyle);
 
         Stack healthStack = new Stack();
         healthStack.add(healthBarBgImage);
@@ -126,13 +133,11 @@ public class Hud implements Disposable {
         barsTable.add(expImage).size(30);
         barsTable.add(experienceStack).size(200, 20);
 
-
         Table countsTable = new Table();
         countsTable.add(coins).pad(5);
         countsTable.row();
         countsTable.add(enemies).pad(5);
         // table.add(pauseButton).padTop(10).padRight(10).expandX().right();
-        
 
         table.add(barsTable).padTop(15).padLeft(5);
         table.add(countLabel).expandX();
@@ -142,11 +147,11 @@ public class Hud implements Disposable {
     }
 
     // public void togglePause() {
-    //     isPaused = !isPaused;
+    // isPaused = !isPaused;
     // }
 
     // public boolean isPaused() {
-    //     return isPaused;
+    // return isPaused;
     // }
 
     public void update(float dt) {
@@ -172,11 +177,11 @@ public class Hud implements Disposable {
 
     public void updateUI() {
         sb.setLength(0); // Resetear el StringBuilder
-        sb.append("Coins: ").append(knight.getCoins());
+        sb.append(goldText + ": ").append(knight.getCoins());
         coins.setText(sb.toString());
 
         sb.setLength(0);
-        sb.append("Enemies: ").append(knight.getEnemiesDefeated());
+        sb.append(enemiesText + ": ").append(knight.getEnemiesDefeated());
         enemies.setText(sb.toString());
 
         sb.setLength(0);

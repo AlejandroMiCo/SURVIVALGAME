@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
 
 public class GameOverScreen implements Screen {
     private IslandsSurvivors game;
@@ -37,13 +38,15 @@ public class GameOverScreen implements Screen {
         table.setFillParent(true);
 
         TextButtonStyle btnStyle = new TextButtonStyle();
-        btnStyle.up = new TextureRegionDrawable(new Texture((Gdx.files.internal("ui/boton_azul.png"))));
+        btnStyle.up = new TextureRegionDrawable(Assets.manager.get("ui/boton_azul.png", Texture.class));
+        btnStyle.down = new TextureRegionDrawable(Assets.manager.get("ui/boton_azul_press.png", Texture.class));
         btnStyle.font = new BitmapFont();
         btnStyle.fontColor = Color.BLACK;
 
-        Label gameOverLabel = new Label("GAME OVER", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        TextButton retryButton = new TextButton("Reintentar", btnStyle);
-        TextButton mainMenuButton = new TextButton("Menu Principal", btnStyle);
+        Label gameOverLabel = new Label(Assets.getText("game.over"),
+                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        TextButton retryButton = new TextButton(Assets.getText("game.retry"), btnStyle);
+        TextButton mainMenuButton = new TextButton(Assets.getText("game.mainMenu"), btnStyle);
 
         Bullet.resetBullet();
         Enemy.resetEnemiesStats();
