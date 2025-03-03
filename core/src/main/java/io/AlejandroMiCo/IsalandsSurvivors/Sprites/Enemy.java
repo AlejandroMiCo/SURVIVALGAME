@@ -2,7 +2,6 @@ package io.AlejandroMiCo.IsalandsSurvivors.Sprites;
 
 import java.util.Random;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -19,7 +18,8 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
-
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.PreferencesManager;
 
 public abstract class Enemy extends Sprite implements Poolable {
     protected World world;
@@ -50,6 +50,7 @@ public abstract class Enemy extends Sprite implements Poolable {
     private Vector2 direction;
     private int value;
     private static final Vector2 tempVector = new Vector2(); // Vector reutilizables
+    float volume;
 
     public int getValue() {
         return value;
@@ -72,15 +73,15 @@ public abstract class Enemy extends Sprite implements Poolable {
         direction = new Vector2();
 
         walkAnimation = getAnimation(new Texture(walkFile));
-        deathAnimation = getAnimation(new Texture("img/Dead_custom.png"));
-
+        deathAnimation = getAnimation(Assets.manager.get("img/Dead_custom.png"));
         stateTime = 0;
         deathAnimationFinished = false;
 
         defineEnemy();
         setBounds(getX(), getY(), 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
         setPosition(x, y);
-        getHit = Gdx.audio.newSound(Gdx.files.internal("sounds/pupa.ogg"));
+        getHit = Assets.manager.get("sounds/pupa.ogg");
+        volume = PreferencesManager.getSoundVolume();
     }
 
     public void defineEnemy() {
@@ -108,7 +109,7 @@ public abstract class Enemy extends Sprite implements Poolable {
         if (!active)
             return;
 
-        getHit.play();
+        getHit.play(volume);
         health -= dmg;
 
         // Si la vida llega a 0, destruir el enemigo

@@ -15,7 +15,7 @@ public class Assets {
     public static I18NBundle bundle; // Para los textos en distintos idiomas
 
     public static void load() {
-        
+
         // Cargar imágenes
         manager.load("img/map.png", Texture.class);
         manager.load("ui/title2.png", Texture.class);
@@ -27,10 +27,14 @@ public class Assets {
         manager.load("ui/slider.png", Texture.class);
         manager.load("ui/sliderKnob.png", Texture.class);
 
+        manager.load("img/Dead_custom.png", Texture.class); // Carga la textura de muerte
+       
+
+
         // Cargar sonidos y música
         manager.load("music/menuSong.ogg", Music.class);
-        manager.load("music/song.ogg", Music.class);       
-        manager.load( "sounds/attack.ogg", Sound.class);
+        manager.load("music/song.ogg", Music.class);
+        manager.load("sounds/attack.ogg", Sound.class);
         manager.load("sounds/pupa.ogg", Sound.class);
         // manager.load("sounds/click.ogg", Sound.class);
 
