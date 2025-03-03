@@ -18,13 +18,14 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.PreferencesManager;
 
 public class MainMenuScreen implements Screen {
     private final IslandsSurvivors game;
     private final Stage stage;
     private final OrthographicCamera camera;
     private final Texture fondo, titulo, pergamino;
-    private final Music music;
+    private Music music;  // La música se manejará aquí
     private final TextButtonStyle blueStyle, redStyle;
 
     public MainMenuScreen(final IslandsSurvivors game) {
@@ -34,9 +35,10 @@ public class MainMenuScreen implements Screen {
         stage = new Stage(new FitViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, camera));
         Gdx.input.setInputProcessor(stage);
 
-        // Cargar música
+        // Cargar música y aplicar el volumen desde preferencias o valor guardado
         music = Assets.manager.get("music/menuSong.ogg");
         music.setLooping(true);
+        music.setVolume(PreferencesManager.getMusicVolume());  // Usamos PreferencesManager para obtener el volumen
         music.play();
 
         // Cargar texturas

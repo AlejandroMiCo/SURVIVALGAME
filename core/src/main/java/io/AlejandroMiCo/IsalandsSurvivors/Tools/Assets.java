@@ -5,6 +5,7 @@ import java.util.Locale;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.I18NBundle;
@@ -23,13 +24,20 @@ public class Assets {
         manager.load("ui/boton_rojo.png", Texture.class);
         manager.load("ui/boton_rojo_press.png", Texture.class);
         manager.load("ui/pergamino.png", Texture.class);
+        manager.load("ui/slider.png", Texture.class);
+        manager.load("ui/sliderKnob.png", Texture.class);
 
         // Cargar sonidos y música
         manager.load("music/menuSong.ogg", Music.class);
+        manager.load("music/song.ogg", Music.class);       
+        manager.load( "sounds/attack.ogg", Sound.class);
+        manager.load("sounds/pupa.ogg", Sound.class);
         // manager.load("sounds/click.ogg", Sound.class);
 
         // Cargar localización
         loadLanguage("en");
+        loadLanguage("es");
+
         manager.finishLoading();
     }
 

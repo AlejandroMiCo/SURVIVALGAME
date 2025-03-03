@@ -123,10 +123,10 @@ public class PlayScreen implements Screen {
         pendingExperience = new HashMap<Vector2, Integer>();
         pendingMeat = new ArrayList<>();
 
-        music = Gdx.audio.newMusic(Gdx.files.internal("music/song.ogg"));
+        music = Assets.manager.get("music/song.ogg");
         music.setLooping(true);
         music.play();
-        sonidoAtaque = Gdx.audio.newSound(Gdx.files.internal("sounds/attack.ogg"));
+        sonidoAtaque = Assets.manager.get("sounds/attack.ogg");
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(hud.stage);
