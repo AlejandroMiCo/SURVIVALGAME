@@ -165,6 +165,7 @@ public class PlayScreen implements Screen {
 
     public void update(float dt) {
         knight.update(dt);
+        hud.update(dt);
 
         if (knight.getState() == State.DEAD) {
             isGameOver = true;
@@ -216,7 +217,6 @@ public class PlayScreen implements Screen {
             updateWave();
         }
 
-        hud.update(dt);
         updateWorld();
         joystick.update();
 

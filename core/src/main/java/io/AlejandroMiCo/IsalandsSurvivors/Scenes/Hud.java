@@ -65,7 +65,7 @@ public class Hud implements Disposable {
         expBgTexture = new Texture("ui/health_bar_bg.png");
         expFillTexture = new Texture("ui/exp_bar_fill.png");
         heartTexture = new Texture("ui/heart.png");
-        expTexture = new Texture("ui/exp.png");
+        expTexture = new Texture("ui/experience.png");
 
         pauseTexture = new Texture("ui/pause_button.png");
         pausePressedTexture = new Texture("ui/pause_button_pressed.png");
@@ -98,7 +98,6 @@ public class Hud implements Disposable {
         experienceBarFillImage = new Image(new TextureRegionDrawable(experienceBarFillRegion));
 
         healthBarBgImage = new Image(healthBgTexture);
-        healthBarFillImage = new Image(healthFillTexture);
         experienceBarBgImage = new Image(expBgTexture);
         experienceBarFillImage = new Image(expFillTexture);
         heartImage = new Image(heartTexture);
@@ -157,13 +156,8 @@ public class Hud implements Disposable {
         healthPercentage = Math.max(knight.getCurrentHealth() / knight.getMaxHealth(), 0);
         experiencePercentage = Math.max(knight.getCurrentExperience() / knight.getNextLevelExperience(), 0);
 
-        // Modificar el tamaño de las regiones en lugar de redimensionar imágenes
-        healthBarFillRegion.setRegionWidth((int) (200 * healthPercentage));
-        experienceBarFillRegion.setRegionWidth((int) (200 * experiencePercentage));
-
-        // Actualizar las texturas en la UI
-        ((TextureRegionDrawable) healthBarFillImage.getDrawable()).setRegion(healthBarFillRegion);
-        ((TextureRegionDrawable) experienceBarFillImage.getDrawable()).setRegion(experienceBarFillRegion);
+        healthBarFillImage.setSize(200 * healthPercentage, healthBarFillImage.getHeight());
+        experienceBarFillImage.setSize(200 * experiencePercentage, experienceBarFillImage.getHeight());
     }
 
     public void render() {
