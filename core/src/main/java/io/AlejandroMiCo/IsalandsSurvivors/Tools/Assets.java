@@ -54,6 +54,7 @@ public class Assets {
         manager.dispose();
     }
 
+    @SuppressWarnings("deprecation")
     public static void loadLanguage(String langCode) {
         FileHandle baseFileHandle = Gdx.files.internal("i18n/messages");
         Locale locale = new Locale(langCode);

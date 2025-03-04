@@ -1,7 +1,6 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -39,8 +38,6 @@ public class OptionsScreen implements Screen {
     private Music musicMenu, musicGame;
     private Sound soundEffect;
 
-    private Preferences prefs;
-
     private Label titleLabel;
     private Label musicLabel;
     private Label soundLabel;
@@ -68,7 +65,6 @@ public class OptionsScreen implements Screen {
         soundEffect = Assets.manager.get("sounds/attack.ogg", Sound.class);
 
         // Cargar preferencias
-        prefs = Gdx.app.getPreferences("GamePreferences");
         loadPreferences();
 
         Assets.loadLanguage(language);

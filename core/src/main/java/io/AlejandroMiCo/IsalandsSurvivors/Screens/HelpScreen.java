@@ -46,18 +46,26 @@ public class HelpScreen implements Screen {
         // Título
         Label titleLabel = new Label(Assets.getText("menu.help"), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
 
-        // Contenido de ayuda
-        String helpText = Assets.getText("help.content"); // Texto cargado desde assets/lang
-        Label helpLabel = new Label(helpText, new Label.LabelStyle(new BitmapFont(), Color.BLACK));
-        helpLabel.setWrap(true); // Permite que el texto se ajuste al ancho
-        helpLabel.setAlignment(1); // Centra el texto
+        String helpText = Assets.getText("help.content");
+        String[] lines = helpText.split("\n"); // Dividir por saltos de línea
 
-        // Tabla con contenido desplazable
         Table contentTable = new Table();
-        contentTable.add(helpLabel).width(600).pad(10).row(); // Ajustamos el ancho del texto
+        contentTable.top().pad(10);
 
+        // Crear las etiquetas para cada línea del texto de ayuda
+        for (String line : lines) {
+            Label lineLabel = new Label(line, new Label.LabelStyle(new BitmapFont(), Color.BLACK));
+            lineLabel.setWrap(true); // Hacer que el texto se ajuste automáticamente
+            lineLabel.setAlignment(1); // Alinear el texto al centro
+            contentTable.add(lineLabel).width(350).padBottom(10).row(); // Separamos líneas
+        }
+
+        // Colocar la tabla en un ScrollPane
         ScrollPane scrollPane = new ScrollPane(contentTable);
-        scrollPane.setScrollingDisabled(true, false); // Solo desplazamiento vertical
+        scrollPane.setScrollingDisabled(false, false); // Permite desplazamiento vertical y horizontal
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setForceScroll(false, true); // Forzar scroll solo vertical
+        scrollPane.layout(); // Asegura que el ScrollPane se ajuste bien
 
         // Botón de regreso
         TextButton backButton = new TextButton(Assets.getText("menu.back"), btnStyle);
@@ -69,15 +77,16 @@ public class HelpScreen implements Screen {
             }
         });
 
-        // Tabla principal con fondo de pergamino
+        // Crear la tabla principal con fondo de pergamino
         Table mainTable = new Table();
-        mainTable.setSize(800, 700); // Ajustamos tamaño del pergamino
+        mainTable.setSize(800, 700); // Ajustar tamaño de la tabla
         mainTable.setPosition((IslandsSurvivors.V_WIDTH - mainTable.getWidth()) / 2,
-                (IslandsSurvivors.V_HEIGHT - mainTable.getHeight()-40) / 2);
+                (IslandsSurvivors.V_HEIGHT - mainTable.getHeight() - 40) / 2);
         mainTable.setBackground(new TextureRegionDrawable(pergamino));
         mainTable.top();
         mainTable.add(titleLabel).padTop(50).row();
-        mainTable.add(scrollPane).width(600).height(300).pad(20).row();
+        mainTable.add(scrollPane).size(450, 300).padTop(80).row(); // Expande el ScrollPane para que ocupe el espacio
+                                                                 // disponible
         mainTable.add(backButton).size(200, 50).padBottom(20);
 
         stage.addActor(mainTable);
@@ -95,6 +104,7 @@ public class HelpScreen implements Screen {
         game.batch.draw(background, 0, 0, IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT);
         game.batch.end();
 
+        stage.act(delta); // Actualiza el stage para procesar eventos de entrada
         stage.draw();
     }
 
