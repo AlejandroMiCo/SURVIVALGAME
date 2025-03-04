@@ -53,6 +53,8 @@ public class OptionsScreen implements Screen {
     private TextButton helpButton;
     private TextButton backButton;
 
+    private final Texture pergamino;
+
     public OptionsScreen(final IslandsSurvivors game) {
         this.game = game;
         camera = new OrthographicCamera();
@@ -70,6 +72,7 @@ public class OptionsScreen implements Screen {
         loadPreferences();
 
         Assets.loadLanguage(language);
+        pergamino = Assets.manager.get("ui/pergamino.png");
 
         // Estilos de botones
         TextButtonStyle btnStyle = new TextButtonStyle();
@@ -85,7 +88,7 @@ public class OptionsScreen implements Screen {
         btnBackStyle.fontColor = Color.BLACK;
 
         // Inicializar las etiquetas (Labels)
-        titleLabel = new Label(Assets.getText("game.title"), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
+        titleLabel = new Label(Assets.getText("menu.options"), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
         musicLabel = new Label(Assets.getText("menu.music"), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
         soundLabel = new Label(Assets.getText("menu.sound"), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
         vibrationLabel = new Label(Assets.getText("menu.vibration"),
@@ -96,23 +99,21 @@ public class OptionsScreen implements Screen {
         // Inicializar los botones antes de usarlos
         vibrationButton = new TextButton(vibrationEnabled ? Assets.getText("menu.on") : Assets.getText("menu.off"),
                 btnStyle);
+        vibrationButton.padBottom(5);
         languageButton = new TextButton(Assets.getText("menu.change"), btnStyle);
+        languageButton.padBottom(5);
         creditsButton = new TextButton(Assets.getText("menu.credits"), btnStyle);
+        creditsButton.padBottom(5);
         helpButton = new TextButton(Assets.getText("menu.help"), btnStyle);
+        helpButton.padBottom(5);
         backButton = new TextButton(Assets.getText("menu.back"), btnBackStyle);
-
-        // Labels
-        Label titleLabel = new Label(Assets.getText("game.title"), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        Label musicLabel = new Label(Assets.getText("menu.music"), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        Label soundLabel = new Label(Assets.getText("menu.sound"), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        Label vibrationLabel = new Label(Assets.getText("menu.vibration"),
-                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        Label languageLabel = new Label(Assets.getText("menu.language") + ": " + language,
-                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        backButton.padBottom(5);
 
         Slider.SliderStyle sliderStyle = new Slider.SliderStyle();
         sliderStyle.background = new TextureRegionDrawable(Assets.manager.get("ui/slider.png", Texture.class));
         sliderStyle.knob = new TextureRegionDrawable(Assets.manager.get("ui/sliderKnob.png", Texture.class));
+        sliderStyle.knob.setMinHeight(40);
+        sliderStyle.knob.setMinWidth(40);
 
         // Sliders para volumen de música y sonido
         Slider musicSlider = new Slider(0, 1, 0.1f, false, sliderStyle);
@@ -164,24 +165,24 @@ public class OptionsScreen implements Screen {
         });
 
         // Botón de créditos
-        //
-        // creditsButton.addListener(new ClickListener() {
-        // @Override
-        // public void clicked(InputEvent event, float x, float y) {
-        // // game.setScreen(new CreditsScreen(game));
-        // dispose();
-        // }
-        // });
+
+        creditsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // game.setScreen(new CreditsScreen(game));
+                dispose();
+            }
+        });
 
         // Botón de ayuda
-        //
-        // helpButton.addListener(new ClickListener() {
-        // @Override
-        // public void clicked(InputEvent event, float x, float y) {
-        // // game.setScreen(new HelpScreen(game));
-        // dispose();
-        // }
-        // });
+
+        helpButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new HelpScreen(game));
+                dispose();
+            }
+        });
 
         // Botón para volver al menú principal
         backButton.addListener(new ClickListener() {
@@ -193,22 +194,23 @@ public class OptionsScreen implements Screen {
         });
 
         Table table = new Table();
-        table.setSize(500, 350);
-        table.setPosition((IslandsSurvivors.V_WIDTH / 2) - (table.getWidth() / 2), 40);
+        table.setSize(700, 700);
+        table.setPosition((IslandsSurvivors.V_WIDTH / 2) - (table.getWidth() / 2), -160);
+        table.setBackground(new TextureRegionDrawable(pergamino));
 
         // Construcción de la tabla
         table.add(titleLabel).padBottom(10).colspan(2).row();
         table.add(musicLabel).padRight(10);
-        table.add(musicSlider).width(200).row();
+        table.add(musicSlider).width(150).row();
         table.add(soundLabel).padRight(10);
-        table.add(soundSlider).width(200).row();
+        table.add(soundSlider).width(150).row();
         table.add(vibrationLabel).padRight(10);
-        table.add(vibrationButton).width(100).row();
+        table.add(vibrationButton).padBottom(5).size(150, 40).row();
         table.add(languageLabel).padRight(10);
-        table.add(languageButton).width(100).row();
-        // table.add(creditsButton).size(150, 50);
-        // table.add(helpButton).size(150, 50).row();
-        table.add(backButton).size(200, 60).colspan(2).row();
+        table.add(languageButton).padBottom(5).size(150, 40).row();
+        table.add(creditsButton).padBottom(5).size(150, 40);
+        table.add(helpButton).padBottom(5).size(150, 40).row();
+        table.add(backButton).padBottom(5).size(200, 40).colspan(2).row();
 
         stage.addActor(table);
     }

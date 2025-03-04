@@ -42,13 +42,13 @@ public class RecordsScreen implements Screen {
 
         // Crear tabla para los récords
         Table table = new Table();
-        table.setSize(500, 450);
-        table.setPosition((IslandsSurvivors.V_WIDTH / 2f) - (table.getWidth() / 2f), 50);
+        table.setSize(700, 700);
+        table.setPosition((IslandsSurvivors.V_WIDTH / 2) - (table.getWidth() / 2), -160);
         table.background(new TextureRegionDrawable(pergamino));
 
         // Título
-        Label titleLabel = new Label("🏆 Mejores Puntuaciones",
-                new Label.LabelStyle(IslandsSurvivors.font, Color.WHITE));
+        Label titleLabel = new Label(Assets.getText("records.title"),
+                new Label.LabelStyle(IslandsSurvivors.font, Color.BLACK));
         table.add(titleLabel).padBottom(20).row();
 
         // Obtener los récords guardados y ordenarlos de mayor a menor
@@ -64,7 +64,8 @@ public class RecordsScreen implements Screen {
 
         // Botón de volver al menú
         TextButtonStyle buttonStyle = createButtonStyle("ui/boton_rojo.png", "ui/boton_rojo_press.png");
-        TextButton backButton = new TextButton("Volver", buttonStyle);
+        TextButton backButton = new TextButton(Assets.getText("menu.back"), buttonStyle);
+        backButton.padBottom(10);
 
         backButton.addListener(new ClickListener() {
             @Override
@@ -74,7 +75,7 @@ public class RecordsScreen implements Screen {
             }
         });
 
-        table.add(backButton).padTop(20).size(150, 50).row();
+        table.add(backButton).size(150, 50).row();
         stage.addActor(table);
     }
 
