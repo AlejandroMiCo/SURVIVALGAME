@@ -165,7 +165,7 @@ public class OptionsScreen implements Screen {
         creditsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // game.setScreen(new CreditsScreen(game));
+                game.setScreen(new CreditsScreen(game));
                 dispose();
             }
         });
