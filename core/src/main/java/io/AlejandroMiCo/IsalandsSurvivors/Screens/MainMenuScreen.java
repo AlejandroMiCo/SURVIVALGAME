@@ -61,7 +61,7 @@ public class MainMenuScreen implements Screen {
 
         TextButton playButton = createButton("menu.play", blueStyle);
         TextButton optionButton = createButton("menu.options", blueStyle);
-        TextButton recordsButton = createButton("menu.options", blueStyle);
+        TextButton recordsButton = createButton("menu.records", blueStyle);
         TextButton exitButton = createButton("menu.exit", redStyle);
 
         // Listeners

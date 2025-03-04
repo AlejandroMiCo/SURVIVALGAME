@@ -1,7 +1,5 @@
 package io.AlejandroMiCo.IsalandsSurvivors.Screens;
 
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -23,7 +21,6 @@ import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.PreferencesManager;
 
 public class VictoryScreen implements Screen {
-    private IslandsSurvivors game;
     private Stage stage;
     private OrthographicCamera camera;
 
@@ -31,7 +28,6 @@ public class VictoryScreen implements Screen {
     private int enemiesDefeated;
 
     public VictoryScreen(final IslandsSurvivors game, int playerLevel, int enemiesDefeated, int coins) {
-        this.game = game;
         this.playerLevel = playerLevel;
         this.enemiesDefeated = enemiesDefeated;
 
@@ -39,7 +35,7 @@ public class VictoryScreen implements Screen {
         stage = new Stage(new FitViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, camera));
         Gdx.input.setInputProcessor(stage);
 
-        int score = playerLevel * Math.max(enemiesDefeated, 1) * Math.max(coins, 1);
+        int score = this.playerLevel * Math.max(this.enemiesDefeated, 1) * Math.max(coins, 1);
 
         PreferencesManager.saveHighScore(score);
 
@@ -54,23 +50,13 @@ public class VictoryScreen implements Screen {
 
         // Obtener textos traducidos
         String victoryText = Assets.getText("game.victory");
-        String statsText = String.format(Assets.getText("game.stats"), playerLevel, enemiesDefeated);
+        String statsText = String.format(Assets.getText("game.stats"), playerLevel, enemiesDefeated, score);
         String continueText = Assets.getText("game.continue");
         String mainMenuText = Assets.getText("game.main_menu");
 
         // Crear labels con traducción
         Label victoryLabel = new Label(victoryText, new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         Label statsLabel = new Label(statsText, new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-
-        // // Obtener las mejores puntuaciones
-        // List<Integer> highScores = PreferencesManager.getHighScores();
-        // StringBuilder highScoreText = new StringBuilder("🏆 Top Scores:\n");
-        // for (int i = 0; i < highScores.size(); i++) {
-        // highScoreText.append(i + 1).append(".
-        // ").append(highScores.get(i)).append("\n");
-        // }
-        // Label highScoreLabel = new Label(highScoreText.toString(),
-        // new Label.LabelStyle(IslandsSurvivors.font, Color.YELLOW));
 
         // Botones con traducción
         TextButton continueButton = new TextButton(continueText, btnStyle);

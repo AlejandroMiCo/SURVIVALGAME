@@ -6,10 +6,6 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.utils.Json;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class PreferencesManager {
     private static final Preferences prefs = Gdx.app.getPreferences("GamePreferences");
@@ -20,7 +16,6 @@ public class PreferencesManager {
     private static final String VIBRATION_KEY = "vibrationEnabled";
     private static final String LANGUAGE_KEY = "language";
 
-    private static final String PREFS_NAME = "islands_survivors_prefs";
     private static final String HIGH_SCORES = "high_scores";
     private static final int MAX_SCORES = 5;
 
