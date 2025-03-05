@@ -31,8 +31,8 @@ import io.AlejandroMiCo.IsalandsSurvivors.Sprites.CollectedItem;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.EnemyPool;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Experience;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight.State;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Player;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Player.State;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Meat;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.B2WorldCreator;
@@ -55,7 +55,7 @@ public class PlayScreen implements Screen {
     private World world;
     private Box2DDebugRenderer b2dr;
 
-    private Knight knight;
+    private Player knight;
 
     private ArrayList<Vector2> pendingCoins;
     private HashMap<Vector2, Integer> pendingExperience;
@@ -115,7 +115,7 @@ public class PlayScreen implements Screen {
         new B2WorldCreator(this);
         joystick = new VirtualJoystick(50);
 
-        knight = new Knight(this, joystick);
+        knight = new Player(this, joystick);
         hud = new Hud(game.batch, knight);
         Gdx.input.setInputProcessor(hud.stage);
 

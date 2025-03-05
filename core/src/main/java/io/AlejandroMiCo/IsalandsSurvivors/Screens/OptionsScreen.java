@@ -33,7 +33,7 @@ public class OptionsScreen implements Screen {
     private float musicVolume;
     private float soundVolume;
     private boolean vibrationEnabled;
-    private String language; // Idioma por defecto (ES = Español)
+    private String language;
 
     private Music musicMenu, musicGame;
     private Sound soundEffect;
@@ -52,13 +52,18 @@ public class OptionsScreen implements Screen {
 
     private final Texture pergamino;
 
+    /**
+     * Constructor de la pantalla de opciones.
+     * 
+     * @param game
+     */
     public OptionsScreen(final IslandsSurvivors game) {
         this.game = game;
         camera = new OrthographicCamera();
         stage = new Stage(new FitViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, camera));
         Gdx.input.setInputProcessor(stage);
 
-        // Usar el AssetManager para cargar las texturas
+        // Cargar recursos desde el AssetManager
         fondo = Assets.manager.get("img/map.png", Texture.class);
         musicMenu = Assets.manager.get("music/menuSong.ogg", Music.class);
         musicGame = Assets.manager.get("music/song.ogg", Music.class);
@@ -67,6 +72,7 @@ public class OptionsScreen implements Screen {
         // Cargar preferencias
         loadPreferences();
 
+        // Cargar el idioma seleccionado
         Assets.loadLanguage(language);
         pergamino = Assets.manager.get("ui/pergamino.png");
 
@@ -161,7 +167,6 @@ public class OptionsScreen implements Screen {
         });
 
         // Botón de créditos
-
         creditsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -171,7 +176,6 @@ public class OptionsScreen implements Screen {
         });
 
         // Botón de ayuda
-
         helpButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -189,6 +193,7 @@ public class OptionsScreen implements Screen {
             }
         });
 
+        // Crear la tabla principal
         Table table = new Table();
         table.setSize(700, 700);
         table.setPosition((IslandsSurvivors.V_WIDTH / 2) - (table.getWidth() / 2), -160);
@@ -217,13 +222,16 @@ public class OptionsScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        // Limpiar la pantalla
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.setProjectionMatrix(camera.combined);
 
+        // Dibujar elementos en la pantalla
         game.batch.begin();
         game.batch.draw(fondo, 0, 0, IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT);
         game.batch.end();
 
+        // Dibujar el escenario con la UI
         stage.draw();
     }
 

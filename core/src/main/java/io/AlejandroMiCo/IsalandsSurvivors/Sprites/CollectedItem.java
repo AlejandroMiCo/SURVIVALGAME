@@ -29,9 +29,9 @@ public class CollectedItem extends Sprite {
 
     public Animation<TextureRegion> animation;
     private float stateTimer;
-    private Knight knight;
+    private Player knight;
 
-    public CollectedItem(World world, float x, float y, Knight knight, String file) {
+    public CollectedItem(World world, float x, float y, Player knight, String file) {
         this.world = world;
         this.knight = knight;
 

@@ -20,19 +20,31 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
 
-public class HelpScreen implements Screen {
-    private IslandsSurvivors game;
-    private Stage stage;
-    private OrthographicCamera camera;
-    private Texture background;
-    private Texture pergamino;
+/**
+ * Pantalla de ayuda del juego. Muestra un fondo con un pergamino donde se
+ * despliega el contenido de la ayuda
+ * con un botón para regresar al menú de opciones.
+ */
 
+public class HelpScreen implements Screen {
+    private IslandsSurvivors game; // Referencia al juego principal
+    private Stage stage; // Contenedor de los elementos de la UI
+    private OrthographicCamera camera; // Cámara para la vista ortográfica
+    private Texture background; // Fondo de la pantalla de ayuda
+    private Texture pergamino; // Imagen de pergamino para mostrar el texto de ayuda
+
+    /**
+     * Constructor de la pantalla de ayuda.
+     *
+     * @param game Referencia al juego principal
+     */
     public HelpScreen(final IslandsSurvivors game) {
         this.game = game;
         camera = new OrthographicCamera();
         stage = new Stage(new FitViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, camera));
-        Gdx.input.setInputProcessor(stage);
+        Gdx.input.setInputProcessor(stage); // Configurar el input para que el escenario responda a los eventos de entrada
 
+        // Cargar texturas de fondo y pergamino
         background = Assets.manager.get("img/map.png", Texture.class);
         pergamino = Assets.manager.get("ui/pergamino.png", Texture.class); // Fondo de pergamino
 
@@ -46,6 +58,7 @@ public class HelpScreen implements Screen {
         // Título
         Label titleLabel = new Label(Assets.getText("menu.help"), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
 
+        // Obtener el texto de ayuda y dividirlo en líneas
         String helpText = Assets.getText("help.content");
         String[] lines = helpText.split("\n"); // Dividir por saltos de línea
 
@@ -57,7 +70,7 @@ public class HelpScreen implements Screen {
             Label lineLabel = new Label(line, new Label.LabelStyle(new BitmapFont(), Color.BLACK));
             lineLabel.setWrap(true); // Hacer que el texto se ajuste automáticamente
             lineLabel.setAlignment(1); // Alinear el texto al centro
-            contentTable.add(lineLabel).width(350).padBottom(10).row(); // Separamos líneas
+            contentTable.add(lineLabel).width(350).padBottom(10).row(); // Agregar margen entre líneas
         }
 
         // Colocar la tabla en un ScrollPane
@@ -85,8 +98,7 @@ public class HelpScreen implements Screen {
         mainTable.setBackground(new TextureRegionDrawable(pergamino));
         mainTable.top();
         mainTable.add(titleLabel).padTop(50).row();
-        mainTable.add(scrollPane).size(450, 300).padTop(80).row(); // Expande el ScrollPane para que ocupe el espacio
-                                                                 // disponible
+        mainTable.add(scrollPane).size(450, 300).padTop(80).row(); // Ajustar tamaño del ScrollPane
         mainTable.add(backButton).size(200, 50).padBottom(20);
 
         stage.addActor(mainTable);
@@ -98,18 +110,22 @@ public class HelpScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        // Limpiar la pantalla
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // Dibujar el fondo de la pantalla de ayuda
         game.batch.begin();
         game.batch.draw(background, 0, 0, IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT);
         game.batch.end();
 
-        stage.act(delta); // Actualiza el stage para procesar eventos de entrada
+        // Actualizar y renderizar el escenario
+        stage.act(delta);
         stage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
+        // Ajustar la vista cuando cambia el tamaño de la pantalla
         stage.getViewport().update(width, height, true);
     }
 

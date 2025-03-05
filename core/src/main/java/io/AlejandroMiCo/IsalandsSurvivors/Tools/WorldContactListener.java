@@ -12,14 +12,14 @@ import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Coin;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.CollectedItem;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Experience;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Player;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Meat;
 
 public class WorldContactListener implements ContactListener {
 
-    private Knight knight;
+    private Player knight;
 
-    public WorldContactListener(Knight knight) {
+    public WorldContactListener(Player knight) {
         this.knight = knight;
     }
 

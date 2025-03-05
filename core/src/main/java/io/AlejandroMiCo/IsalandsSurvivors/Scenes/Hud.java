@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
-import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
+import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Player;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
 
 /**
@@ -44,7 +44,7 @@ public class Hud implements Disposable {
     private Label coins;
     private Label enemies;
 
-    private Knight knight;
+    private Player knight;
     private float healthPercentage;
     private float experiencePercentage;
 
@@ -87,7 +87,7 @@ public class Hud implements Disposable {
      * @param sb     SpriteBatch para renderizar los elementos de la UI.
      * @param knight Instancia del personaje principal para obtener su estado.
      */
-    public Hud(SpriteBatch sb, Knight knight) {
+    public Hud(SpriteBatch sb, Player knight) {
         goldText = Assets.getText("hud.gold");
         enemiesText = Assets.getText("hud.enemies");
 

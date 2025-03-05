@@ -4,7 +4,7 @@ import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
 
 public class TntGobling extends Enemy {
 
-    public TntGobling(PlayScreen screen, float x, float y, Knight knight) {
+    public TntGobling(PlayScreen screen, float x, float y, Player knight) {
         super(screen, x, y, knight, "creatures/tntGobling.png", 50);
 
         damage = INITIAL_DAMAGE + 10;

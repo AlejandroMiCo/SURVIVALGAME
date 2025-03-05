@@ -29,9 +29,15 @@ public class RecordsScreen implements Screen {
     private final OrthographicCamera camera;
     private final Texture fondo, pergamino;
 
+    /**
+     * Constructor de la pantalla de récords.
+     * 
+     * @param game
+     */
     public RecordsScreen(final IslandsSurvivors game) {
         this.game = game;
 
+        // Inicializar cámara y escenario
         camera = new OrthographicCamera();
         stage = new Stage(new FitViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, camera));
         Gdx.input.setInputProcessor(stage);
@@ -79,6 +85,13 @@ public class RecordsScreen implements Screen {
         stage.addActor(table);
     }
 
+    /**
+     * Método auxiliar para crear un estilo de botón.
+     * 
+     * @param textureUp   Imagen cuando el botón no está presionado.
+     * @param textureDown Imagen cuando el botón está presionado.
+     * @return
+     */
     private TextButtonStyle createButtonStyle(String textureUp, String textureDown) {
         TextButtonStyle style = new TextButtonStyle();
         style.up = new TextureRegionDrawable(Assets.manager.get(textureUp, Texture.class));
@@ -90,13 +103,16 @@ public class RecordsScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        // Limpiar la pantalla
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.setProjectionMatrix(camera.combined);
 
+        // Dibujar elementos en la pantalla
         game.batch.begin();
         game.batch.draw(fondo, 0, 0, IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT);
         game.batch.end();
 
+        // Dibujar el escenario con la UI
         stage.draw();
     }
 

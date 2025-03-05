@@ -27,22 +27,35 @@ public class VictoryScreen implements Screen {
     private int playerLevel;
     private int enemiesDefeated;
 
+    /**
+     * Constructor de la pantalla de victoria.
+     *
+     * @param game Referencia al juego principal.
+     * @param playerLevel Nivel del jugador.
+     * @param enemiesDefeated Número de enemigos derrotados.
+     * @param coins Número de monedas recogidas.
+     */
     public VictoryScreen(final IslandsSurvivors game, int playerLevel, int enemiesDefeated, int coins) {
         this.playerLevel = playerLevel;
         this.enemiesDefeated = enemiesDefeated;
 
+        // Inicializar cámara y escenario
         camera = new OrthographicCamera();
         stage = new Stage(new FitViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, camera));
         Gdx.input.setInputProcessor(stage);
 
+        // Calcular el puntaje basado en el nivel del jugador, enemigos derrotados y monedas obtenidas
         int score = this.playerLevel * Math.max(this.enemiesDefeated, 1) * Math.max(coins, 1);
 
+        // Guardar el puntaje en las preferencias
         PreferencesManager.saveHighScore(score);
 
+        // Crear tabla para los elementos de la pantalla
         Table table = new Table();
         table.center();
         table.setFillParent(true);
 
+        // Estilo de los botones
         TextButtonStyle btnStyle = new TextButtonStyle();
         btnStyle.up = new TextureRegionDrawable(Assets.manager.get("ui/boton_azul.png", Texture.class));
         btnStyle.font = new BitmapFont();
@@ -68,6 +81,7 @@ public class VictoryScreen implements Screen {
             }
         });
 
+        // Agregar los elementos a la tabla y luego al escenario
         table.add(victoryLabel).padBottom(20).row();
         table.add(statsLabel).padBottom(20).row(); // Espacio para las estadísticas
         table.add(mainMenuButton).padBottom(10).row();

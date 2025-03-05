@@ -17,7 +17,7 @@ import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.VirtualJoystick;
 
-public class Knight extends Sprite {
+public class Player extends Sprite {
 
     // Posibles estados del personaje
     public enum State {
@@ -69,7 +69,7 @@ public class Knight extends Sprite {
         this.b2body = b2body;
     }
 
-    public Knight(PlayScreen screen, VirtualJoystick joy) {
+    public Player(PlayScreen screen, VirtualJoystick joy) {
         super(new Texture("creatures/Archer_Blue.png"), 196, 196);
 
         this.joystick = joy;

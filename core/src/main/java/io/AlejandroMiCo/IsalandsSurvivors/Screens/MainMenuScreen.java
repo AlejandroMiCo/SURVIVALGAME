@@ -20,6 +20,10 @@ import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.PreferencesManager;
 
+/**
+ * Pantalla principal del menú del juego.
+ * Muestra opciones como jugar, ajustes, récords y salir del juego.
+ */
 public class MainMenuScreen implements Screen {
     private final IslandsSurvivors game;
     private final Stage stage;
@@ -28,6 +32,11 @@ public class MainMenuScreen implements Screen {
     private Music music; // La música se manejará aquí
     private final TextButtonStyle blueStyle, redStyle;
 
+    /**
+     * Constructor de la pantalla de menú principal.
+     * 
+     * @param game Referencia al juego principal.
+     */
     public MainMenuScreen(final IslandsSurvivors game) {
         this.game = game;
 
@@ -106,6 +115,13 @@ public class MainMenuScreen implements Screen {
         stage.addActor(table);
     }
 
+    /**
+     * Método auxiliar para crear un estilo de botón.
+     * 
+     * @param textureUp   Imagen cuando el botón no está presionado.
+     * @param textureDown Imagen cuando el botón está presionado.
+     * @return Un estilo de botón configurado.
+     */
     private TextButtonStyle createButtonStyle(String textureUp, String textureDown) {
         TextButtonStyle style = new TextButtonStyle();
         style.up = new TextureRegionDrawable(Assets.manager.get(textureUp, Texture.class));
@@ -115,6 +131,13 @@ public class MainMenuScreen implements Screen {
         return style;
     }
 
+    /**
+     * Método auxiliar para crear un botón con texto.
+     * 
+     * @param textKey Clave del texto en los recursos de localización.
+     * @param style   Estilo del botón.
+     * @return Un botón configurado.
+     */
     private TextButton createButton(String textKey, TextButtonStyle style) {
         TextButton button = new TextButton(Assets.getText(textKey), style);
         button.padBottom(10);
@@ -123,14 +146,17 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        // Limpiar la pantalla
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.setProjectionMatrix(camera.combined);
 
+        // Dibujar elementos en la pantalla
         game.batch.begin();
         game.batch.draw(fondo, 0, 0, IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT);
         game.batch.draw(titulo, 145, 312, titulo.getWidth(), titulo.getHeight());
         game.batch.end();
 
+        // Dibujar el escenario con la UI
         stage.draw();
     }
 
@@ -144,7 +170,6 @@ public class MainMenuScreen implements Screen {
         stage.dispose();
     }
 
-    // Métodos vacíos necesarios por la interfaz Screen
     @Override
     public void show() {
     }

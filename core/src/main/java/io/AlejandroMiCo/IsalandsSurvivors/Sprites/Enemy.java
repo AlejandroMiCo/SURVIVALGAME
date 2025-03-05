@@ -25,7 +25,7 @@ public abstract class Enemy extends Sprite implements Poolable {
     protected World world;
     protected PlayScreen screen;
     private Body b2body;
-    public Knight knight;
+    public Player knight;
 
     public static int INITIAL_HEALTH = 20;
     public static int INITIAL_DAMAGE = 5;
@@ -60,7 +60,7 @@ public abstract class Enemy extends Sprite implements Poolable {
         this.value = value;
     }
 
-    public Enemy(PlayScreen screen, float x, float y, Knight knight, String walkFile, int value) {
+    public Enemy(PlayScreen screen, float x, float y, Player knight, String walkFile, int value) {
         this.health = INITIAL_HEALTH;
         this.damage = INITIAL_DAMAGE;
         this.speed = INITIAL_SPEED;

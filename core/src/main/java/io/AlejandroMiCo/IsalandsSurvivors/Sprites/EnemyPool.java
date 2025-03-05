@@ -6,10 +6,10 @@ import io.AlejandroMiCo.IsalandsSurvivors.Screens.PlayScreen;
 
 public class EnemyPool extends Pool<Enemy> {
     private PlayScreen screen;
-    private Knight knight;
+    private Player knight;
     private int enemyType = 0;
 
-    public EnemyPool(PlayScreen screen, Knight knight) {
+    public EnemyPool(PlayScreen screen, Player knight) {
         this.screen = screen;
         this.knight = knight;
     }
