@@ -51,28 +51,18 @@ public class VictoryScreen implements Screen {
         // Obtener textos traducidos
         String victoryText = Assets.getText("game.victory");
         String statsText = String.format(Assets.getText("game.stats"), playerLevel, enemiesDefeated, score);
-        String continueText = Assets.getText("game.continue");
         String mainMenuText = Assets.getText("game.main_menu");
 
         // Crear labels con traducción
         Label victoryLabel = new Label(victoryText, new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         Label statsLabel = new Label(statsText, new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 
-        // Botones con traducción
-        TextButton continueButton = new TextButton(continueText, btnStyle);
         TextButton mainMenuButton = new TextButton(mainMenuText, btnStyle);
-
-        continueButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
-                game.setScreen(new PlayScreen(game));
-                dispose();
-            }
-        });
 
         mainMenuButton.addListener(new ClickListener() {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
+                IslandsSurvivors.font.getData().setScale(1.0f);
                 game.setScreen(new MainMenuScreen(game));
                 dispose();
             }
@@ -80,7 +70,6 @@ public class VictoryScreen implements Screen {
 
         table.add(victoryLabel).padBottom(20).row();
         table.add(statsLabel).padBottom(20).row(); // Espacio para las estadísticas
-        table.add(continueButton).padBottom(10).row();
         table.add(mainMenuButton).padBottom(10).row();
 
         stage.addActor(table);

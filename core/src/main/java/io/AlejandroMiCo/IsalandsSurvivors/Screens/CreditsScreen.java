@@ -20,6 +20,10 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
 
+/**
+ * Pantalla de créditos del juego.
+ * Muestra información sobre los desarrolladores y colaboradores.
+ */
 public class CreditsScreen implements Screen {
     private IslandsSurvivors game;
     private Stage stage;
@@ -27,16 +31,22 @@ public class CreditsScreen implements Screen {
     private Texture background;
     private Texture pergamino;
 
+    /**
+     * Constructor de la pantalla de créditos.
+     * 
+     * @param game Instancia principal del juego.
+     */
     public CreditsScreen(final IslandsSurvivors game) {
         this.game = game;
         camera = new OrthographicCamera();
         stage = new Stage(new FitViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, camera));
         Gdx.input.setInputProcessor(stage);
 
+        // Cargar texturas de fondo y pergamino
         background = Assets.manager.get("img/map.png", Texture.class);
         pergamino = Assets.manager.get("ui/pergamino.png", Texture.class); // Fondo de pergamino
 
-        // Estilo del botón
+        // Estilo del botón de regreso
         TextButtonStyle btnStyle = new TextButtonStyle();
         btnStyle.up = new TextureRegionDrawable(Assets.manager.get("ui/boton_rojo.png", Texture.class));
         btnStyle.down = new TextureRegionDrawable(Assets.manager.get("ui/boton_rojo_press.png", Texture.class));
@@ -46,6 +56,7 @@ public class CreditsScreen implements Screen {
         // Título
         Label titleLabel = new Label(Assets.getText("menu.help"), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
 
+         // Obtener el contenido de los créditos desde los assets
         String helpText = Assets.getText("credits.content");
         String[] lines = helpText.split("\n"); // Dividir por saltos de línea
 
@@ -86,7 +97,7 @@ public class CreditsScreen implements Screen {
         mainTable.top();
         mainTable.add(titleLabel).padTop(50).row();
         mainTable.add(scrollPane).size(450, 300).padTop(80).row(); // Expande el ScrollPane para que ocupe el espacio
-                                                                 // disponible
+                                                                   // disponible
         mainTable.add(backButton).size(200, 50).padBottom(20);
 
         stage.addActor(mainTable);
@@ -98,13 +109,16 @@ public class CreditsScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        // Limpiar pantalla
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // Dibujar fondo
         game.batch.begin();
         game.batch.draw(background, 0, 0, IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT);
         game.batch.end();
 
-        stage.act(delta); // Actualiza el stage para procesar eventos de entrada
+        // Actualizar y dibujar la UI
+        stage.act(delta);
         stage.draw();
     }
 
@@ -125,6 +139,9 @@ public class CreditsScreen implements Screen {
     public void hide() {
     }
 
+    /**
+     * Libera los recursos utilizados por la pantalla de créditos.
+     */
     @Override
     public void dispose() {
         stage.dispose();
