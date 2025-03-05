@@ -20,6 +20,10 @@ import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Knight;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
 
+/**
+ * Clase que representa la interfaz de usuario (HUD) del juego.
+ * Muestra información sobre la salud, experiencia, tiempo, monedas y enemigos.
+ */
 public class Hud implements Disposable {
     public Stage stage;
     private Viewport viewport;
@@ -40,13 +44,11 @@ public class Hud implements Disposable {
     private Label coins;
     private Label enemies;
 
-    // private ImageButton pauseButton;
-    // private boolean isPaused;
     private Knight knight;
     private float healthPercentage;
     private float experiencePercentage;
 
-    // **Recursos compartidos para evitar fugas de memoria**
+    // Recursos compartidos para evitar fugas de memoria
     private static BitmapFont font = new BitmapFont();
     private static Texture healthBgTexture, healthFillTexture, expBgTexture, expFillTexture, heartTexture, expTexture;
     private static Texture pauseTexture, pausePressedTexture;
@@ -59,6 +61,7 @@ public class Hud implements Disposable {
     private String goldText;
     private String enemiesText;
 
+    // Inicialización de recursos estáticos
     static {
         font.setColor(Color.WHITE);
 
@@ -73,15 +76,24 @@ public class Hud implements Disposable {
         pausePressedTexture = new Texture("ui/pause_button_pressed.png");
     }
 
-    public Hud(SpriteBatch sb, Knight knight) {
+    // Getters
+    public float getWorldTimer() {
+        return worldTimer;
+    }
 
+    /**
+     * Constructor de la clase Hud.
+     * 
+     * @param sb     SpriteBatch para renderizar los elementos de la UI.
+     * @param knight Instancia del personaje principal para obtener su estado.
+     */
+    public Hud(SpriteBatch sb, Knight knight) {
         goldText = Assets.getText("hud.gold");
         enemiesText = Assets.getText("hud.enemies");
 
         this.knight = knight;
         worldTimer = 0;
         timeCount = 0;
-        // isPaused = false;
 
         viewport = new FillViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
@@ -89,14 +101,6 @@ public class Hud implements Disposable {
         Table table = new Table();
         table.top();
         table.setFillParent(true);
-
-        // pauseButton = new ImageButton(new TextureRegionDrawable(new
-        // TextureRegion(pauseTexture)),
-        // new TextureRegionDrawable(new TextureRegion(pausePressedTexture)));
-        // pauseButton.addListener(event -> {
-        // togglePause();
-        // return true;
-        // });
 
         healthBarFillRegion = new TextureRegion(healthFillTexture, 0, 0, 200, 20);
         experienceBarFillRegion = new TextureRegion(expFillTexture, 0, 0, 200, 20);
@@ -137,7 +141,6 @@ public class Hud implements Disposable {
         countsTable.add(coins).pad(5);
         countsTable.row();
         countsTable.add(enemies).pad(5);
-        // table.add(pauseButton).padTop(10).padRight(10).expandX().right();
 
         table.add(barsTable).padTop(15).padLeft(5);
         table.add(countLabel).expandX();
@@ -146,14 +149,13 @@ public class Hud implements Disposable {
         stage.addActor(table);
     }
 
-    // public void togglePause() {
-    // isPaused = !isPaused;
-    // }
-
-    // public boolean isPaused() {
-    // return isPaused;
-    // }
-
+    /**
+     * Actualiza el HUD cada frame. Se actualiza el tiempo transcurrido, la barra de
+     * salud y experiencia,
+     * y los contadores de monedas y enemigos.
+     * 
+     * @param dt Delta time (tiempo transcurrido desde el último frame).
+     */
     public void update(float dt) {
         timeCount += dt;
         if (timeCount >= 1) {
@@ -175,6 +177,9 @@ public class Hud implements Disposable {
         stage.draw();
     }
 
+    /**
+     * Actualiza los textos del HUD con los valores actuales del jugador.
+     */
     public void updateUI() {
         sb.setLength(0); // Resetear el StringBuilder
         sb.append(goldText + ": ").append(knight.getCoins());
@@ -210,9 +215,5 @@ public class Hud implements Disposable {
         expTexture.dispose();
         pauseTexture.dispose();
         pausePressedTexture.dispose();
-    }
-
-    public float getWorldTimer() {
-        return worldTimer;
     }
 }

@@ -16,24 +16,28 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 
 import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 
+/**
+ * Clase que representa una bala en el juego.
+ * Se gestiona con Box2D y se reutiliza con un sistema de Pooling.
+ */
 public class Bullet extends Sprite implements Poolable {
 
-    private float angle;
-    private float time;
-    private float size;
+    private float angle; // Ángulo de disparo
+    private float time; // Tiempo de vida de la bala
+    private float size; // Tamaño de la bala
     private TextureRegion[][] tmp;
     private TextureRegion[] regionsMovimiento;
-    private Texture animacionMovimiento;
-    private boolean shouldRemove = false;
+    private Texture animacionMovimiento; // Textura de la animación de la bala
+    private boolean shouldRemove = false; // Bandera para marcar la bala como eliminada
 
     private static final Vector2 tmpPosition = new Vector2();
     private static final Vector2 tmpVelocity = new Vector2();
 
-    float stateTime;
-    TextureRegion texture;
-    Body body;
-    World world;
+    float stateTime; // Tiempo de animación
+    Body body; // Cuerpo de la bala en el mundo físico
+    World world; // Mundo donde existe la bala
 
+    // Atributos de la bala que pueden ser mejorados
     private static HashMap<String, Float> atributos = new HashMap<>() {
         {
             put("bullet_speed", 1f);
@@ -41,16 +45,36 @@ public class Bullet extends Sprite implements Poolable {
         }
     };
 
+    /**
+     * Constructor de la bala.
+     * 
+     * @param world Mundo físico en el que se encuentra
+     * @param x     Posición X inicial
+     * @param y     Posición Y inicial
+     * @param angle Ángulo de disparo
+     */
     public Bullet(World world, float x, float y, float angle) {
         super();
-        // Son necesarios para el bdef
         this.angle = angle;
         this.world = world;
         animacionMovimiento = new Texture("img/arrow.png");
     }
 
+    // Getters
+    public Body getBody() {
+        return body;
+    }
+
+    public float getCooldown() {
+        return atributos.get("bullet_cooldown");
+    }
+
+    /**
+     * Actualiza la posición, animación de la bala y el tiempo de vida que le queda.
+     * 
+     * @param dt Delta time (tiempo transcurrido desde la última actualización)
+     */
     public void update(float dt) {
-        // Resta el tiempo de vida
         time -= dt;
         stateTime += dt;
 
@@ -58,36 +82,43 @@ public class Bullet extends Sprite implements Poolable {
         setSize(size, size);
         setOriginCenter();
 
-        // Sincroniza la posición del sprite con la del body (conversión de unidades del
-        // mundo a píxeles)
         if (body != null) {
             setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
             setRotation((float) Math.toDegrees(angle));
         }
         setScale(size * 10);
         setRegion(animacionMovimiento);
-        // Actualiza la rotación del sprite según el ángulo del body
         setRotation((float) Math.toDegrees(angle));
     }
 
+    /**
+     * Marca la bala para su eliminación.
+     */
     public void markForRemoval() {
         shouldRemove = true;
     }
 
+    /**
+     * Comprueba si la bala debe ser eliminada.
+     * 
+     * @return true si la bala ha expirado o ha colisionado
+     */
     public boolean isDead() {
         return time < 0 || body == null || shouldRemove;
     }
 
-    public Body getBody() {
-        return body;
-    }
-
+    /**
+     * Define la física de la bala y la inicializa en el mundo.
+     * 
+     * @param x    Posición X inicial
+     * @param y    Posición Y inicial
+     * @param size Tamaño del cuerpo físico
+     */
     public void defineBullet(float x, float y, float size) {
         float offset = 0.3f;
 
         BodyDef bdef = new BodyDef();
-        tmpPosition.set(x, y).add((float) Math.cos(angle) * offset, (float) Math.sin(angle) * offset); // Reutilizando
-                                                                                                       // Vector2
+        tmpPosition.set(x, y).add((float) Math.cos(angle) * offset, (float) Math.sin(angle) * offset);
         bdef.position.set(tmpPosition);
         bdef.angle = angle;
         bdef.type = BodyDef.BodyType.DynamicBody;
@@ -96,7 +127,7 @@ public class Bullet extends Sprite implements Poolable {
         body = world.createBody(bdef);
 
         CircleShape shape = new CircleShape();
-        shape.setRadius(size / 2); // Radio pequeño
+        shape.setRadius(size / 2);
 
         FixtureDef fedef = new FixtureDef();
         fedef.shape = shape;
@@ -104,7 +135,7 @@ public class Bullet extends Sprite implements Poolable {
         fedef.friction = 0f;
         fedef.restitution = 0f;
 
-        fedef.filter.categoryBits = IslandsSurvivors.BULLET_BIT; // El Gobling pertenece a la categoría "enemigo"
+        fedef.filter.categoryBits = IslandsSurvivors.BULLET_BIT;
         fedef.filter.maskBits = IslandsSurvivors.ENEMY_BIT | IslandsSurvivors.DEFAULT_BIT;
 
         body.createFixture(fedef).setUserData(this);
@@ -114,6 +145,12 @@ public class Bullet extends Sprite implements Poolable {
         body.setLinearVelocity(tmpVelocity);
     }
 
+    /**
+     * Devuelve la animación de la bala.
+     * 
+     * @param imagen Textura de la animación de la cual se extraerán los frames
+     * @return Animación de la bala
+     */
     public Animation<TextureRegion> getAnimation(Texture imagen) {
         tmp = TextureRegion.split(imagen, imagen.getWidth() / 8, imagen.getHeight());
         regionsMovimiento = new TextureRegion[8];
@@ -123,45 +160,51 @@ public class Bullet extends Sprite implements Poolable {
         return new Animation<>(0.075f, regionsMovimiento);
     }
 
-    // public int getDamage() {
-    //     return atributos.get("daño_bala").intValue(); // Daño base de la bala
-    // }
-
-    // public float getCritChance() {
-    //     return atributos.get("critico_bala"); // Daño base de la bala
-    // }
-
-    public float getCooldown() {
-        return atributos.get("bullet_cooldown"); // Devuelve el valor del cooldown
-    }
-
+    /**
+     * Mejora un atributo de la bala.
+     * 
+     * @param atributo Nombre del atributo a mejorar
+     * @param cantidad Cantidad de mejora
+     */
     public static void mejorarAtributo(String atributo, float cantidad) {
         if (atributos.containsKey(atributo)) {
             atributos.put(atributo, atributos.get(atributo) + cantidad);
         }
     }
 
+    /**
+     * Restablece los atributos de la bala a sus valores iniciales.
+     */
     public static void resetBullet() {
         atributos.put("bullet_speed", 1.5f);
         atributos.put("bullet_cooldown", 2f);
     }
 
+    /**
+     * Inicializa la bala en una nueva posición.
+     * 
+     * @param x     Posición X
+     * @param y     Posición Y
+     * @param angle Ángulo de movimiento
+     */
     public void init(float x, float y, float angle) {
-        // Establecer la posición, ángulo y otros parámetros de la bala
         setPosition(x, y);
         this.angle = angle;
         time = 2f;
         stateTime = 0;
         shouldRemove = false;
         defineBullet(x, y, size);
-
-        // Inicializa el cuerpo de Box2D o lo que necesites
     }
 
+    /**
+     * Restablece la bala para ser reutilizada en un pool.
+     */
     @Override
     public void reset() {
         setPosition(0, 0);
-        body.setLinearVelocity(0, 0);
-        body = null;
+        if (body != null) {
+            body.setLinearVelocity(0, 0);
+            body = null;
+        }
     }
 }
