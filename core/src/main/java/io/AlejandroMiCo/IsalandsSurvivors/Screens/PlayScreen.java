@@ -201,7 +201,8 @@ public class PlayScreen implements Screen {
                 enemyList.clear();
 
                 music.dispose();
-                game.setScreen(new GameOverScreen(game));
+                game.setScreen(
+                        new GameOverScreen(game, player.getLevel(), player.getEnemiesDefeated(), player.getCoins()));
                 return;
             }
         }

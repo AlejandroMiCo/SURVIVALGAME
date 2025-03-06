@@ -20,6 +20,7 @@ import io.AlejandroMiCo.IsalandsSurvivors.IslandsSurvivors;
 import io.AlejandroMiCo.IsalandsSurvivors.Combat.Bullet;
 import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Enemy;
 import io.AlejandroMiCo.IsalandsSurvivors.Tools.Assets;
+import io.AlejandroMiCo.IsalandsSurvivors.Tools.PreferencesManager;
 
 /**
  * Pantalla de Game Over que se muestra cuando el jugador muere.
@@ -34,7 +35,7 @@ public class GameOverScreen implements Screen {
      * 
      * @param game Instancia principal del juego.
      */
-    public GameOverScreen(final IslandsSurvivors game) {
+    public GameOverScreen(final IslandsSurvivors game, int playerLevel, int enemiesDefeated, int coins) {
         camera = new OrthographicCamera();
         stage = new Stage(new FitViewport(IslandsSurvivors.V_WIDTH, IslandsSurvivors.V_HEIGHT, camera));
         Gdx.input.setInputProcessor(stage);
@@ -84,6 +85,13 @@ public class GameOverScreen implements Screen {
         table.add(mainMenuButton).padBottom(10).row();
 
         stage.addActor(table);
+
+        // Calcular el puntaje basado en el nivel del jugador, enemigos derrotados y
+        // monedas obtenidas
+        int score = playerLevel * Math.max(enemiesDefeated, 1) * Math.max(coins, 1);
+
+        // Guardar el puntaje en las preferencias
+        PreferencesManager.saveHighScore(score);
     }
 
     @Override
