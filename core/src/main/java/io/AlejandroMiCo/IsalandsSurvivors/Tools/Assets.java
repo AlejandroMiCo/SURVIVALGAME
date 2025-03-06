@@ -50,7 +50,7 @@ public class Assets {
 
     /**
      * Método auxiliar para obtener el texto de un recurso.
-     * 
+     *
      * @param key Clave del recurso.
      * @return El texto del recurso.
      */
@@ -64,10 +64,10 @@ public class Assets {
 
     /**
      * Método auxiliar para cargar el idioma seleccionado.
-     * 
+     *
      * @param langCode Código del idioma.
      */
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation")    // Dependiendo de la version de java este warning es necesario
     public static void loadLanguage(String langCode) {
         FileHandle baseFileHandle = Gdx.files.internal("i18n/messages");
         Locale locale = new Locale(langCode);
