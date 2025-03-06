@@ -105,7 +105,7 @@ public class Player extends Sprite {
         atributos.put("player_speed", 80f);
         atributos.put("player_damage", 15f);
         atributos.put("player_critical_chance", 0f);
-        atributos.put("player_health_regenarition", 0f);
+        atributos.put("player_health_regeneration", 0f);
         atributos.put("player_absorption_radius", 0.75f);
 
         currentHealth = atributos.get("player_max_health");
@@ -160,7 +160,7 @@ public class Player extends Sprite {
         timeB4Heal -= dt;
         if (timeB4Heal <= 0 && currentState != State.DEAD && currentHealth < getMaxHealth()) {
             // Actualizar la salud del personaje si no está muerto y no está al máximo
-            currentHealth += Math.min(atributos.get("player_health_regenarition"),
+            currentHealth += Math.min(atributos.get("player_health_regeneration"),
                     atributos.get("player_max_health") - currentHealth);
             timeB4Heal = 1.0f;
         }
