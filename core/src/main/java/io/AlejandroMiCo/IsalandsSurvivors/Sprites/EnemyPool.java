@@ -9,13 +9,24 @@ public class EnemyPool extends Pool<Enemy> {
     private Player knight;
     private int enemyType = 0;
 
-    public EnemyPool(PlayScreen screen, Player knight) {
+    /**
+     * Constructor de la clase EnemyPool.
+     * 
+     * @param screen Pantalla de juego.
+     * @param player Instancia del personaje principal.
+     */
+    public EnemyPool(PlayScreen screen, Player player) {
         this.screen = screen;
-        this.knight = knight;
+        this.knight = player;
     }
 
-    // Método para obtener un enemigo del pool
-
+    /**
+     * Método para obtener un enemigo del pool.
+     * 
+     * @param x Posición X.
+     * @param y Posición Y.
+     * @return Un enemigo del pool.
+     */
     public Enemy obtain(float x, float y) {
         Enemy enemy = super.obtain(); // Obtiene un enemigo de la pool
 
@@ -30,10 +41,21 @@ public class EnemyPool extends Pool<Enemy> {
         return enemy;
     }
 
+    /**
+     * Método auxiliar para cambiar el tipo de enemigo que se va a extraer de la
+     * pool.
+     * 
+     * @param enemyType Tipo de enemigo.
+     */
     public void setEnemyType(int enemyType) {
         this.enemyType = enemyType;
     }
 
+    /**
+     * Método auxiliar para liberar el enemigo de la pool.
+     * 
+     * @param enemy Enemigo a liberar.
+     */
     @Override
     public void free(Enemy enemy) {
         enemy.getBody().setLinearVelocity(0, 0); // Detener movimiento
@@ -41,6 +63,11 @@ public class EnemyPool extends Pool<Enemy> {
         enemy.setActive(false); // Marcarlo como inactivo
     }
 
+    /**
+     * Método para crear un nuevo enemigo.
+     * 
+     * @return Un nuevo enemigo.
+     */
     @Override
     protected Enemy newObject() {
         switch (enemyType) {
@@ -55,10 +82,20 @@ public class EnemyPool extends Pool<Enemy> {
         }
     }
 
+    /**
+     * Método auxiliar para obtener una posición X aleatoria.
+     * 
+     * @return Posición X aleatoria.
+     */
     private float randomX() {
         return (float) ((Math.random() * 22) + 5);
     }
 
+    /**
+     * Método auxiliar para obtener una posición Y aleatoria.
+     * 
+     * @return Posición Y aleatoria.
+     */
     private float randomY() {
         return (float) ((Math.random() * 23) + 5);
     }

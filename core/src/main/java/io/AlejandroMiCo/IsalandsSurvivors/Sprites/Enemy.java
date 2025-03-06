@@ -25,7 +25,7 @@ public abstract class Enemy extends Sprite implements Poolable {
     protected World world;
     protected PlayScreen screen;
     private Body b2body;
-    public Player knight;
+    public Player player;
 
     public static int INITIAL_HEALTH = 20;
     public static int INITIAL_DAMAGE = 5;
@@ -60,33 +60,54 @@ public abstract class Enemy extends Sprite implements Poolable {
         this.value = value;
     }
 
-    public Enemy(PlayScreen screen, float x, float y, Player knight, String walkFile, int value) {
+    /**
+     * Constructor de la clase Enemy.
+     * 
+     * @param screen   Pantalla de juego.
+     * @param x        Posición X.
+     * @param y        Posición Y.
+     * @param player   Instancia del personaje principal.
+     * @param walkFile Archivo de la textura del enemigo.
+     * @param value    Valor de la experiencia dejada por el enemigo. En referencia
+     *                 a su tipo.
+     */
+    public Enemy(PlayScreen screen, float x, float y, Player player, String walkFile, int value) {
         this.health = INITIAL_HEALTH;
         this.damage = INITIAL_DAMAGE;
         this.speed = INITIAL_SPEED;
         this.world = screen.getWorld();
         this.screen = screen;
-        this.knight = knight;
+        this.player = player;
         this.value = value;
         this.active = false; // Se inicia inactivo
 
+        // Inicializar el vector de dirección
         direction = new Vector2();
 
+        // Obtener la animación del enemigo
         walkAnimation = getAnimation(new Texture(walkFile));
         deathAnimation = getAnimation(Assets.manager.get("img/Dead_custom.png"));
         stateTime = 0;
         deathAnimationFinished = false;
 
+        // Definir el cuerpo 2d del enemigo
         defineEnemy();
         setBounds(getX(), getY(), 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
         setPosition(x, y);
+
+        // Obtener el sonido de haber sido golpeado
         getHit = Assets.manager.get("sounds/pupa.ogg");
+
+        // Obtener el volumen del sonido
         volume = PreferencesManager.getSoundVolume();
     }
 
+    /**
+     * Define el cuerpo 2d del enemigo.
+     */
     public void defineEnemy() {
         BodyDef bdef = new BodyDef();
-        bdef.position.set(0, 0); // (float) ((Math.random() * 22) + 5), (float) ((Math.random() * 23) + 5)
+        bdef.position.set(0, 0);
         bdef.type = BodyDef.BodyType.DynamicBody;
 
         b2body = world.createBody(bdef);
@@ -105,6 +126,11 @@ public abstract class Enemy extends Sprite implements Poolable {
         b2body.createFixture(fedef).setUserData(this);
     }
 
+    /**
+     * Calcula el valor de la vida del enemigo al ser golpeado.
+     * 
+     * @param dmg Valor de la vida a mejorar.
+     */
     public void takeDamage(int dmg) {
         if (!active)
             return;
@@ -119,6 +145,12 @@ public abstract class Enemy extends Sprite implements Poolable {
         flashDamage();
     };
 
+    /**
+     * Método auxiliar para obtener la animación del enemigo.
+     * 
+     * @param imagen Textura de la animación del enemigo.
+     * @return La animación del enemigo.
+     */
     public Animation<TextureRegion> getAnimation(Texture imagen) {
         TextureRegion[][] tmp;
         TextureRegion[] regionsMovimiento;
@@ -131,6 +163,12 @@ public abstract class Enemy extends Sprite implements Poolable {
         return new Animation<>(0.125f, regionsMovimiento);
     }
 
+    /**
+     * Método auxiliar para dibujar el enemigo. Lo dibuja si el enemigo no ha
+     * muerto.
+     * 
+     * @param batch SpriteBatch para renderizar el enemigo.
+     */
     public void draw(Batch batch) {
         if (!deathAnimationFinished) {
             super.draw(batch);
@@ -143,17 +181,22 @@ public abstract class Enemy extends Sprite implements Poolable {
         stateTime += dt;
 
         // Reutilizar un Vector2 temporal para evitar crear objetos innecesarios
-        tempVector.set(knight.getB2body().getPosition()).sub(b2body.getPosition()).nor();
+        // (Bastante optimo para reducir el uso de memoria)
+        tempVector.set(player.getB2body().getPosition()).sub(b2body.getPosition()).nor();
         direction.set(tempVector); // Actualizar 'direction' sin generar nuevas instancias
-        b2body.setLinearVelocity(direction.scl(speed * dt));
+        b2body.setLinearVelocity(direction.scl(speed * dt)); // Actualizar la velocidad del enemigo
 
+        // Actualizar la posición del enemigo
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
         setRegion(walkAnimation.getKeyFrame(stateTime, true));
 
+        // Cambiar el estado del enemigo si está en movimiento hacia el lado opuesto
+        // (para que siempre mire hacia el jugador)
         if (b2body.getLinearVelocity().x < 0) {
             flip(true, false);
         }
 
+        // Actualizar el temporizador de daño del enemigo
         if (damageTimer > 0) {
             damageTimer -= dt;
             if (damageTimer <= 0) {
@@ -170,11 +213,19 @@ public abstract class Enemy extends Sprite implements Poolable {
         return health;
     }
 
+    /**
+     * Método auxiliar para que el enemigo se vea con un efecto de flash de
+     * daño. (Setea el color del sprite a rojo y el timer de flash a 0.1s)
+     */
     private void flashDamage() {
         setColor(1, 0, 0, 0.8f);
         damageTimer = 0.1f;
     }
 
+    /**
+     * Restablece los valores iniciales de las estadisticas del enemigo. Para cuando
+     * sea reutilizado.
+     */
     public static void resetEnemiesStats() {
         INITIAL_HEALTH = 20;
         INITIAL_DAMAGE = 5;
@@ -193,10 +244,12 @@ public abstract class Enemy extends Sprite implements Poolable {
         return health <= 0;
     }
 
+    /**
+     * Resetea los valores de las estadisticas del enemigo. Para cuando sea
+     * reutilizado desde la pool.
+     */
     @Override
     public void reset() {
-        // Restablece todos los campos relevantes del enemigo para que pueda ser
-        // reutilizado desde la pool
         active = false;
         health = INITIAL_HEALTH;
         damage = INITIAL_DAMAGE;
@@ -204,11 +257,18 @@ public abstract class Enemy extends Sprite implements Poolable {
         stateTime = 0;
         setRegion(deathAnimation.getKeyFrame(stateTime, false));
         deathAnimationFinished = false;
-        direction.set(0, 0); // Limpiar el vector
-        setPosition(0, 0); // Puedes restablecer la posición a cualquier valor que sea necesario
-        b2body.setLinearVelocity(0, 0);// Reiniciar otras propiedades del enemigo según sea necesario.
+        direction.set(0, 0);
+        setPosition(0, 0);
+        b2body.setLinearVelocity(0, 0);
     }
 
+    /**
+     * Reinicializa los valores de las estadisticas del enemigo. Para cuando sea
+     * reutilizado desde la pool.
+     * 
+     * @param x Posición X.
+     * @param y Posición Y.
+     */
     public void reinitialize(float x, float y) {
         setPosition(x, y);
         active = true;

@@ -39,7 +39,6 @@ public class Player extends Sprite {
     private boolean movingRight;
 
     // Estadisticas del personaje
-    public float timebetweenattacks;
     private int level;
     private float xp;
     private float xpToNextLevel;
@@ -69,6 +68,12 @@ public class Player extends Sprite {
         this.b2body = b2body;
     }
 
+    /**
+     * Constructor de la clase Player.
+     * 
+     * @param screen Pantalla de juego.
+     * @param joy    Instancia del joystick.
+     */
     public Player(PlayScreen screen, VirtualJoystick joy) {
         super(new Texture("creatures/Archer_Blue.png"), 196, 196);
 
@@ -92,8 +97,9 @@ public class Player extends Sprite {
         setBounds(0, 0, 96 / IslandsSurvivors.PPM, 96 / IslandsSurvivors.PPM);
         this.level = 1;
         this.xp = 0;
-        this.xpToNextLevel = 100; // Se necesita 100 XP para subir al nivel 2
+        this.xpToNextLevel = 100; // Se necesita 100 XP para subir el primer nivel
 
+        // Atributos del personaje
         atributos = new HashMap<>();
         atributos.put("player_max_health", 100f);
         atributos.put("player_speed", 80f);
@@ -102,13 +108,16 @@ public class Player extends Sprite {
         atributos.put("player_health_regenarition", 0f);
         atributos.put("player_absorption_radius", 0.75f);
 
-        timebetweenattacks = 0;
-
         currentHealth = atributos.get("player_max_health");
         this.xp = 0;
         this.level = 1;
     }
 
+    /**
+     * Añade experiencia al personaje.
+     * 
+     * @param amount Cantidad de experiencia a añadir.
+     */
     public void gainXP(int amount) {
         xp += amount;
         if (xp >= xpToNextLevel) {
@@ -117,6 +126,9 @@ public class Player extends Sprite {
         }
     }
 
+    /**
+     * Sube al nivel del personaje.
+     */
     private void levelUp() {
         level++;
         xp -= xpToNextLevel; // Mantiene el exceso de XP
@@ -124,7 +136,11 @@ public class Player extends Sprite {
 
     }
 
-    // Se encarga de actualizar la camara y la animacion
+    /**
+     * Actualiza la posición, animación y velocidad del personaje.
+     * 
+     * @param dt Delta time (tiempo transcurrido desde el último frame).
+     */
     public void update(float dt) {
         direction.set(joystick.getDirection());
         velocity.set(direction).scl(atributos.get("player_speed") * dt);
@@ -133,23 +149,29 @@ public class Player extends Sprite {
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
         setRegion(getFrame(dt));
 
-        timebetweenattacks += dt;
         if (damageTimer > 0) {
             damageTimer -= dt;
             if (damageTimer <= 0) {
-                setColor(1, 1, 1, 1); // Volver al color normal
+                setColor(1, 1, 1, 1);
             }
         }
 
+        // Actualizar la velocidad de curación del personaje
         timeB4Heal -= dt;
         if (timeB4Heal <= 0 && currentState != State.DEAD && currentHealth < getMaxHealth()) {
+            // Actualizar la salud del personaje si no está muerto y no está al máximo
             currentHealth += Math.min(atributos.get("player_health_regenarition"),
                     atributos.get("player_max_health") - currentHealth);
             timeB4Heal = 1.0f;
         }
     }
 
-    // Devuelve la animacion en funcion del estado actual del personaje
+    /**
+     * Obtiene el frame actual de la animación del personaje.
+     * 
+     * @param dt Delta time (tiempo transcurrido desde el último frame).
+     * @return El frame actual de la animación.
+     */
     public TextureRegion getFrame(float dt) {
         currentState = getState();
         switch (currentState) {
@@ -172,7 +194,11 @@ public class Player extends Sprite {
         return region;
     }
 
-    // Devuelve el estado actual del personaje
+    /**
+     * Obtiene el estado actual del personaje.
+     * 
+     * @return El estado actual del personaje.
+     */
     public State getState() {
         if (currentHealth <= 0) {
             return State.DEAD;
@@ -184,7 +210,9 @@ public class Player extends Sprite {
         }
     }
 
-    // Define el cuerpo 2d del personaje
+    /**
+     * Define el cuerpo 2d del personaje.
+     */
     public void defineKnight() {
         BodyDef bdef = new BodyDef();
         bdef.position.set(500 / IslandsSurvivors.PPM, 500 / IslandsSurvivors.PPM);
@@ -203,7 +231,13 @@ public class Player extends Sprite {
         b2body.createFixture(fedef);
     }
 
-    // Se encarga de establecer las animaciones basicas del personaje
+    /**
+     * Método auxiliar para establecer las animaciones basicas del personaje.
+     * 
+     * @param imagen Textura de la animación.
+     * @param fila   Fila de la textura de la animación.
+     * @return La animación del personaje.
+     */
     public Animation<TextureRegion> getAnimation(Texture imagen, int fila) {
         tmp = TextureRegion.split(imagen, imagen.getWidth() / 8, imagen.getHeight() / 7);
         regionsMovimiento = new TextureRegion[6];
@@ -229,6 +263,10 @@ public class Player extends Sprite {
         return atributos.get("player_damage").intValue();
     }
 
+    public float getSpeed() {
+        return atributos.get("player_speed");
+    }
+
     public float getAbsorptionRadius() {
         return atributos.get("player_absorption_radius");
     }
@@ -237,12 +275,23 @@ public class Player extends Sprite {
         return atributos.get("player_critical_chance").floatValue(); // Probabilidad de crítico del personaje
     }
 
+    /**
+     * Mejora un atributo del personaje.
+     * 
+     * @param atributo Nombre del atributo a mejorar.
+     * @param cantidad Cantidad de mejora.
+     */
     public void mejorarAtributo(String atributo, float cantidad) {
         if (atributos.containsKey(atributo)) {
             atributos.put(atributo, atributos.get(atributo) + cantidad);
         }
     }
 
+    /**
+     * Recibe daño al personaje.
+     * 
+     * @param damage Daño recibido.
+     */
     public void receiveDamage(float damage) {
         currentHealth -= damage;
 
@@ -250,7 +299,6 @@ public class Player extends Sprite {
             currentHealth = 0;
             b2body.setLinearVelocity(0, 0);
             stateTimer = 0;
-            // Aquí puedes agregar lógica de muerte, como una animación o reiniciar el juego
         }
         flashDamage();
     }
@@ -263,6 +311,12 @@ public class Player extends Sprite {
         return atributos.get("player_max_health");
     }
 
+    /**
+     * Método auxiliar para obtener la animación del personaje.
+     * 
+     * @param imagen Textura de la animación.
+     * @return La animación del personaje.
+     */
     public Animation<TextureRegion> getAnimation(Texture imagen) {
         TextureRegion[][] tmp;
         TextureRegion[] regionsMovimiento;
@@ -275,11 +329,18 @@ public class Player extends Sprite {
         return new Animation<>(0.125f, regionsMovimiento);
     }
 
+    /**
+     * Método auxiliar para recolorear el personaje.
+     * 
+     */
     private void flashDamage() {
         setColor(1, 0, 0, 0.8f);
         damageTimer = 0.1f;
     }
 
+    /**
+     * Añade monedas al personaje.
+     */
     public void addCoin() {
         coinCount++;
     }
@@ -288,6 +349,9 @@ public class Player extends Sprite {
         return coinCount;
     }
 
+    /**
+     * Añade salud al personaje. (Si está al máximo, no se añade más)
+     */
     public void eat() {
         if (currentHealth < getMaxHealth()) {
             currentHealth += Math.min(10, getMaxHealth() - currentHealth);
