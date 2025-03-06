@@ -10,10 +10,16 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.I18NBundle;
 
+/**
+ * Clase que contiene los recursos de la aplicación.
+ */
 public class Assets {
     public static final AssetManager manager = new AssetManager();
     public static I18NBundle bundle; // Para los textos en distintos idiomas
 
+    /**
+     * Método auxiliar para cargar recursos.
+     */
     public static void load() {
 
         // Cargar imágenes
@@ -27,17 +33,13 @@ public class Assets {
         manager.load("ui/pergamino.png", Texture.class);
         manager.load("ui/slider.png", Texture.class);
         manager.load("ui/sliderKnob.png", Texture.class);
-
         manager.load("img/Dead_custom.png", Texture.class); // Carga la textura de muerte
-       
-
 
         // Cargar sonidos y música
         manager.load("music/menuSong.ogg", Music.class);
         manager.load("music/song.ogg", Music.class);
         manager.load("sounds/attack.ogg", Sound.class);
         manager.load("sounds/pupa.ogg", Sound.class);
-        // manager.load("sounds/click.ogg", Sound.class);
 
         // Cargar localización
         loadLanguage("en");
@@ -46,6 +48,12 @@ public class Assets {
         manager.finishLoading();
     }
 
+    /**
+     * Método auxiliar para obtener el texto de un recurso.
+     * 
+     * @param key Clave del recurso.
+     * @return El texto del recurso.
+     */
     public static String getText(String key) {
         return bundle != null ? bundle.get(key) : "???" + key + "???";
     }
@@ -54,6 +62,11 @@ public class Assets {
         manager.dispose();
     }
 
+    /**
+     * Método auxiliar para cargar el idioma seleccionado.
+     * 
+     * @param langCode Código del idioma.
+     */
     @SuppressWarnings("deprecation")
     public static void loadLanguage(String langCode) {
         FileHandle baseFileHandle = Gdx.files.internal("i18n/messages");

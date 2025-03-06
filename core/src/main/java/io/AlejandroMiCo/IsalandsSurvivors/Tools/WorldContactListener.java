@@ -17,12 +17,22 @@ import io.AlejandroMiCo.IsalandsSurvivors.Sprites.Meat;
 
 public class WorldContactListener implements ContactListener {
 
-    private Player knight;
+    private Player player;
 
-    public WorldContactListener(Player knight) {
-        this.knight = knight;
+    /**
+     * Constructor de la clase WorldContactListener.
+     * 
+     * @param player Instancia del personaje principal.
+     */
+    public WorldContactListener(Player player) {
+        this.player = player;
     }
 
+    /**
+     * Método auxiliar para iniciar un contacto.
+     * 
+     * @param contact Contacto a iniciar.
+     */
     @Override
     public void beginContact(Contact contact) {
         Fixture fixA = contact.getFixtureA();
@@ -31,10 +41,12 @@ public class WorldContactListener implements ContactListener {
         int cDef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
 
         switch (cDef) {
+            // Colision entre bala y enemigo
             case IslandsSurvivors.BULLET_BIT | IslandsSurvivors.ENEMY_BIT:
                 Bullet bullet;
                 Enemy enemy;
 
+                // Obtener las entidades que colisionan
                 if (fixA.getFilterData().categoryBits == IslandsSurvivors.BULLET_BIT) {
                     bullet = (Bullet) fixA.getUserData();
                     enemy = (Enemy) fixB.getUserData();
@@ -43,39 +55,48 @@ public class WorldContactListener implements ContactListener {
                     enemy = (Enemy) fixA.getUserData();
                 }
 
-                int damage = DamageCalculator.calculateDamage(knight, bullet);
+                // Calcular el daño y aplicarlo al enemigo
+                int damage = DamageCalculator.calculateDamage(player, bullet);
                 enemy.takeDamage(damage);
                 bullet.markForRemoval();
                 break;
 
+            // Colision entre jugador y enemigo
             case IslandsSurvivors.PLAYER_BIT | IslandsSurvivors.ENEMY_BIT:
                 Enemy enemySource;
 
+                // Obtener las entidades que colisionan
                 if (fixA.getFilterData().categoryBits == IslandsSurvivors.ENEMY_BIT) {
                     enemySource = (Enemy) fixA.getUserData();
                 } else {
                     enemySource = (Enemy) fixB.getUserData();
                 }
 
+                // Aplicar daño al jugador
                 if (enemySource != null) {
-                    knight.receiveDamage(enemySource.getDamage());
+                    player.receiveDamage(enemySource.getDamage());
                 }
                 break;
+
+            // Colision entre objeto y jugador
             case IslandsSurvivors.ITEM_BIT | IslandsSurvivors.PLAYER_BIT:
                 CollectedItem item;
+
+                // Obtener las entidades que colisionan
                 if (fixA.getFilterData().categoryBits == IslandsSurvivors.ITEM_BIT) {
                     item = (CollectedItem) fixA.getUserData();
                 } else {
                     item = (CollectedItem) fixB.getUserData();
                 }
 
+                // Recolectar el objeto
                 item.collect();
                 if (item instanceof Meat) {
-                    knight.eat();
+                    player.eat();
                 } else if (item instanceof Coin) {
-                    knight.addCoin();
+                    player.addCoin();
                 } else if (item instanceof Experience) {
-                    knight.gainXP(((Experience)item).getExpValue());
+                    player.gainXP(((Experience) item).getExpValue());
                 }
                 break;
             default:

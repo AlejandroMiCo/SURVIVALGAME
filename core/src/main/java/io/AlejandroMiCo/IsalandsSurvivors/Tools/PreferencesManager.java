@@ -7,6 +7,9 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 
+/**
+ * Clase para gestionar las preferencias de la aplicación.
+ */
 public class PreferencesManager {
     private static final Preferences prefs = Gdx.app.getPreferences("GamePreferences");
 
@@ -16,6 +19,7 @@ public class PreferencesManager {
     private static final String VIBRATION_KEY = "vibrationEnabled";
     private static final String LANGUAGE_KEY = "language";
 
+    // Lista de puntajes más altos
     private static final String HIGH_SCORES = "high_scores";
     private static final int MAX_SCORES = 5;
 
@@ -57,7 +61,11 @@ public class PreferencesManager {
         prefs.flush(); // Guardar los cambios
     }
 
-    // Obtener la lista de puntajes más altos
+    /**
+     * Obtiene la lista de puntajes más altos.
+     * 
+     * @return La lista de puntajes más altos.
+     */
     public static List<Integer> getHighScores() {
         String scoresString = prefs.getString(HIGH_SCORES, "");
         List<Integer> scores = new ArrayList<>();
@@ -70,13 +78,17 @@ public class PreferencesManager {
         return scores;
     }
 
-    // Guardar una nueva puntuación si está entre las mejores
+    /**
+     * Guarda una nueva puntuación si está entre las mejores.
+     * 
+     * @param newScore Puntuación a guardar.
+     */
     public static void saveHighScore(int newScore) {
         List<Integer> scores = getHighScores();
         scores.add(newScore);
         Collections.sort(scores, Collections.reverseOrder()); // Ordenar de mayor a menor
 
-        // Mantener solo los mejores 5 o 10 puntajes
+        // Mantener solo los mejores 5
         if (scores.size() > MAX_SCORES) {
             scores = scores.subList(0, MAX_SCORES);
         }
@@ -90,6 +102,7 @@ public class PreferencesManager {
             scoresString.deleteCharAt(scoresString.length() - 1); // Eliminar la última coma
         }
 
+        // Guardar la lista de puntajes en las preferencias
         prefs.putString(HIGH_SCORES, scoresString.toString());
         prefs.flush();
     }
